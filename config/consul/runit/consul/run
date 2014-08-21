@@ -1,0 +1,12 @@
+#!/bin/sh
+
+SERVICE_NAME=$(basename $(pwd))
+
+sv check -w2 socklog-unix
+exec 2>&1
+
+exec consul agent -data-dir=/tmp/consul -dc=localdev
+
+#exec serf agent -tag role=${SERF_ROLE:-base} -event-handler="member-join=/etc/serf/member-join.sh" \
+#  -event-handler="member-leave,member-failed=/etc/serf/member-leave.sh"
+#exec serf agent -config-file=/etc/serf/config.json -join ${CONNECTOR_IP:-192.168.59.3}

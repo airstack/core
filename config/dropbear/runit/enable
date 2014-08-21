@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+
+echo "Configuring $TMP_SERVICE"
+# mkdir -vp /var/run/sshd
+# sed -i -e 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/' /etc/pam.d/sshd
+
+printf "\tsetting ssh password\n"
+echo "$AIRSTACK_USER_NAME:$AIRSTACK_USER_PASSWORD" | chpasswd
+
+
+## runit files
+
+printf "\tcreating runit directories\n"
+mkdir -p /etc/sv/$TMP_SERVICE/log
+
+printf "\tcreating runit service file\n"
+cat > /etc/sv/$TMP_SERVICE/run << "EOF"
+#!/bin/sh
+SERVICE_NAME=$(basename $(pwd))
+
+sv check -w2 socklog-unix
+exec 2>&1
+
+exec chpst -u root /usr/sbin/dropbear -F -E
+EOF
+
+printf "\tcreating runit log file\n"
+cat > /etc/sv/$TMP_SERVICE/log/run << "EOF"
+#!/bin/sh
+SERVICE_NAME=$(basename $(dirname $(pwd)))
+
+exec chpst -u root logger -t $SERVICE_NAME -p local0.notice
+EOF
+
+echo "Enabling $TMP_SERVICE"
+chmod ug+x /etc/sv/$TMP_SERVICE/run
+chmod ug+x /etc/sv/$TMP_SERVICE/log/run
+ln -s /etc/sv/$TMP_SERVICE /etc/service/

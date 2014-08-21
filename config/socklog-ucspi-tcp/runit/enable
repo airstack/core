@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+
+echo "Configuring $TMP_SERVICE"
+socklog-conf ucspi-tcp nobody log
+
+# now make mods to the files...
+cat > /etc/sv/$TMP_SERVICE/log/main/main/config << "EOF"
+s999999
+n11
+EOF
+
+cat > /etc/sv/$TMP_SERVICE/run << "EOF"
+#!/bin/sh
+PORT=10516
+TCPREMOTEIP=127.0.0.2
+#common
+SERVICE_NAME=$(basename $(pwd))
+
+#dependencies
+sv -w2 check socklog-unix
+exec 2>&1
+
+exec tcpsvd -vllogserver -unobody 0 "\$PORT" socklog ucspi "\$TCPREMOTEIP"
+EOF
+
+echo "Enabling $TMP_SERVICE"
+chmod ug+x /etc/sv/$TMP_SERVICE/run
+chmod ug+x /etc/sv/$TMP_SERVICE/log/run
+ln -s /etc/sv/$TMP_SERVICE /etc/service/
+

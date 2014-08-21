@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+echo "S10local_start"
+
+exec 2>&1
+
+
+for i in $AIRSTACK_SERVICES; do
+/etc/airstack/$i/runit/enable
+done
+
+echo "Starting runit process manager" 
+/usr/sbin/runsvdir-start -P /etc/service &
+
+LOGFILES="/var/log/socklog/main/current"
+while [ ! -f "$LOGFILES" ]; do sleep 0.2 && printf "."; done
+
+#for i in $(ls /opt/log); do LOGFILES="$LOGFILES /opt/log/${i}/current"; done
+exec tail -F $LOGFILES

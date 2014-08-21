@@ -1,0 +1,168 @@
+
+# -tag role=$AIRSTACK_ROLE -tag start_time=`date +%s` -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_APP_NAME:-airstack} -event-handler="/etc/airstack/serf/serf_router.sh"
+# env | grep -P "AIRSTACK_(ROLE|ENV|TAGS)" | awk '{print "\{ \"tag\": [\"$1"=\""$2"\""}' FS='[="]'
+#exec chpst -u airstack serf agent -tag role=$AIRSTACK_ROLE -config-dir=/etc/serf/config/ -tag start_time=`date +%s` -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_APP_NAME:-airstack} -event-handler="/etc/airstack/serf/serf_router.sh"
+#exec chpst -u airstack serf agent -tag role=$AIRSTACK_ROLE -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_SERF_CLUSTER:-airstack} -event-handler="member-join=/etc/airstack/serf/actions/member-join.sh" -event-handler="member-leave,member-failed=/etc/airstack/serf/actions/member-leave.sh"
+
+
+cat ./test.json | jq --raw-output --arg name steve '(.employees[] | {name: .name, div: .division}| .name )|= . + " "+$name+"." | .employees[] | .name'
+
+cat ./test.json | jq --arg name steve '(.employees[] | {name: .name, div: .division})'
+
+for i in $(set -o posix; set | grep -P "^AIRSTACK_TAGS" | awk '{print $1}' FS='[=]'); do
+for x in $(echo ${!i}); do
+	echo "var: $x";
+done
+done
+
+cat test.json | jq --raw-output '.[] | select(.type=="postgres") | {ports}
+
+x=$(echo ${!i}); 
+
+unset TMP_TAGS
+for i in $(set -o posix; set | grep -P "^AIRSTACK_TAGS" | awk '{print $1}' FS='[=]'); do
+	for x in $(echo ${!i}); do 
+	# echo "tag: $i var: $x";
+	TMP_TAGNAME="$(echo $i | cut -d '_' -f 3)"
+	TMP_TAGS="$TMP_TAGS $(echo "-tag ${TMP_TAGNAME^^}=${x^^}")"
+	done; 
+done
+echo $TMP_TAGS
+
+env | grep AIRSTACK_ | while read -r test; do echo "$test" >> /etc/environment; done
+
+cat /etc/environment | grep AIRSTACK_ | while read -r test; do set -x; echo "$test"; export -n "$test";done
+
+cat /etc/environment | grep AIRSTACK_ | while read -r test; do set -x; export "$test\n"; done 
+
+for pid in $(pgrep docker); do
+    if [ -f /proc/$pid/smaps ]; then
+            echo "* Mem usage for PID $pid"
+            echo "-- Size:"
+            cat /proc/$pid/smaps | grep -m 1 -e ^Size: | awk '{print $2}'
+            echo "-- Rss:"
+            cat /proc/$pid/smaps | grep -m 1 -e ^Rss: | awk '{print $2}'
+            echo "-- Pss:"
+            cat /proc/$pid/smaps | grep -m 1 -e ^Pss: | awk '{print $2}'
+            echo "Shared Clean"
+            cat /proc/$pid/smaps | grep -m 1 -e '^Shared_Clean:' | awk '{print $2}'
+            echo "Shared Dirty"
+            cat /proc/$pid/smaps | grep -m 1 -e '^Shared Dirty:' | awk '{print $2}'
+    fi
+done
+
+# http://locklessinc.com/articles/memory_usage/
+# To access the total memory information about a process on Linux, we use the /proc virtual file system. Within it there is a directory full of information for each active process id (pid). By reading /proc/(pid)/status we can obtain information about memory. Amoungst other things, in Linux version 2.6.39, this file includes:
+
+# VmPeak:	Peak virtual memory usage
+# VmSize:	Current virtual memory usage
+# VmLck:	Current mlocked memory
+# VmHWM:	Peak resident set size
+# VmRSS:	Resident set size
+# VmData:	Size of "data" segment
+# VmStk:	Size of stack
+# VmExe:	Size of "text" segment
+# VmLib:	Shared library usage
+# VmPTE:	Pagetable entries size
+# VmSwap:	Swap space used
+
+# get full ids of all running docker containers
+TMP_CONTAINERIDS=$(docker ps --no-trunc | awk '{if (NR>1) print $1}')
+
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+#get memory usage of all container processes
+echo Memory Usage of container $TMP_CONTAINERID: $(cat /sys/fs/cgroup/memory/docker/$TMP_CONTAINERID/memory.usage_in_bytes) bytes
+done
+
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+#get list of pids of processes running in container
+echo -n PIDS of PROCESSES in container $TMP_CONTAINERID: $(cat /sys/fs/cgroup/cpu/docker/$TMP_CONTAINERID/tasks)
+echo -e "\n"
+done
+
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do
+	docker inspect --format '{{.State.Pid}}' $TMP_CONTAINERID
+done
+
+TMP_CONTAINERIDS=$(docker ps --no-trunc | awk '{if (NR>1) print $1}')
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+echo "CONTAINER ID: $TMP_CONTAINERID"
+echo "PID   MEM(kB) CMD":
+TMP_PIDS=$(cat /sys/fs/cgroup/cpu/docker/$TMP_CONTAINERID/cgroup.procs)
+for TMP_PID in $TMP_PIDS; do
+	echo $TMP_PID $(cat /proc/$TMP_PID/status | awk '/VmRSS/ {print $2}') $(cat /proc/$TMP_PID/cmdline | tr "\0" " ")
+done
+echo ""
+echo Total Memory Usage: $(echo $( for TMP_PID in $TMP_PIDS; do echo $(cat /proc/$TMP_PID/status | awk '/VmRSS/ {print $2}'); done) | awk ' { for (i=0;i<NF;i++) SUM+=$i} END {print SUM} ')
+echo "==================="
+echo ""
+done
+
+docker run --rm -i -t --volume /Users/j/airstack/airstack/airsdk/base/output:/home/airstack/output --volume /home/docker/base0:/home/airstack/base0 --volume /Users/j/airstack/airstack/airsdk/base/input:/home/airstack/input:ro --publish-all --workdir /home/airstack --user airstack airstack/base:latest 
+
+TMP_CONTAINERIDS=$(docker ps --no-trunc | awk '{if (NR>1) print $1}')
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+echo "CONTAINER ID: $TMP_CONTAINERID"
+echo "TOTAL MEMORY USAGE"
+TMP_PIDS=$(cat /sys/fs/cgroup/cpu/docker/$TMP_CONTAINERID/cgroup.procs)
+echo Totals: $(echo $( for TMP_PID in $TMP_PIDS; do echo $(cat /proc/$TMP_PID/status | awk '/VmRSS/ {print $2}'); done) | awk ' { for (i=1;i<NF;i++) SUM+=$i} END {print SUM} ')
+done
+
+TMP_CONTAINERIDS=$(docker ps --no-trunc | awk '{if (NR>1) print $1}')
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+echo "CONTAINER ID: $TMP_CONTAINERID"
+echo "PID   MEM(kB) CMD":
+TMP_PIDS=$(cat /sys/fs/cgroup/cpu/docker/$TMP_CONTAINERID/cgroup.procs)
+echo $( for TMP_PID in $TMP_PIDS; do echo $(cat /proc/$TMP_PID/status | awk '/VmRSS/ {print $2}'); done) | grep 1
+echo Total Memory Usage: $(echo $( for TMP_PID in $TMP_PIDS; do echo $(cat /proc/$TMP_PID/status | awk '/VmRSS/ {print $2}'); done) | awk ' { for (i=1;i<NF;i++) SUM+=$i} END {print SUM} ')
+echo -e "\n"
+done
+
+
+####### OLD
+TMP_CONTAINERIDS=$(docker ps --no-trunc | awk '{if (NR>1) print $1}')
+for TMP_CONTAINERID in $TMP_CONTAINERIDS; do 
+echo $(cat /sys/fs/cgroup/memory/docker/be676c476359330ec41fd685929c0ddfdc8fd97607ea4be038bc625ae016d988/memory.stat) 
+#| awk '{ printf "%.0f\n", ($1/1000) KB }'
+done
+
+awk 'BEGIN {
+		str = "daabaaa"
+        sub(/a*/, "c&c", str)
+        print str
+}'
+
+ps -A -o pid,%cpu,%mem,rss,time,etime,command | awk 'NR == 1 || /[V]Box/' | 
+awk '
+BEGIN { }
+{ if (NR == 1) { 
+	x=NF; print $0 
+} else { 
+	STR=$0; sub(/\//, "\"\/"); 
+	print x
+	} 
+} 
+END { print x,$x } '
+
+ps -A -o pid,%cpu,%mem,rss,time,etime,command | awk 'NR == 1 || /[V]Box/' | 
+awk '
+BEGIN { }
+{ if (NR == 1) { 
+	x=NF; print $0 
+} else { 
+	STR=$0; sub(/\//, "\"\/"); 
+	print x,NF
+	} 
+} 
+END { print x,$x } '
+
+
+
+
+
+
+
+
+
+
+

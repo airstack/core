@@ -17,7 +17,7 @@ initdirs::
 init: initdirs
 ifeq ($(uname_S),Darwin)
 ifneq ($(shell boot2docker status),running)
-	$(shell boot2docker up)
+	@boot2docker up
 endif
 export DOCKER_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
 endif
@@ -26,7 +26,7 @@ build: init
 	@docker build --tag $(NAME):$(VERSION) --force-rm .
 
 test:
-	env NAME=$(NAME) VERSION=$(VERSION) ./test/runner.sh
+	@env NAME=$(NAME) VERSION=$(VERSION) ./test/runner.sh
 
 tag_latest:
 	@docker tag $(NAME):$(VERSION) $(NAME):latest
@@ -37,9 +37,7 @@ release: test tag_latest
 	@echo "*** Don't forget to create a tag. git tag rel-$(VERSION) && git push origin rel-$(VERSION)"
 
 COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERNAME) --user $(USERNAME) $(NAME):$(VERSION)
-# --hostname=$(SHORTNAME)-$(VERSION)
 LINUX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERNAME)/output --volume $(ROOTDIR)/input:/home/$(USERNAME)/input:ro
-
 OSX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERNAME)/output --volume /home/docker/base0:/home/$(USERNAME)/base0 --volume $(ROOTDIR)/input:/home/$(USERNAME)/input:ro
 
 ifeq ($(uname_S),Darwin)
@@ -49,8 +47,9 @@ else
 endif
 
 debug: init
-#ifconfig docker0 -multicast && ifconfig docker0 multicast
-	$(shell docker rm $(SHORTNAME)-$(VERSION) > /dev/null 2>&1)
+	@if [ `boot2docker ssh 'ifconfig docker0 | grep -io multicast | wc -w'` -lt 1 ]; \
+		then ifconfig docker0 -multicast && ifconfig docker0 multicast; fi
+	@docker rm $(SHORTNAME)-$(VERSION) > /dev/null 2>&1; true
 	@docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) /bin/bash
 
 run_daemon:

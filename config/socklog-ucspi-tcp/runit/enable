@@ -20,7 +20,7 @@ TCPREMOTEIP=127.0.0.2
 SERVICE_NAME=$(basename $(pwd))
 
 #dependencies
-sv -w2 check socklog-unix
+sv check socklog-unix >/dev/null || exit 1
 exec 2>&1
 
 exec tcpsvd -vllogserver -unobody 0 "\$PORT" socklog ucspi "\$TCPREMOTEIP"
@@ -29,5 +29,5 @@ EOF
 echo "Enabling $TMP_SERVICE"
 chmod ug+x /etc/sv/$TMP_SERVICE/run
 chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -e /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/
 

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Linux From Scratch Runit Stage 3 Bootscript.
+# Copyright 2014 James Powell, Keith Hedger, and Stoat of LinuxQuestions.
+# Work derived from VoidLinux and Ignite and adapted for LFS.
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# First re-read the configuration to see if any special parameters are needed.
+. /etc/runit.conf
+
+# This stops the services, and brings down all the services in 15 seconds. Normally
+# Runit uses a few minutes to bring down services, but unless totally necessary, the
+# system can be brought down very quickly in under 15 seconds. We'll use 10 as default.
+echo "Waiting for services to stop..."
+sv -w10 force-stop /etc/runit/runsvdir/current/*
+sv exit /etc/runit/runsvdir/current/*
+
+# Stop any remaining processes and core services.
+echo "Sending TERM signal to processes..."
+pkill --inverse -s0,1 -TERM
+sleep 5
+echo "Sending KILL signal to processes..."
+pkill --inverse -s0,1 -KILL

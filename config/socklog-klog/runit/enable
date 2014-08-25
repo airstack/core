@@ -7,4 +7,4 @@ echo "Configuring $TMP_SERVICE"
 socklog-conf klog nobody log
 
 echo "Enabling $TMP_SERVICE"
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -e /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/

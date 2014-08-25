@@ -50,7 +50,7 @@ debug: init
 	@if [ `boot2docker ssh 'ifconfig docker0 | grep -io multicast | wc -w'` -lt 1 ]; \
 		then ifconfig docker0 -multicast && ifconfig docker0 multicast; fi
 	@docker rm $(SHORTNAME)-$(VERSION) > /dev/null 2>&1; true
-	@docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) /bin/bash
+	@docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) /bin/sh
 
 run_daemon:
 	@docker run $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS)

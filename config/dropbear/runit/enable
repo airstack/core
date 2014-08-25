@@ -21,10 +21,10 @@ cat > /etc/sv/$TMP_SERVICE/run << "EOF"
 #!/bin/sh
 SERVICE_NAME=$(basename $(pwd))
 
-sv check -w2 socklog-unix
+# sv -w2 check socklog-unix >/dev/null || exit 1
 exec 2>&1
 
-exec chpst -u root /usr/sbin/dropbear -F -E
+exec chpst -u root /usr/sbin/dropbear -F -E -R
 EOF
 
 printf "\tcreating runit log file\n"
@@ -38,4 +38,4 @@ EOF
 echo "Enabling $TMP_SERVICE"
 chmod ug+x /etc/sv/$TMP_SERVICE/run
 chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -f /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/

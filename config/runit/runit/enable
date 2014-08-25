@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+
+echo "Configuring $TMP_SERVICE"
+RUNIT_DIR="/etc/runit"
+# [ ! -e "$RUNIT_DIR" ] && mkdir -p "$RUNIT_DIR"
+[ ! -e $RUNIT_DIR/runit ] && ln -s /etc/airstack/$TMP_SERVICE/config/runit $RUNIT_DIR
+
+rm -f /etc/rc.local && ln -s /etc/airstack/$TMP_SERVICE/config/rc.local /etc/

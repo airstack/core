@@ -5,7 +5,7 @@ TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
 
 echo "Configuring $TMP_SERVICE"
 SERF_DIR="/etc/serf"
-[ ! -e "$SERF_DIR" ] && mkdir -vp "$SERF_DIR"
+[ ! -e "$SERF_DIR" ] && mkdir -p "$SERF_DIR"
 ln -s /etc/airstack/serf/handlers $SERF_DIR/
 ln -s /etc/airstack/serf/config $SERF_DIR/
 
@@ -19,7 +19,7 @@ cat > /etc/sv/$TMP_SERVICE/run << "EOF"
 SERVICE_NAME=$(basename $(pwd))
 
 #dependencies
-sv -w2 check socklog-unix
+# sv -w1 up socklog-unix >/dev/null || exit 1
 exec 2>&1
 
 #custom init
@@ -43,4 +43,4 @@ EOF
 echo "Enabling $TMP_SERVICE"
 chmod ug+x /etc/sv/$TMP_SERVICE/run
 chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -e /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# This is the rc.local file to load any programs not covered by Runit
+# as daemons. For best results, you should use the following sample
+# as a method to load a daemon...
+#
+# Load Timidity++ as Daemon
+# if [ -x /usr/bin/timidity ]; then
+#     echo "Starting TiMidity++"
+#     /usr/bin/timidity -iAD -Os -B2,8
+# fi

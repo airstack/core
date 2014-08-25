@@ -32,5 +32,5 @@ EOF
 echo "Enabling $TMP_SERVICE"
 chmod ug+x /etc/sv/$TMP_SERVICE/run
 chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -e /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/
 

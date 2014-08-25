@@ -4,7 +4,7 @@ SOURCE=$0
 TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
 
 echo "Configuring $TMP_SERVICE"
-ln -s /etc/airstack/haproxy/haproxy.cfg /etc/haproxy/
+ln -sf /etc/airstack/haproxy/haproxy.cfg /etc/haproxy/
 
 printf "\tcreating runit directories\n"
 mkdir -p /etc/sv/$TMP_SERVICE/log
@@ -12,7 +12,7 @@ mkdir -p /etc/sv/$TMP_SERVICE/log
 printf "\tcreating runit service file\n"
 cat > /etc/sv/$TMP_SERVICE/run << "EOF"
 #!/bin/sh
-sv -w2 check socklog-unix
+# sv -w2 check socklog-unix >/dev/null || exit 1
 exec 2>&1
 
 exec /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
@@ -54,7 +54,7 @@ fi
 echo "Enabling $TMP_SERVICE"
 chmod ug+x /etc/sv/$TMP_SERVICE/run
 chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-ln -s /etc/sv/$TMP_SERVICE /etc/service/
+[ ! -f /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/
 
 # enabling rsyslog config for haproxy
 # ln -s /etc/airstack/haproxy/rsyslog/haproxy.conf /etc/rsyslog.d/

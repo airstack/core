@@ -1,8 +1,0 @@
-#!/usr/bin/env sh
-
-for i in $(ls /usr/local/etc/container_init/S*); do
-  [ ! -x "$i" ] && chmod +x "$i" && echo "[INIT] $i now executable"
-  echo "RUNNING: "$i
-  exec $i
-  echo "DONE"
-done

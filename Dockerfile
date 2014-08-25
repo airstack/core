@@ -11,7 +11,7 @@ ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confd
 ENV DEBIAN_FRONTEND noninteractive
 ENV AIRSTACK_PKGS_COMMON apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny htop ethtool bwm-ng
-ENV AIRSTACK_SERVICES socklog-unix dropbear serf haproxy
+ENV AIRSTACK_SERVICES dropbear serf haproxy
 
 # DEV INSTALL
 RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
@@ -45,25 +45,25 @@ RUN \
   echo "$AIRSTACK_USER_NAME  ALL = NOPASSWD: ALL" > /etc/sudoers.d/$AIRSTACK_USER_NAME && \
   usermod --shell /bin/bash $AIRSTACK_USER_NAME
 
-#container custom init system
-ENV INIT_DIR /usr/local/etc/container_init
-ADD config/container_start /usr/local/bin/container_start
-ADD config/container_init /usr/local/etc/container_init
-CMD exec sudo -E sh /usr/local/bin/container_start
-
-#----
-# END COMMON HEAD v0.0.1
-#
-# CUSTOMIZATIONS BELOW
-#----
-
 #runit install
 RUN set -x; eval $PKG_INSTALL runit
-#VOLUME ["/opt/log"]
 
 #socklog install
 ADD config/socklog-unix /etc/airstack/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
+
+#container custom init system
+#ENV INIT_DIR /usr/local/etc/container_init
+ADD config/runit /etc/airstack/runit
+RUN /etc/airstack/runit/runit/enable
+ADD config/init/airstack-start /usr/local/bin/airstack-start
+CMD exec sudo -E sh /usr/local/bin/airstack-start
+
+#----
+# END COMMON HEAD v0.0.2
+#
+# CUSTOMIZATIONS BELOW
+#----
 
 ##socklog-klog install
 # ADD config/socklog-klog /etc/airstack/socklog-klog

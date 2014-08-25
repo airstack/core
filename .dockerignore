@@ -1,4 +1,7 @@
+.dockerignore
 .git
+.gitignore
 .DS_Store
 .airstack
 cache
+

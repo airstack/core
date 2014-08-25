@@ -2,7 +2,7 @@
 
 SERVICE_NAME=$(basename $(pwd))
 
-sv check -w2 socklog-unix
+# sv check -w2 socklog-unix
 exec 2>&1
 
 exec consul agent -data-dir=/tmp/consul -dc=localdev

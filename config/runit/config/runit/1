@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+msg() {
+    # bold
+    printf "\033[1m=> $@\033[m"
+}
+
+msg_ok() {
+    # bold/green
+    printf "\033[1m\033[32m OK\033[m\n"
+}
+
+msg_fail() {
+    # bold/red
+    printf "\033[1m\033[31m FAIL\033[m\n"
+}
+
+msg_warn() {
+    # bold/yellow
+    printf "\033[1m\033[33mWARNING: $@\033[m"
+}
+
+## END COMMON HEAD
+
+msg "Initializing Runit Level 1\n"
+
+# Log the system boot.
+dmesg >/var/log/dmesg.log
+
+# Get stopit and reboot read for usage.
+install -m0 /dev/null /etc/runit/reboot
+install -m0 /dev/null /etc/runit/stopit
+
+msg "Starting /dev/log service\n"
+/etc/airstack/socklog-unix/runit/enable 2>&1
+msg_ok
+
+env - PATH=$PATH \
+/usr/sbin/runsvdir-start -P /etc/service &
+
+# wait until socklog is up b4 proceeding
+sv up socklog-unix >/dev/null
+
+LOGFILES="/var/log/socklog/main/current"
+while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done
+
+msg "$(sv status /etc/service/*)\n"

@@ -64,8 +64,7 @@ RUN set -x; eval $PKG_INSTALL socklog ipsvd
 #container init system
 ADD config/runit /etc/airstack/runit
 RUN /etc/airstack/runit/runit/enable
-ADD config/init/container-start /usr/local/bin/
-ADD config/init/container-stop /usr/local/bin/
+
 CMD exec sudo -E sh /usr/local/bin/container-start
 
 #----

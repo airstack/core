@@ -24,22 +24,9 @@ msg_warn() {
 
 ## END COMMON HEAD
 
-msg "Welcome to Airstack \n"
-
-sh -c 'exec /etc/runit/1'
-sh -c 'exec /etc/runit/2'
-
-# for i in /etc/runit/1 /etc/runit/2; do
-#   [ ! -x "$i" ] && chmod +x "$i" && echo "[INIT] $i now executable"
-#   echo "RUNNING: "$i
-#   . $i
-#   echo "DONE"
-# done
-
 shutdown() {
-    msg_warn "Shutting down..."
-    /etc/runit/3
+    msg_warn "Shutting down...\n"
+    /etc/runit/3 || exit 1
 }
 
 trap shutdown EXIT
-

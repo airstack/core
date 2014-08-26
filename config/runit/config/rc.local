@@ -13,3 +13,6 @@
 #     /usr/bin/timidity -iAD -Os -B2,8
 # fi
 # https://code.google.com/p/runit-for-lfs/source/browse/trunk/rc.local
+
+# default just tail the log file
+tail -F /var/log/socklog/main/current

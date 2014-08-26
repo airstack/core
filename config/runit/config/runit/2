@@ -26,16 +26,8 @@ msg_warn() {
 
 msg "Initializing Runit Level 2\n"
 
+# Enable all services in parallel. See [TODO service docs] for details.
 echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/runit/enable; done) | xargs -n1 sh
-# for i in $AIRSTACK_SERVICES; do
-#  /etc/airstack/$i/runit/enable 2>&1
-# done
 
 # load files in /etc/rc.local
 [ -x /etc/rc.local ] && exec /etc/rc.local
-
-tail -F /var/log/socklog/main/current
-
-# msg "Starting runit process manager\n" 
-# (set -x; /usr/sbin/runsvdir-start -P /etc/service)
-#runsvdir /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'

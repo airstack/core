@@ -23,16 +23,17 @@ msg_warn() {
 }
 
 ## END COMMON HEAD
-msg_warn "Waiting for services to stop..."
+
+msg_warn "Waiting for services to stop...\n"
 sv -w10 force-stop /etc/service/*
 sv exit /etc/service/*
-msg_warn "Stopping runit daemon"
+msg_warn "Stopping runit daemon\n"
 kill $(pidof runsvdir)
 for i in $(find /etc/service/*); do unlink $i; done
 
 # Stop any remaining processes and core services.
-msg_warn "Sending TERM signal to processes..."
+msg_warn "Sending TERM signal to processes...\n"
 pkill --inverse -s0,1 -TERM
 sleep 5
-msg_warn "Sending KILL signal to processes..."
+msg_warn "Sending KILL signal to processes...\n"
 pkill --inverse -s0,1 -KILL

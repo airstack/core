@@ -44,6 +44,5 @@ env - PATH=$PATH \
 sv up socklog-unix >/dev/null
 
 LOGFILES="/var/log/socklog/main/current"
-while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done
-
+while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done; printf "\n"
 msg "$(sv status /etc/service/*)\n"

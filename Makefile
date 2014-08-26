@@ -1,4 +1,3 @@
-#SHELL = /bin/bash
 NAME = $(notdir $(realpath ../../))/$(notdir $(CURDIR))
 VERSION = latest
 SHORTNAME = $(notdir $(CURDIR))

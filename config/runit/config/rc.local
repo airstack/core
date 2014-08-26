@@ -14,5 +14,5 @@
 # fi
 # https://code.google.com/p/runit-for-lfs/source/browse/trunk/rc.local
 
-# default just tail the log file
+# default just tail the syslog file
 tail -F /var/log/socklog/main/current

@@ -4,7 +4,8 @@
 # as daemons. For best results, you should use the following sample
 # as a method to load a daemon... 
 #
-# TODO CHANGE
+# TODO reference docs & man
+
 # References:
 # Load Timidity++ as Daemon
 # if [ -x /usr/bin/timidity ]; then

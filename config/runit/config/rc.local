@@ -2,10 +2,13 @@
 
 # This is the rc.local file to load any programs not covered by Runit
 # as daemons. For best results, you should use the following sample
-# as a method to load a daemon...
+# as a method to load a daemon... 
 #
+# TODO CHANGE
+# References:
 # Load Timidity++ as Daemon
 # if [ -x /usr/bin/timidity ]; then
 #     echo "Starting TiMidity++"
 #     /usr/bin/timidity -iAD -Os -B2,8
 # fi
+# https://code.google.com/p/runit-for-lfs/source/browse/trunk/rc.local

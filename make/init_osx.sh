@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh -e
 
 : ${DISK_NAME:=airstack0}
 

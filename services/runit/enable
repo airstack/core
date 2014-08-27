@@ -1,0 +1,48 @@
+#!/bin/sh -e
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $SOURCE))
+
+## end common head
+
+echo "Configuring $TMP_SERVICE"
+RUNIT_DIR="/etc/runit"
+RUNSVDIR_DIR=$RUNIT_DIR/runsvdir
+
+# Remove any existing symlinked directory first.
+if [ -e $RUNIT_DIR ]; then
+	echo "Removing $RUNIT_DIR"
+	#TODO use msg_warn util
+	rm -rf $RUNIT_DIR
+fi
+
+# enable runlevel scripts
+ln -s /etc/airstack/$TMP_SERVICE/runit $RUNIT_DIR
+
+# Create runsvdir directories
+# See: http://smarden.org/runit/runlevels.html
+for i in single multi; do
+mkdir -p $RUNSVDIR_DIR/$i
+done
+
+# /service should be canonical
+# set default level of single
+[ ! -L $RUNSVDIR_DIR/current ] && ln -sf $RUNSVDIR_DIR/single $RUNSVDIR_DIR/current
+[ ! -L /service ] && ln -sf $RUNSVDIR_DIR/current /service
+
+# for debian compatibility, set up /etc/service.
+[ -L /etc/service ] && unlink /etc/service
+[ -d /etc/service ] && rm -rf /etc/service
+ln /service /etc/service
+
+# enable custom rc.local
+[ -e /etc/rc.local ] && (rm -f /etc/rc.local && ln -s /etc/airstack/$TMP_SERVICE/rc.local /etc/)
+
+# enable init utils
+RUNSVSTART_DIR=$(which runsvdir-start)
+ln -sf /etc/runit/2 $RUNSVSTART_DIR
+ln -s /etc/runit/2 /usr/local/bin/container-start
+BIN_DIR="/etc/airstack/$TMP_SERVICE/bin"
+for i in $(ls $BIN_DIR/); do
+[ -e /usr/local/bin/$i ] || ln -s $BIN_DIR/$i /usr/local/bin/$i
+done

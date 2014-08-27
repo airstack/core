@@ -1,0 +1,39 @@
+#!/bin/sh -e
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+msg() {
+    # bold
+    printf "\033[1m=> $@\033[m"
+}
+
+msg_ok() {
+    # bold/green
+    printf "\033[1m\033[32m OK\033[m\n"
+}
+
+msg_fail() {
+    # bold/red
+    printf "\033[1m\033[31m FAIL\033[m\n"
+}
+
+msg_warn() {
+    # bold/yellow
+    printf "\033[1m\033[33mWARNING: $@\033[m"
+}
+
+## END COMMON HEAD
+
+msg_warn "Waiting for services to stop...\n"
+sv -w10 force-stop /etc/service/*
+sv exit /etc/service/*
+msg_warn "Stopping runit daemon\n"
+kill $(pidof runsvdir)
+for i in $(find /etc/service/*); do unlink $i; done
+
+# Stop any remaining processes and core services.
+msg_warn "Sending TERM signal to processes...\n"
+pkill --inverse -s0,1 -TERM
+sleep 5
+msg_warn "Sending KILL signal to processes...\n"
+pkill --inverse -s0,1 -KILL

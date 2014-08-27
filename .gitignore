@@ -3,3 +3,4 @@ output
 .airstack/*.vmdk
 j_
 _old
+_test

@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+
+echo "Configuring $TMP_SERVICE"
+SERF_DIR="/etc/serf"
+[ ! -e "$SERF_DIR" ] && mkdir -p "$SERF_DIR"
+ln -s /etc/airstack/serf/handlers $SERF_DIR/
+ln -s /etc/airstack/serf/config $SERF_DIR/
+
+printf "\tcreating runit directories\n"
+mkdir -p /etc/sv/$TMP_SERVICE/log
+
+printf "\tcreating runit service file\n"
+cat > /etc/sv/$TMP_SERVICE/run << "EOF"
+#!/bin/sh
+#common
+SERVICE_NAME=$(basename $(pwd))
+
+#dependencies
+# sv -w1 up socklog-unix >/dev/null || exit 1
+exec 2>&1
+
+#custom init
+unset TMP_TAGS
+for i in $(set | grep -P "AIRSTACK_TAGS"); do
+	TMP_TAGS="$TMP_TAGS $(echo $i | awk '{print "-tag " tolower($3) "=" tolower($4)}' FS='[_=]')"
+done
+
+#command
+exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERUUID:-airstack}
+EOF
+
+printf "\tcreating runit log file\n"
+cat > /etc/sv/$TMP_SERVICE/log/run << "EOF"
+#!/bin/sh
+SERVICE_NAME=$(basename $(dirname $(pwd)))
+
+exec chpst -u root logger -t $SERVICE_NAME -p local0.notice
+EOF
+
+echo "Enabling $TMP_SERVICE"
+chmod ug+x /etc/sv/$TMP_SERVICE/run
+chmod ug+x /etc/sv/$TMP_SERVICE/log/run
+[ ! -e /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/
+
+# add to service control
+ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE

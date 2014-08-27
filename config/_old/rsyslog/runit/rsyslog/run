@@ -1,7 +1,0 @@
-#!/bin/bash
-exec 2>&1
-
-sed -i s/\$ModLoad\ imklog/#\$ModLoad\ imklog/g /etc/rsyslog.conf
-
-cd /
-exec rsyslogd -n

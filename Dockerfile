@@ -30,7 +30,7 @@ ENV AIRSTACK_USER_PASSWORD airstack
 
 # base packages install
 ENV AIRSTACK_PKGS_COMMON apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
-ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny htop ethtool bwm-ng
+ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db
 RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 
 #----
@@ -58,11 +58,11 @@ RUN \
 RUN set -x; eval $PKG_INSTALL runit
 
 #socklog install
-ADD config/socklog-unix /etc/airstack/socklog-unix
+ADD services/socklog-unix /etc/airstack/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
 
 #container init system
-ADD config/runit /etc/airstack/runit
+ADD services/runit /etc/airstack/runit
 RUN /etc/airstack/runit/runit/enable
 
 CMD exec sudo -E sh /usr/local/bin/container-start
@@ -72,15 +72,15 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 #----
 
 #socklog-ucspi-tcp install
-ADD config/socklog-ucspi-tcp /etc/airstack/socklog-ucspi-tcp
+ADD services/socklog-ucspi-tcp /etc/airstack/socklog-ucspi-tcp
 
 #dropbear install
-ADD config/dropbear /etc/airstack/dropbear
+ADD services/dropbear /etc/airstack/dropbear
 RUN set -x; eval $PKG_INSTALL dropbear
 EXPOSE 22
 
 #haproxy install
-ADD config/haproxy /etc/airstack/haproxy
+ADD services/haproxy /etc/airstack/haproxy
 RUN \
   set -x; eval $PKG_INSTALL haproxy && \
   rm -vf /etc/haproxy/haproxy.cfg && \
@@ -88,7 +88,7 @@ RUN \
 EXPOSE 443 80
 
 #serf install
-ADD config/serf /etc/airstack/serf
+ADD services/serf /etc/airstack/serf
 RUN \
   wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip

@@ -1,0 +1,45 @@
+#!/usr/bin/env sh
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+msg() {
+    # bold
+    printf "\033[1m=> $@\033[m"
+}
+
+msg_ok() {
+    # bold/green
+    printf "\033[1m\033[32m OK\033[m\n"
+}
+
+msg_fail() {
+    # bold/red
+    printf "\033[1m\033[31m FAIL\033[m\n"
+}
+
+msg_warn() {
+    # bold/yellow
+    printf "\033[1m\033[33mWARNING: $@\033[m"
+}
+
+## END COMMON HEAD
+
+msg "Welcome to Airstack \n"
+
+sh -c 'exec /etc/runit/1' || exit 1
+sh -c 'exec /etc/runit/2' || exit 1
+
+# for i in /etc/runit/1 /etc/runit/2; do
+#   [ ! -x "$i" ] && chmod +x "$i" && echo "[INIT] $i now executable"
+#   echo "RUNNING: "$i
+#   . $i
+#   echo "DONE"
+# done
+
+shutdown() {
+    msg_warn "Shutting down..."
+    /etc/runit/3
+}
+
+trap shutdown SIGHUP SIGKILL
+

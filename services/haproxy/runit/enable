@@ -1,0 +1,60 @@
+#!/usr/bin/env sh
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+
+echo "Configuring $TMP_SERVICE"
+ln -sf /etc/airstack/haproxy/haproxy.cfg /etc/haproxy/
+
+printf "\tcreating runit directories\n"
+mkdir -p /etc/sv/$TMP_SERVICE/log
+
+printf "\tcreating runit service file\n"
+cat > /etc/sv/$TMP_SERVICE/run << "EOF"
+#!/bin/sh
+# sv -w2 check socklog-unix >/dev/null || exit 1
+exec 2>&1
+
+exec /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
+EOF
+
+printf "\tcreating runit log file\n"
+cat > /etc/sv/$TMP_SERVICE/log/run << "EOF"
+#!/bin/sh
+SERVICE_NAME=$(basename $(dirname $(pwd)))
+
+exec chpst -u root logger -t $SERVICE_NAME -p local0.notice
+EOF
+
+echo -n "Generating ssl cert for haproxy "
+	mkdir -p /etc/ssl && \
+	export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo) && \
+	openssl genrsa -des3 -out server.key -passout env:PASSPHRASE 2048 && \
+	openssl req -new -batch -key server.key -out server.csr -subj "/C=/ST=/O=org/localityName=/commonName=org/organizationalUnitName=org/emailAddress=/" -passin env:PASSPHRASE && \
+	openssl rsa -in server.key -out server.key -passin env:PASSPHRASE && \
+	openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt && \
+	cat server.crt server.key > /etc/ssl/server.pem
+	echo "[OK]"
+
+if [ -z "$HAPROXY_USERNAME" ]; then
+    export HAPROXY_USERNAME="admin"
+fi  
+
+if [ -z "$HAPROXY_URI" ]; then
+    export HAPROXY_URI="/haproxy?stats"
+fi  
+
+if [ -n "$HAPROXY_PASSWORD" ]
+then
+  echo "	stats enable" >> /etc/haproxy/haproxy.cfg
+  echo "	stats auth $HAPROXY_USERNAME:$HAPROXY_PASSWORD" >> /etc/haproxy/haproxy.cfg
+  echo "	stats uri $HAPROXY_URI" >> /etc/haproxy/haproxy.cfg
+fi
+
+echo "Enabling $TMP_SERVICE"
+chmod ug+x /etc/sv/$TMP_SERVICE/run
+chmod ug+x /etc/sv/$TMP_SERVICE/log/run
+[ ! -f /etc/service/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/service/
+
+ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE
+

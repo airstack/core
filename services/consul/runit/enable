@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SOURCE="${BASH_SOURCE[0]}"
+TMP_SERVICE=$(basename $(dirname $(dirname $SOURCE)))
+echo "Enabling $TMP_SERVICE"
+
+ln -s /etc/sv/$TMP_SERVICE /etc/service/
+ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE

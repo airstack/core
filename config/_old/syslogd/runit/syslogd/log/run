@@ -1,7 +1,0 @@
-#!/bin/sh
-service=$(basename $(dirname $(pwd)))
-logdir="/opt/log/${service}"
-mkdir -p ${logdir} 
-exec 2>&1
-exec chpst -u root /usr/bin/svlogd -tt ${logdir}
-#exec /usr/bin/svlogd -tt ${logdir}

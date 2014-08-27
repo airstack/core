@@ -30,7 +30,7 @@ ENV AIRSTACK_USER_PASSWORD airstack
 
 # base packages install
 ENV AIRSTACK_PKGS_COMMON apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
-ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db
+ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db psmisc
 RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 
 #----

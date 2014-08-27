@@ -15,7 +15,7 @@
 # https://code.google.com/p/runit-for-lfs/source/browse/trunk/rc.local
 
 # default tail the syslog file
-tail -F /var/log/socklog/main/current &
+tail -n100 /var/log/socklog/main/current
 
 # run bash
 /bin/bash

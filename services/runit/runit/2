@@ -26,14 +26,15 @@ msg_warn() {
 
 msg "Initializing Runit Level 2\n"
 
-msg "Starting /dev/log service\n"
-/etc/airstack/socklog-unix/enable 2>&1 && msg_ok
 
-runsvchdir single >/dev/null
+runsvchdir multi >/dev/null
 
 # run in bg
 env - PATH=$PATH \
 /usr/bin/runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................' &
+
+msg "Starting /dev/log service\n"
+/etc/airstack/socklog-unix/enable 2>&1 && msg_ok
 
 # wait until socklog is up b4 proceeding
 # TODO put in healthcheck in check script instead of default
@@ -44,9 +45,6 @@ done
 LOGFILES="/var/log/socklog/main/current"
 while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done; printf "\n"
 msg "$(sv status /service/*)\n"
-
-# switch to multi runlevel
-runsvchdir multi >/dev/null
 
 # Enable all services in parallel. See [TODO service docs] for details.
 # TODO error check to ensure that service has enable script b4 execution.

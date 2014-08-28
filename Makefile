@@ -35,6 +35,12 @@ all: build
 
 #boot2docker functions
 
+help:
+	@printf "\
+	Usage of airstack Makefile:\n\
+	  repair                    attempt to repair boot2docker setup\n\
+	  build                     locally build current image\n\
+	"
 repair:
 ifeq ($(uname_S),Darwin)
 	@printf "\n\

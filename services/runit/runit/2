@@ -47,7 +47,10 @@ while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done; printf "\n"
 msg "$(sv status /service/*)\n"
 
 # Enable all services in parallel. See [TODO service docs] for details.
-# TODO error check to ensure that service has enable script b4 execution.
+# TODO:
+# - loop through AIRSTACK_RUNTIME_VARS.services
+# - for each service, check if it has a "run" command set in the json
+# - if no "run" command, default to the respective enable script
 echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | xargs -n1 sh
 
 # load files in /etc/rc.local

@@ -4,6 +4,7 @@
 # Should not need to touch these unless your directory structure differs.
 
 # Deriving names from directory structure.
+# TODO allow overrides based on vars found in .airstack folder
 NAME = $(notdir $(realpath ../../))/$(notdir $(CURDIR))
 SHORTNAME = $(notdir $(CURDIR))
 ROOTDIR = $(realpath .)

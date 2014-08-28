@@ -9,6 +9,7 @@ NAME = $(notdir $(realpath ../../))/$(notdir $(CURDIR))
 SHORTNAME = $(notdir $(CURDIR))
 ROOTDIR = $(realpath .)
 
+# Detecting OS
 uname_S = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 
 # ######################################

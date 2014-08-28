@@ -38,8 +38,9 @@ all: build
 help:
 	@printf "\
 	Usage of airstack Makefile:\n\
-	  repair                    attempt to repair boot2docker setup\n\
+	  repair                    attempt to repair boot2docker subsystem\n\
 	  build                     locally build current image\n\
+	  init                      initialize local environment\n\
 	"
 repair:
 ifeq ($(uname_S),Darwin)
@@ -56,6 +57,9 @@ ifeq ($(uname_S),Darwin)
 	boot2docker init > /dev/null
 	@printf "DONE\n"
 endif
+
+watch:
+	@printf "watch for auto-builds\n"
 
 initdirs::
 	@if [ ! -d cache ]; then mkdir cache; fi

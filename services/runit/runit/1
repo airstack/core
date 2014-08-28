@@ -35,3 +35,5 @@ dmesg >/var/log/dmesg.log
 install -m0 /dev/null /etc/runit/reboot
 install -m0 /dev/null /etc/runit/stopit
 
+# load files in /etc/rc.local
+[ -x /etc/rc.local ] && exec /etc/rc.local

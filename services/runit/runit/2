@@ -48,7 +48,6 @@ msg "$(sv status /service/*)\n"
 
 # Enable all services in parallel. See [TODO service docs] for details.
 # TODO error check to ensure that service has enable script b4 execution.
-echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | xargs -n1 sh
+echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | exec xargs -n1 sh
 
-# load files in /etc/rc.local
-[ -x /etc/rc.local ] && /etc/rc.local
+

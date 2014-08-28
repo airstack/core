@@ -1,14 +1,53 @@
+# ######################################
+# Default vars
+#
+# Should not need to touch these unless your directory structure differs.
+
+# Deriving names from directory structure.
 NAME = $(notdir $(realpath ../../))/$(notdir $(CURDIR))
-VERSION = latest
 SHORTNAME = $(notdir $(CURDIR))
 ROOTDIR = $(realpath .)
-USERNAME = $(notdir $(realpath ../../))
-RAWDISK = $(shell mount | grep airstack | cut -d ' ' -f 1 )
+
 uname_S = $(shell sh -c 'uname -s 2>/dev/null || echo not')
+
+# ######################################
+
+# ######################################
+# Runtime overrides
+#
+# Set these at runtime to override the below defaults.
+# e.g.: 
+# `make CMD=/bin/bash debug`
+# `make USERNAME=root CMD=runit-init debug`
+# `make VERSION=debug build
+
+CMD = /bin/sh
+USERNAME = airstack
+VERSION = latest
+
+# ######################################
 
 .PHONY: all dockerfile build test tag_latest release debug run run_daemon init_share
 
 all: build
+
+#boot2docker functions
+
+repair:
+ifeq ($(uname_S),Darwin)
+	@printf "\n\
+	=====================\n\
+	Repairing boot2docker\n\
+	=====================\n\
+	"
+	@printf "\nRemoving existing boot2docker setup..."
+	@boot2docker destroy
+	@printf "DONE\n"
+
+	@printf "\nInitializing new boot2docker setup..."
+	boot2docker init > /dev/null
+	@printf "DONE\n"
+endif
 
 initdirs::
 	@if [ ! -d cache ]; then mkdir cache; fi
@@ -38,9 +77,6 @@ release: test tag_latest
 COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERNAME) --user $(USERNAME) $(NAME):$(VERSION)
 LINUX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERNAME)/output --volume $(ROOTDIR)/input:/home/$(USERNAME)/input:ro
 OSX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERNAME)/output --volume /home/docker/base0:/home/$(USERNAME)/base0 --volume $(ROOTDIR)/input:/home/$(USERNAME)/input:ro
-
-# can override using e.g.: `make CMD=/bin/bash debug`
-CMD = /bin/sh
 
 ifeq ($(uname_S),Darwin)
 	OS_SPECIFIC_RUNFLAGS = $(OSX_RUNFLAGS)	

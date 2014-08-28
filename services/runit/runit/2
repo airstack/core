@@ -50,5 +50,6 @@ msg "$(sv status /service/*)\n"
 # TODO:
 # - loop through AIRSTACK_RUNTIME_VARS.services
 # - for each service, check if it has a "run" command set in the json
+#   - compile a new enable script with template header, footer, and the run command
 # - if no "run" command, default to the respective enable script
 echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | xargs -n1 exec sh

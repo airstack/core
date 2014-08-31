@@ -58,7 +58,7 @@ done
 # - if no "run" command, default to the respective enable script
 #echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | exec xargs -n1 sh
 
-if [ ! TMP_RUNLEVEL == "single" ]; then
+if [ ! $TMP_RUNLEVEL == "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/config.json; done) | exec xargs -n1 sh /etc/airstack/core/service-conf /etc/airstack/core/defaults.json
 fi
 

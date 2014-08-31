@@ -41,5 +41,8 @@ for i in ${TMP_RUNLEVELS:-multi}; do
 	[ ! -e /etc/runit/runsvdir/$i/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/runit/runsvdir/$i
 done
 
+# symlink current log to syslog
+ln -s /var/log/socklog/main/current /var/log/syslog
+
 # adding to init.d for service command compatibility
 ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE

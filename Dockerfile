@@ -6,7 +6,7 @@ ENV HOME /root
 WORKDIR /root
 
 #----
-# Runlevel 1: Base Environment
+# Base Environment
 #----
 
 # install commands
@@ -34,7 +34,7 @@ ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db psmisc
 RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 
 #----
-# Runlevel 1: Services
+# Services
 #----
 
 #service env vars

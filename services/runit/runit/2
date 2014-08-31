@@ -26,8 +26,11 @@ msg_warn() {
 
 msg "Initializing Runit Level 2\n"
 
+# defaults to 'multi', but can pass in different runlevel.
+# /etc/runit/2 single
 
-runsvchdir multi >/dev/null
+TMP_RUNLEVEL=$1
+runsvchdir ${TMP_RUNLEVEL:-"multi"} >/dev/null
 
 # run in bg
 env - PATH=$PATH \
@@ -42,6 +45,10 @@ while sv check socklog-unix >/dev/null && false; do
 sv up socklog-unix >/dev/null
 done
 
+while socklog-check >/dev/null && false; do
+sv up socklog-unix >/dev/null
+done
+
 # Enable all services in parallel. See [TODO service docs] for details.
 # TODO:
 # - loop through AIRSTACK_RUNTIME_VARS.services
@@ -49,3 +56,16 @@ done
 #   - compile a new enable script with template header, footer, and the run command
 # - if no "run" command, default to the respective enable script
 echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | exec xargs -n1 sh
+
+
+printf "services currently running:\n"
+update-service --list
+
+printf "\nShowing log entries from: /var/log/syslog\n"
+
+# tail syslog in foreground
+while true; do 
+[ -e /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog 
+#printf '.' && 
+sleep 0.1
+done

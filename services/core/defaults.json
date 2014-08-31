@@ -1,16 +1,19 @@
 {
-  "start": {
-    "before": "echo '[before]'",
-    "cmd": "echo 'Hello from Airstack Base' "
-  },
   "stop": "echo '[stop]'",
   "env": "development",
-  "name": "base",
+  "name": "airstack-base",
+  "username": "airstack",
+  "password": "airstack",
+
   "role": "base",
   "cluster": "airstack_cluster",
   "services": {
+    "airstack-base": {
+      "run": "while true; do echo \"HELLO \"airstack-base\"\"; sleep 1; done",
+      "check": "true",
+      "finish": "echo \"finished\""
+    },
     "socklog-unix": {
-      "runlevel": "1",
       "tags": ["logger", "local", "facilities"]
     },
     "socklog-notify": {
@@ -18,25 +21,21 @@
         {
           "ip": "192.168.59.3",
           "port": "514",
-          "protocol": "udp",
+          "protocol": "udp"
         }
       ],
-      "runlevel": "2",
       "tags": ["logger", "remote", "syslog"]
     },
     "dropbear": {
       "listen": [{"port": "22", "protocol": "tcp"}],
-      "runlevel": "2",
       "tags": ["ssh"]
     },
     "haproxy": {
       "listen": [{"port": "9999", "protocol": "tcp", "tags": ["statistics"]}],
-      "runlevel": "2",
       "tags:": ["proxy"]
     },
     "serf": {
       "listen": [{"port": "7946", "protocol": "tcp"}],
-      "runlevel": "2",
       "tags": ["autodiscovery", "autoclustering"]
     }
   }

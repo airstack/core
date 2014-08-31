@@ -1,0 +1,97 @@
+#!/bin/sh
+set -e
+
+# Usage: $1 is the service settings. $2 is the main settings          
+# example usage is: 
+# service-conf /etc/airstack/dropbear/config.json /etc/airstack/core/defaults.json
+# TODO: if the json has any missing options, it will assume defaults.
+
+init() {
+  BASEDIR="/etc/sv"
+  # BASEDIR="/tmp"  
+  SERVICE_SETTINGS=$1
+  MAIN_SETTINGS=$2
+  ( [ "$SERVICE_SETTINGS" == "" ] || [ "$MAIN_SETTINGS" == "" ] ) && (echo 'all params not set.' && exit 1)
+  return 0
+}
+
+main_settings_load() {
+  local tmp_settings
+  tmp_settings=$MAIN_SETTINGS
+  AIRSTACK_USER_NAME=$(cat $tmp_settings | jq --raw-output '.username')
+  AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq --raw-output '.password')
+  return 0
+}
+
+service_settings_load() {
+  local tmp_settings
+  tmp_settings=$SERVICE_SETTINGS
+  SERVICE_NAME=$(cat $tmp_settings | jq --raw-output '.services | keys[]')
+  SERVICE_ENABLE=$(cat $tmp_settings | jq --raw-output '.services[].enable')
+  SERVICE_RUN=$(cat $tmp_settings | jq --raw-output '.services[].run')
+  SERVICE_LOG=$(cat $tmp_settings | jq --raw-output '.services[].log')  
+  SERVICE_CHECK=$(cat $tmp_settings | jq --raw-output '.services[].check')
+  SERVICE_FINISH=$(cat $tmp_settings | jq --raw-output '.services[].finish')
+  return 0
+}
+
+service_enable() {
+  set +e
+  # eval the enable command
+  if ! eval "$SERVICE_ENABLE"; then
+    echo "$SERVICE_NAME enable script failure." >&2
+    exit ${E_BAD_ENABLE}
+  else printf "$SERVICE_NAME enabled\n"
+  fi
+  return 0
+}
+
+service_run_init() {
+  set +e
+  # create runit service dir
+  [ ! -e $BASEDIR/$SERVICE_NAME/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/
+
+  # create runit service file
+  echo "#!/bin/sh" > $BASEDIR/$SERVICE_NAME/run
+  echo "exec 2>&1" >> $BASEDIR/$SERVICE_NAME/run
+  echo $(eval "echo $SERVICE_RUN") >> $BASEDIR/$SERVICE_NAME/run
+
+  if [ "$?" -ne 0 ]; then
+    echo "$SERVICE_NAME run script failure.\n" >&2
+    exit ${E_BAD_RUN}
+  else printf "$SERVICE_NAME run set\n"
+  fi  
+
+  return 0
+}
+
+service_log_init() {
+  set +e
+  # create runit service log dir
+  [ ! -e $BASEDIR/$SERVICE_NAME/log/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/log/
+
+  # create runit service log file
+  local logdir; logdir="$BASEDIR/$SERVICE_NAME/log/run"
+  echo "#!/bin/sh" > "$logdir"
+  echo "exec 2>&1" >> "$logdir"
+  echo $(eval "echo $SERVICE_LOG") >> "$logdir"
+
+  if [ "$?" -ne 0 ]; then
+    echo "$SERVICE_NAME log script failure.\n" >&2
+    exit ${E_BAD_RUN}
+  else printf "$SERVICE_NAME log set\n"
+  fi  
+
+  return 0
+}
+
+main() {
+  init "$@"
+  service_settings_load #$SERVICE_SETTINGS
+  main_settings_load #$MAIN_SETTINGS
+  service_enable
+  service_run_init
+  service_log_init
+}
+
+main "$@"

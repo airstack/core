@@ -38,7 +38,7 @@ service_settings_load() {
 service_enable_pre() {
   set +e
   # eval the enable command
-  eval "echo $SERVICE_ENABLE"
+  eval "$SERVICE_ENABLE"
 
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME enable script failure." >&2
@@ -65,19 +65,21 @@ service_enable_post() {
 
 service_run_init() {
   set +e
-  set +x
+
+  # don't do anything if blank
+  [ -z "$SERVICE_RUN" ] && return 1
+  
   # create runit service dir
   [ ! -e $BASEDIR/$SERVICE_NAME/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/
 
   # create runit service file
   echo "#!/bin/sh" > $BASEDIR/$SERVICE_NAME/run
   echo "exec 2>&1" >> $BASEDIR/$SERVICE_NAME/run
-  echo $(eval "echo $SERVICE_RUN") >> $BASEDIR/$SERVICE_NAME/run
+  echo $(eval "$SERVICE_RUN") >> $BASEDIR/$SERVICE_NAME/run
 
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME run script failure.\n" >&2
     exit ${E_BAD_RUN}
-  else printf "$SERVICE_NAME run set\n"
   fi  
 
   return 0
@@ -97,7 +99,6 @@ service_log_init() {
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME log script failure.\n" >&2
     exit ${E_BAD_RUN}
-  else printf "$SERVICE_NAME log set\n"
   fi  
 
   return 0
@@ -108,8 +109,15 @@ main() {
   service_settings_load #$SERVICE_SETTINGS
   main_settings_load #$MAIN_SETTINGS
   service_enable_pre
+
   service_run_init
+  printf "$SERVICE_NAME run is now:\n"
+  printf "$(cat /etc/sv/$SERVICE_NAME/run)\n"
+
   service_log_init
+  printf "$SERVICE_NAME log is now:\n"
+  printf "$(cat /etc/sv/$SERVICE_NAME/log/run)\n"
+
   service_enable_post
 }
 

@@ -1,0 +1,11 @@
+{
+  "services": {
+    "serf": {
+      "enable": "SERF_DIR=\"/etc/serf\"; [ ! -e \"$SERF_DIR\" ] && mkdir -p \"$SERF_DIR\"; ln -s /etc/airstack/serf/handlers $SERF_DIR/; ln -s /etc/airstack/serf/config $SERF_DIR/",
+      "run": "unset TMP_TAGS; for i in $(set | grep -P \"AIRSTACK_TAGS\"); do TMP_TAGS=\"$TMP_TAGS $(echo $i | awk '{print \"-tag \" tolower($3) \"=\" tolower($4)}' FS='[_=]')\"; done; exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERUUID:-airstack}",
+      "check": "",
+      "finish": "",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice"
+    }
+   }
+}

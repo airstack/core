@@ -50,7 +50,7 @@ while socklog-check >/dev/null && false; do
 sv up socklog-unix >/dev/null
 done
 
-# Enable all services in parallel if not in single mode. See [TODO service docs] for details.
+# Enable all services in parallel if not in single runlevel. See [TODO service docs] for details.
 # TODO:
 # - loop through AIRSTACK_RUNTIME_VARS.services
 # - for each service, check if it has a "run" command set in the json

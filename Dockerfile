@@ -94,6 +94,8 @@ RUN \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 EXPOSE 7946
 
+ADD services/core /etc/airstack/core
+
 #env vars
 RUN \
   mkdir -vp /etc/airstack/vars && \

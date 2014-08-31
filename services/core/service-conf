@@ -35,7 +35,7 @@ service_settings_load() {
   return 0
 }
 
-service_enable() {
+service_enable_pre() {
   set +e
   # eval the enable command
   if ! eval "$SERVICE_ENABLE"; then
@@ -43,6 +43,21 @@ service_enable() {
     exit ${E_BAD_ENABLE}
   else printf "$SERVICE_NAME enabled\n"
   fi
+  return 0
+}
+
+service_enable_post() {
+  set +e
+  echo "Enabling $SERVICE_NAME"
+  [ -e /etc/sv/$SERVICE_NAME/run ] && chmod ug+x /etc/sv/$SERVICE_NAME/run
+  [ -e /etc/sv/$SERVICE_NAME/log/run ] && chmod ug+x /etc/sv/$SERVICE_NAME/log/run
+
+  for i in ${TMP_RUNLEVELS:-multi}; do
+    [ ! -e /etc/runit/runsvdir/$i/$SERVICE_NAME ] && ln -s /etc/sv/$SERVICE_NAME /etc/runit/runsvdir/$i
+  done
+
+  # adding to init.d for service command compatibility
+  ln -sf /usr/bin/sv /etc/init.d/$SERVICE_NAME
   return 0
 }
 
@@ -89,9 +104,10 @@ main() {
   init "$@"
   service_settings_load #$SERVICE_SETTINGS
   main_settings_load #$MAIN_SETTINGS
-  service_enable
+  service_enable_pre
   service_run_init
   service_log_init
+  service_enable_post
 }
 
 main "$@"

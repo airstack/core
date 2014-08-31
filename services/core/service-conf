@@ -11,7 +11,7 @@ init() {
   # BASEDIR="/tmp"  
   SERVICE_SETTINGS=$1
   MAIN_SETTINGS=$2
-  ( [ "$SERVICE_SETTINGS" == "" ] || [ "$MAIN_SETTINGS" == "" ] ) && (echo 'all params not set.' && exit 1)
+  ( [ -z "$SERVICE_SETTINGS" ] || [ -z "$MAIN_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
   return 0
 }
 
@@ -38,7 +38,9 @@ service_settings_load() {
 service_enable_pre() {
   set +e
   # eval the enable command
-  if ! eval "$SERVICE_ENABLE"; then
+  eval "echo $SERVICE_ENABLE"
+
+  if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME enable script failure." >&2
     exit ${E_BAD_ENABLE}
   else printf "$SERVICE_NAME enabled\n"
@@ -63,6 +65,7 @@ service_enable_post() {
 
 service_run_init() {
   set +e
+  set +x
   # create runit service dir
   [ ! -e $BASEDIR/$SERVICE_NAME/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/
 

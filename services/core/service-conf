@@ -1,17 +1,17 @@
 #!/bin/sh
 set -e
 
-# Usage: $1 is the service settings. $2 is the main settings          
+# Usage: $1 is the main settings. $2 is the service settings.          
 # example usage is: 
-# service-conf /etc/airstack/dropbear/config.json /etc/airstack/core/defaults.json
+# service-conf /etc/airstack/core/defaults.json /etc/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
 init() {
   BASEDIR="/etc/sv"
   # BASEDIR="/tmp"  
-  SERVICE_SETTINGS=$1
-  MAIN_SETTINGS=$2
-  ( [ -z "$SERVICE_SETTINGS" ] || [ -z "$MAIN_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
+  MAIN_SETTINGS=$1
+  SERVICE_SETTINGS=$2
+  ( [ -z "$MAIN_SETTINGS" ] || [ -z "$SERVICE_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
   return 0
 }
 

@@ -9,6 +9,7 @@
   "cluster": "airstack_cluster",
   "services": {
     "airstack-base": {
+      "install": "",
       "enable": "",
       "disable": "",
       "run": "while true; do echo \"HELLO \"airstack-base\"\"; sleep 1; done",

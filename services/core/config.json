@@ -1,10 +1,14 @@
 {
-  "stop": "echo '[stop]'",
   "env": "development",
   "name": "airstack-base",
-  "username": "airstack",
-  "password": "airstack",
-
+  "user": { 
+            "username": "airstack",
+            "password": "password",
+            "comment": "airstack user",
+            "uid": "431",
+            "gid": "432",
+            "shell": "/bin/nologin"
+          },
   "role": "base",
   "cluster": "airstack_cluster",
   "services": {

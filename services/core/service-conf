@@ -3,7 +3,7 @@ set -e
 
 # Usage: $1 is the main settings. $2 is the service settings.          
 # example usage is: 
-# service-conf /etc/airstack/core/defaults.json /etc/airstack/dropbear/config.json
+# service-conf /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
 init() {

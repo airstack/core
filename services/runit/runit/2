@@ -38,7 +38,7 @@ env - PATH=$PATH \
 
 msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # /etc/airstack/socklog-unix/enable 2>&1 && msg_ok
-/etc/airstack/core/service-conf /etc/airstack/core/defaults.json /etc/airstack/socklog-unix/config.json 2>&1 && msg_ok
+/etc/airstack/core/service-conf /etc/airstack/core/config.json /etc/airstack/socklog-unix/config.json 2>&1 && msg_ok
 
 # wait until socklog is up b4 proceeding
 # TODO put in healthcheck in check script instead of default
@@ -59,7 +59,7 @@ done
 #echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | exec xargs -n1 sh
 
 if [ ! $TMP_RUNLEVEL == "single" ]; then
-	echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/config.json; done) | exec xargs -n1 sh /etc/airstack/core/service-conf /etc/airstack/core/defaults.json
+	echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/config.json; done) | exec xargs -n1 sh /etc/airstack/core/service-conf /etc/airstack/core/config.json
 fi
 
 printf "services currently running:\n"

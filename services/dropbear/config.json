@@ -9,7 +9,7 @@
       "finish": "",
       "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
       "tags": ["ssh"],
-      "input": [{"port": "22", "protocol": "tcp"}],
+      "input": [{"location": "", "port": "22", "protocol": "tcp", "tags": [ "ssh" ]}],
       "output": []      
     }
    }

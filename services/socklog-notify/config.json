@@ -12,9 +12,10 @@
       "input": [],
       "output": [
         {
-          "ip": "192.168.59.3",
+          "destination": "192.168.59.3",
           "port": "514",
-          "protocol": "udp"
+          "protocol": "udp",
+          "tags": [ "logger", "remote", "syslog" ]
         }
       ]
   	}

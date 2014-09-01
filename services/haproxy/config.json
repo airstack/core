@@ -9,7 +9,7 @@
       "finish": "",
       "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
       "tags:": ["proxy"],
-      "input": [{"port": "9999", "protocol": "tcp", "tags": ["statistics"]}],
+      "input": [ {"source": "", "port": "9999", "protocol": "tcp", "tags": [ "haproxy", "statistics" ]} ],
       "output": []
     }
    }

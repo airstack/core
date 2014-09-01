@@ -1,0 +1,21 @@
+{
+  "services": {
+    "socklog-notify": {
+      "enable": "[ ! -e /etc/sv/$SERVICE_NAME/log ] && socklog-conf notify log adm || echo \"\";",      
+      "disable": "",
+      "run": "",
+      "check": "",
+      "finish": "",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["logger", "remote", "syslog"],
+      "input": [],
+      "output": [
+        {
+          "ip": "192.168.59.3",
+          "port": "514",
+          "protocol": "udp"
+        }
+      ]
+  	}
+  }
+}

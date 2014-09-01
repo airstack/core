@@ -9,34 +9,15 @@
   "cluster": "airstack_cluster",
   "services": {
     "airstack-base": {
+      "enable": "",
+      "disable": "",
       "run": "while true; do echo \"HELLO \"airstack-base\"\"; sleep 1; done",
       "check": "true",
-      "finish": "echo \"finished\""
-    },
-    "socklog-unix": {
-      "tags": ["logger", "local", "facilities"]
-    },
-    "socklog-notify": {
-      "connect": [
-        {
-          "ip": "192.168.59.3",
-          "port": "514",
-          "protocol": "udp"
-        }
-      ],
-      "tags": ["logger", "remote", "syslog"]
-    },
-    "dropbear": {
-      "listen": [{"port": "22", "protocol": "tcp"}],
-      "tags": ["ssh"]
-    },
-    "haproxy": {
-      "listen": [{"port": "9999", "protocol": "tcp", "tags": ["statistics"]}],
-      "tags:": ["proxy"]
-    },
-    "serf": {
-      "listen": [{"port": "7946", "protocol": "tcp"}],
-      "tags": ["autodiscovery", "autoclustering"]
+      "finish": "echo \"finished\"",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["main-service"],
+      "input": [],
+      "output": []
     }
   }
 }

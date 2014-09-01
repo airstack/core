@@ -1,12 +1,16 @@
 {
   "services": {
     "socklog-unix": {
-      "enable": "[ ! -e /etc/sv/$SERVICE_NAME/log ] && socklog-conf unix nobody log || echo \"\"
+      "enable": "[ ! -e /etc/sv/$SERVICE_NAME/log ] && socklog-conf unix nobody log || echo \"\";
       			local tmp_file; tmp_file=/etc/sv/$SERVICE_NAME/log/main/main/config; echo \"s999999\" > $tmp_file; echo \"n11\" >> $tmp_file; TMP_RUNLEVELS=\"single multi\"",
+      "disable": ""
       "run": "",
       "check": "",
       "finish": "",
-      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice"
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+	  "tags": ["logger", "local", "facilities"],
+	  "input": [],
+	  "output": []	  
     }
    }
 }

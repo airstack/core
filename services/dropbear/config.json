@@ -2,10 +2,14 @@
   "services": {
     "dropbear": {
       "enable": "echo \"$AIRSTACK_USER_NAME:$AIRSTACK_USER_PASSWORD\" | chpasswd",
+      "disable": "",
       "run": "exec chpst -u root /usr/sbin/dropbear -F -E -R",
       "check": "",
       "finish": "",
-      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice"
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["ssh"],
+      "input": [{"port": "22", "protocol": "tcp"}],
+      "output": []      
     }
    }
 }

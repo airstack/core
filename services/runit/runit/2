@@ -42,13 +42,13 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 
 # wait until socklog is up b4 proceeding
 # TODO put in healthcheck in check script instead of default
-while sv check socklog-unix >/dev/null && false; do
-sv up socklog-unix >/dev/null
-done
+# while sv check socklog-unix >/dev/null && false; do
+# sv up socklog-unix >/dev/null
+# done
 
-while socklog-check >/dev/null && false; do
-sv up socklog-unix >/dev/null
-done
+# while socklog-check >/dev/null && false; do
+# sv up socklog-unix >/dev/null
+# done
 
 # Enable all services in parallel if not in single runlevel. See [TODO service docs] for details.
 # TODO:

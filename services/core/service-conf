@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-
+set -x
 # Usage: $1 is the main settings. $2 is the service settings.          
 # example usage is: 
 # service-conf /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
@@ -20,12 +20,12 @@ main_settings_load() {
   tmp_settings=$MAIN_SETTINGS
   AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq --raw-output '.name')
   AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq --raw-output '.env')
-  AIRSTACK_USER_NAME=$(cat $tmp_settings | jq --raw-output '.user[].username')
-  AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq --raw-output '.user[].password')
-  AIRSTACK_USER_COMMENT=$(cat $tmp_settings | jq --raw-output '.user[].comment')
-  AIRSTACK_USER_UID=$(cat $tmp_settings | jq --raw-output '.user[].uid')
-  AIRSTACK_USER_GID=$(cat $tmp_settings | jq --raw-output '.user[].gid')
-  AIRSTACK_USER_SHELL=$(cat $tmp_settings | jq --raw-output '.user[].shell')
+  AIRSTACK_USER_NAME=$(cat $tmp_settings | jq --raw-output '.user.username')
+  AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq --raw-output '.user.password')
+  AIRSTACK_USER_COMMENT=$(cat $tmp_settings | jq --raw-output '.user.comment')
+  AIRSTACK_USER_UID=$(cat $tmp_settings | jq --raw-output '.user.uid')
+  AIRSTACK_USER_GID=$(cat $tmp_settings | jq --raw-output '.user.gid')
+  AIRSTACK_USER_SHELL=$(cat $tmp_settings | jq --raw-output '.user.shell')
 
   return 0
 }
@@ -82,7 +82,8 @@ service_run_init() {
   # create runit service file
   echo "#!/bin/sh" > $BASEDIR/$SERVICE_NAME/run
   echo "exec 2>&1" >> $BASEDIR/$SERVICE_NAME/run
-  echo $(eval "$SERVICE_RUN") >> $BASEDIR/$SERVICE_NAME/run
+  echo "socklog-check || exit 1"
+  echo "$SERVICE_RUN" >> $BASEDIR/$SERVICE_NAME/run
 
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME run script failure.\n" >&2
@@ -94,6 +95,10 @@ service_run_init() {
 
 service_log_init() {
   set +e
+
+  # don't do anything if blank
+  [ -z "$SERVICE_LOG" ] && return 1
+  
   # create runit service log dir
   [ ! -e $BASEDIR/$SERVICE_NAME/log/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/log/
 
@@ -101,7 +106,7 @@ service_log_init() {
   local logdir; logdir="$BASEDIR/$SERVICE_NAME/log/run"
   echo "#!/bin/sh" > "$logdir"
   echo "exec 2>&1" >> "$logdir"
-  echo $(eval "echo $SERVICE_LOG") >> "$logdir"
+  echo $(eval echo "$SERVICE_LOG") >> "$logdir"
 
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME log script failure.\n" >&2

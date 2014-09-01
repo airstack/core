@@ -3,7 +3,7 @@
   "name": "airstack-base",
   "user": { 
             "username": "airstack",
-            "password": "password",
+            "password": "airstack",
             "comment": "airstack user",
             "uid": "431",
             "gid": "432",

@@ -63,10 +63,7 @@ endif
 watch:
 	@printf "watch for auto-builds\n"
 
-initdirs::
-	@if [ ! -d cache ]; then mkdir cache; fi
-
-init: initdirs
+init:
 ifeq ($(uname_S),Darwin)
 ifneq ($(shell boot2docker status),running)
 	@boot2docker up

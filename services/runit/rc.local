@@ -2,7 +2,7 @@
 
 # This is the rc.local file to load any programs not covered by Runit
 # as daemons. For best results, you should use the following sample
-# as a method to load a daemon... 
+# as a method to load a daemon...
 #
 # TODO reference docs & man
 

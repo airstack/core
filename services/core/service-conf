@@ -1,15 +1,15 @@
 #!/bin/sh
 set -e
 # set -x
-# Usage: $1 is the main settings. $2 is the service settings.          
-# example usage is: 
+# Usage: $1 is the main settings. $2 is the service settings.
+# example usage is:
 # service-conf /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
 # TODO: use the "state" key in config.json
 init() {
   BASEDIR="/etc/sv"
-  # BASEDIR="/tmp"  
+  # BASEDIR="/tmp"
   MAIN_SETTINGS=$1
   SERVICE_SETTINGS=$2
   ( [ -z "$MAIN_SETTINGS" ] || [ -z "$SERVICE_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
@@ -37,7 +37,7 @@ service_settings_load() {
   SERVICE_NAME=$(cat $tmp_settings | jq --raw-output '.services | keys[]')
   SERVICE_ENABLE=$(cat $tmp_settings | jq --raw-output '.services[].enable')
   SERVICE_RUN=$(cat $tmp_settings | jq --raw-output '.services[].run')
-  SERVICE_LOG=$(cat $tmp_settings | jq --raw-output '.services[].log')  
+  SERVICE_LOG=$(cat $tmp_settings | jq --raw-output '.services[].log')
   SERVICE_CHECK=$(cat $tmp_settings | jq --raw-output '.services[].check')
   SERVICE_FINISH=$(cat $tmp_settings | jq --raw-output '.services[].finish')
   return 0
@@ -76,7 +76,7 @@ service_run_init() {
 
   # don't do anything if blank
   [ -z "$SERVICE_RUN" ] && return 1
-  
+
   # create runit service dir
   [ ! -e $BASEDIR/$SERVICE_NAME/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/
 
@@ -89,7 +89,7 @@ service_run_init() {
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME run script failure.\n" >&2
     exit ${E_BAD_RUN}
-  fi  
+  fi
 
   return 0
 }
@@ -99,7 +99,7 @@ service_log_init() {
 
   # don't do anything if blank
   [ -z "$SERVICE_LOG" ] && return 1
-  
+
   # create runit service log dir
   [ ! -e $BASEDIR/$SERVICE_NAME/log/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/log/
 
@@ -112,7 +112,7 @@ service_log_init() {
   if [ "$?" -ne 0 ]; then
     echo "$SERVICE_NAME log script failure.\n" >&2
     exit ${E_BAD_RUN}
-  fi  
+  fi
 
   return 0
 }

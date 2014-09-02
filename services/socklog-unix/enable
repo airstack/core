@@ -22,8 +22,8 @@ n11
 EOF
 
 # cat > /etc/sv/$TMP_SERVICE/check << "EOF"
-# TODO: works to check here, but inefficient time-wise so not a great healthcheck... 
-# move to runit service check 
+# TODO: works to check here, but inefficient time-wise so not a great healthcheck...
+# move to runit service check
 # LOGFILES="/var/log/socklog/main/current"
 # while [ ! -f "$LOGFILES" ]; do sleep 0.1 && printf "."; done; printf "\n"
 # msg "$(sv status /service/*)\n"

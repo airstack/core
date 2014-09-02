@@ -14,7 +14,7 @@ ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confd
 ENV DEBIAN_FRONTEND noninteractive
 
 
-#base env vars 
+#base env vars
 ENV AIRSTACK_TAGS_CLUSTERUUID airstack_cluster
 ENV AIRSTACK_RUNTIME_VARS ""
 

@@ -72,8 +72,8 @@ update-service --list
 printf "\nShowing log entries from: /var/log/syslog\n"
 
 # tail syslog in foreground
-while true; do 
-[ -e /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog 
-#printf '.' && 
+while true; do
+[ -e /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog
+#printf '.' &&
 sleep 0.1
 done

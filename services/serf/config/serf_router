@@ -5,7 +5,7 @@ process_event() {
   local HANDLER_DIR
   HANDLER_DIR="/etc/serf/handlers"
   local TMP_EVENT
-  
+
   if [ "$SERF_EVENT" = "user" ]; then
     TMP_EVENT="user-$SERF_USER_EVENT"
     run_event $TMP_EVENT

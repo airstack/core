@@ -18,7 +18,7 @@ uname_S = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 # Runtime overrides
 #
 # Set these at runtime to override the below defaults.
-# e.g.: 
+# e.g.:
 # `make CMD=/bin/bash debug`
 # `make USERNAME=root CMD=runit-init debug`
 # `make VERSION=debug build
@@ -74,7 +74,7 @@ endif
 ps: init
 	@docker ps
 
-build: init 
+build: init
 	@docker build --tag $(NAME):$(VERSION) --force-rm .
 
 test:
@@ -93,17 +93,17 @@ LINUX_RUNFLAGS = --volume $(USERDIR)/output:/home/$(USERDIR)/output --volume $(R
 OSX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume /home/docker/base0:/home/$(USERDIR)/base0 --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 
 ifeq ($(uname_S),Darwin)
-	OS_SPECIFIC_RUNFLAGS = $(OSX_RUNFLAGS)	
+	OS_SPECIFIC_RUNFLAGS = $(OSX_RUNFLAGS)
 else
 	OS_SPECIFIC_RUNFLAGS = $(LINUX_RUNFLAGS)
 endif
 
-runit-init-vars: 
-	$(eval USERNAME = root) 
+runit-init-vars:
+	$(eval USERNAME = root)
 	$(eval CMD = runit-init)
 
 runit-init: runit-init-vars debug
-	
+
 debug: init
 	@if [ `boot2docker ssh 'ifconfig docker0 | grep -io multicast | wc -w'` -lt 1 ]; \
 		then ifconfig docker0 -multicast && ifconfig docker0 multicast; fi
@@ -111,7 +111,7 @@ debug: init
 	docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) $(CMD)
 
 run_single-vars:
-	$(eval USERNAME = root) 
+	$(eval USERNAME = root)
 	$(eval CMD = bash -c '(/etc/runit/2 single &) && /bin/bash')
 
 run_single: run_single-vars debug
@@ -121,6 +121,6 @@ run_daemon:
 
 run_foreground:
 	@echo Press CTRL-C to exit
-	@docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) 
+	@docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS)
 
 run: run_foreground

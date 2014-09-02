@@ -36,9 +36,9 @@ esac
 # 		  echo CONTROLNAME=$$(VBoxManage showvminfo boot2docker-vm --machinereadable | grep storagecontrollername0= | cut -d '=' -f 2); \
 # 		  echo VBoxManage storageattach --storagectl $$CONTROLNAME;\
 # )
-	  
-	#	VBoxManage  
-	#VBoxManage internalcommands storageattach 
+
+	#	VBoxManage
+	#VBoxManage internalcommands storageattach
 
   # createhd                  --filename <filename>
   #                           [--size <megabytes>|--sizebyte <bytes>]

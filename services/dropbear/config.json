@@ -1,6 +1,7 @@
 {
   "services": {
     "dropbear": {
+      "state": "up",
       "enable": "echo \"$AIRSTACK_USER_NAME\":\"$AIRSTACK_USER_PASSWORD\" | chpasswd",
       "disable": "",
       "run": "exec chpst -u root /usr/sbin/dropbear -F -E -R",

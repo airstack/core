@@ -1,6 +1,7 @@
 {
   "services": {
     "socklog-notify": {
+      "state": "down",
       "enable": "[ ! -e /etc/sv/$SERVICE_NAME/log ] && socklog-conf notify log adm || echo \"\";",
       "disable": "",
       "run": "",

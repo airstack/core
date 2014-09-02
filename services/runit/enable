@@ -42,6 +42,7 @@ ln /service /etc/service
 RUNSVSTART_DIR=$(which runsvdir-start)
 ln -sf /etc/runit/2 $RUNSVSTART_DIR
 ln -s /etc/runit/2 /usr/local/bin/container-start
+ln -s /etc/runit/3 /usr/local/bin/container-stop
 BIN_DIR="/package/admin/airstack/conf/$TMP_SERVICE/bin"
 for i in $(ls $BIN_DIR/); do
 [ -e /usr/local/bin/$i ] || ln -s $BIN_DIR/$i /usr/local/bin/$i

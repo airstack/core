@@ -1,1 +1,1 @@
-{ "event_handlers": [ "/etc/airstack/serf/serf_router" ] }
+{ "event_handlers": [ "/package/admin/airstack/conf/serf/serf_router" ] }

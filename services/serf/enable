@@ -8,8 +8,8 @@ TMP_SERVICE=$(basename $(dirname $SOURCE))
 echo "Configuring $TMP_SERVICE"
 SERF_DIR="/etc/serf"
 [ ! -e "$SERF_DIR" ] && mkdir -p "$SERF_DIR"
-ln -s /etc/airstack/serf/handlers $SERF_DIR/
-ln -s /etc/airstack/serf/config $SERF_DIR/
+ln -s /package/admin/airstack/conf/serf/handlers $SERF_DIR/
+ln -s /package/admin/airstack/conf/serf/config $SERF_DIR/
 
 printf "\tcreating runit directories\n"
 mkdir -p /etc/sv/$TMP_SERVICE/log

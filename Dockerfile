@@ -39,8 +39,7 @@ RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 ENV AIRSTACK_RUNTIME_VARS ""
 
 #service env vars
-# TODO >>>>>> collaborate on how to handle AIRSTACK_SERVICES and /etc/airstack and core/config.json (or runtime.json), etc.
-#    We need to finialize mental model for defaults vs runtime configs.
+# TODO: remove AIRSTACK_SERVICES; use runtime.json
 ENV AIRSTACK_SERVICES dropbear serf haproxy
 # TODO: remove service vars after finishing conversion to RUNTIME_VARS
 ENV AIRSTACK_SERVICE_VARS { "base": [{ "type": "base", "ports": { "80": "http", "443": "https" }}, { "type": "logger", "ports": { "514": "tcp" }}]}
@@ -60,12 +59,12 @@ RUN \
 RUN set -x; eval $PKG_INSTALL runit
 
 #socklog install
-ADD services/socklog-unix /etc/airstack/socklog-unix
+ADD services/socklog-unix /package/admin/airstack/conf/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
 
 #container init system
-ADD services/runit /etc/airstack/runit
-RUN /etc/airstack/runit/enable
+ADD services/runit /package/admin/airstack/conf/runit
+RUN /package/admin/airstack/conf/runit/enable
 
 CMD exec sudo -E sh /usr/local/bin/container-start
 
@@ -74,15 +73,15 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 #----
 
 #socklog-ucspi-tcp install
-ADD services/socklog-ucspi-tcp /etc/airstack/socklog-ucspi-tcp
+ADD services/socklog-ucspi-tcp /package/admin/airstack/conf/socklog-ucspi-tcp
 
 #dropbear install
-ADD services/dropbear /etc/airstack/dropbear
+ADD services/dropbear /package/admin/airstack/conf/dropbear
 RUN set -x; eval $PKG_INSTALL dropbear
 EXPOSE 22
 
 #haproxy install
-ADD services/haproxy /etc/airstack/haproxy
+ADD services/haproxy /package/admin/airstack/conf/haproxy
 RUN \
   set -x; eval $PKG_INSTALL haproxy && \
   rm -vf /etc/haproxy/haproxy.cfg && \
@@ -90,19 +89,19 @@ RUN \
 EXPOSE 443 80
 
 #serf install
-ADD services/serf /etc/airstack/serf
+ADD services/serf /package/admin/airstack/conf/serf
 RUN \
   wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 EXPOSE 7946
 
-ADD services/core /etc/airstack/core
+ADD services/core /package/admin/airstack/conf/core
 
 #env vars
 RUN \
-  mkdir -vp /etc/airstack/vars && \
-  echo $AIRSTACK_SERVICE_VARS | jq '' | tee /etc/airstack/vars/service.json && \
-  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/vars/runtime.json && \
+  mkdir -vp /package/admin/airstack/conf/vars && \
+  echo $AIRSTACK_SERVICE_VARS | jq '' | tee /package/admin/airstack/conf/vars/service.json && \
+  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/vars/runtime.json && \
   env | grep AIRSTACK_ | awk '{print ""$1"="$2""}' FS='[=]' | tee /etc/environment
 
 #----

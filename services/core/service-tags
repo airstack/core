@@ -5,7 +5,7 @@ set -e
 # Purpose: given a service json file, return a list of the tags for a specific service
 # Usage: $1 is the service settings.
 # example usage is:
-# service-tags /etc/airstack/dropbear/config.json
+# service-tags /package/admin/airstack/conf/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
 init() {

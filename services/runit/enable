@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+# TODO: migrate contents to config.json and delete this file
+
 SOURCE=$0
 TMP_SERVICE=$(basename $(dirname $SOURCE))
 

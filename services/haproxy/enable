@@ -28,6 +28,8 @@ SERVICE_NAME=$(basename $(dirname $(pwd)))
 exec chpst -u root logger -t $SERVICE_NAME -p local0.notice
 EOF
 
+# TODO: move to config.json enable???
+#   This file should be deleted; now handled by config.json
 echo -n "Generating ssl cert for haproxy "
 	mkdir -p /etc/ssl && \
 	export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo) && \

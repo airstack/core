@@ -1,3 +1,7 @@
+#!/bin/sh -e
+set -x
+
+
 # Add volume to existing boot2docker VirtualBox VM.
 # Useful for persisting data in boot2docker between boot2docker.img rebuilds.
 add_volume() {
@@ -15,7 +19,6 @@ add_volume() {
   # echo $DISK_SATAPORTNAME
   VBoxManage storageattach boot2docker-vm --storagectl $DISK_CONTROLLERNAME --port $DISK_FULLPATH --type hdd --medium $VMFULLPATH && echo "[OK] airstack disk attached to boot2docker" || echo "[FAIL] Could not attach disk"
 }
-
 
 add_volume "airstack0"
 

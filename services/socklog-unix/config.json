@@ -1,7 +1,6 @@
 {
   "services": {
     "socklog-unix": {
-      "install":"apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y socklog ipsvd",     
       "enable": "[ ! -e /etc/sv/$SERVICE_NAME/log ] && socklog-conf unix nobody log || echo \"\"; local tmp_file; tmp_file=/etc/sv/$SERVICE_NAME/log/main/main/config; echo \"s999999\" > $tmp_file; echo \"n11\" >> $tmp_file; TMP_RUNLEVELS=\"single multi\"; ln -s /var/log/socklog/main/current /var/log/syslog;",
       "disable": "unlink /var/log/syslog; rm -rf /etc/sv/socklog-unix",
       "run": "",

@@ -1,7 +1,6 @@
 {
   "services": {
     "serf": {
-      "install": "wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip",      
       "enable": "SERF_DIR=/etc/serf; [ ! -e $SERF_DIR ] && mkdir -p $SERF_DIR; ln -s /etc/airstack/serf/handlers $SERF_DIR/; ln -s /etc/airstack/serf/config $SERF_DIR/",
       "disable": "SERF_DIR=/etc/serf; unlink  $SERF_DIR/handlers; unlink $SERF_DIR/config",
       "run": "for i in $(set | grep -P \"^AIRSTACK_TAGS\"); do TMP_TAGS=\"$TMP_TAGS $(echo $i | awk '{print \"-tag \" tolower($3) \"=\" tolower($4)}' FS='[_=]')\"; done; exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERUUID:-airstack}",

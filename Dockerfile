@@ -41,8 +41,6 @@ ENV AIRSTACK_RUNTIME_VARS ""
 #service env vars
 # TODO: remove AIRSTACK_SERVICES; use runtime.json
 ENV AIRSTACK_SERVICES dropbear serf haproxy
-# TODO: remove service vars after finishing conversion to RUNTIME_VARS
-ENV AIRSTACK_SERVICE_VARS { "base": [{ "type": "base", "ports": { "80": "http", "443": "https" }}, { "type": "logger", "ports": { "514": "tcp" }}]}
 
 #password set in sshd/run script at ssh start. allows for override via env var.
 RUN \
@@ -100,7 +98,6 @@ ADD services/core /package/admin/airstack/conf/core
 #env vars
 RUN \
   mkdir -vp /package/admin/airstack/conf/vars && \
-  # echo $AIRSTACK_SERVICE_VARS | jq '' | tee /package/admin/airstack/conf/vars/service.json && \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/runtime.json && \
   env | grep AIRSTACK_ | awk '{print ""$1"="$2""}' FS='[=]' | tee /etc/environment
 

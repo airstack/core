@@ -1,0 +1,23 @@
+{
+  "services": {
+    "socklog-remote": {
+      "install": "",
+      "enable": "kill -HUP $(pidof svlogd)",
+      "disable": "rm -rf /var/log/socklog/main/toremote/; kill -HUP $(pidof svlogd)",
+      "run": "sv check socklog-unix/log || exit 1; ",
+      "check": "",
+      "finish": "",
+      "log": "",
+      "tags": ["logger", "remote", "syslog", "tcp"],
+      "input": [],
+      "output": [
+        {
+          "destination": "192.168.59.3",
+          "port": "514",
+          "protocol": "tcp",
+          "tags": [ "logger", "remote", "syslog" ]
+        }
+      ]
+    }
+  }
+}

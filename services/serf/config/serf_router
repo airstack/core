@@ -1,15 +1,37 @@
-#!/bin/bash
+#!/bin/sh -e
+set -x
 
-HANDLER_DIR="/etc/serf/handlers"
-if [ "$SERF_EVENT" = "user" ]; then
-	EVENT="user-$SERF_USER_EVENT"
-elif [ "$SERF_EVENT" = "query" ]; then
-	EVENT="query-$SERF_QUERY_NAME"
-elif [[ "$SERF_EVENT" =~ member-.* ]]; then
-	EVENT="$SERF_TAG_ROLE-member-event"
-	# EVENT="$SERF_TAG_ROLE-$SERF_EVENT"
-else
-	EVENT=$SERF_EVENT
-fi
-HANDLER="$HANDLER_DIR/$EVENT"
-[ -f "$HANDLER" -a -x "$HANDLER" ] && exec chpst -u root "$HANDLER" || :
+process_event() {
+  local HANDLER_DIR
+  HANDLER_DIR="/etc/serf/handlers"
+  local TMP_EVENT
+  
+  if [ "$SERF_EVENT" = "user" ]; then
+    TMP_EVENT="user-$SERF_USER_EVENT"
+    run_event $TMP_EVENT
+  elif [ "$SERF_EVENT" = "query" ]; then
+    TMP_EVENT="query-$SERF_QUERY_NAME"
+    run_event $TMP_EVENT
+  elif [[ "$SERF_EVENT" =~ member-.* ]]; then
+    tag_event "$@"
+  else
+    TMP_EVENT=$SERF_EVENT
+    run_event $TMP_EVENT
+  fi
+}
+
+run_event() {
+  HANDLER="$HANDLER_DIR/$EVENT"
+  [ -f "$HANDLER" -a -x "$HANDLER" ] && exec chpst -u root "$HANDLER" || :
+}
+
+tag_event() {
+  [ -z $SERF_TAG_ROLE ] && EVENT="$SERF_TAG_ROLE-member-event"
+  [ -z $SERF_TAG_LOG ] && EVENT="$SERF_TAG_LOG-member-event"
+}
+
+main() {
+  process_event "$@"
+}
+
+main "$@"

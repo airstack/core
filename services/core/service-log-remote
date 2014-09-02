@@ -1,0 +1,60 @@
+#!/bin/sh
+set -e
+#set -x
+
+# Purpose: given a settings json file, configure the local svlogd to log remotely to the specified machines.
+# Usage: $1 is the main settings. $2 is the service settings.          
+# example usage is: 
+# service-log-remote /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
+# TODO: if the json has any missing options, it will assume defaults.
+
+init() {
+  BASEDIR="/etc/sv"
+  MAIN_SETTINGS=$1
+  SERVICE_SETTINGS=$2
+  ( [ -z "$MAIN_SETTINGS" ] || [ -z "$SERVICE_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
+  return 0
+}
+
+log_settings_load() {
+  local tmp_settings; tmp_settings=$MAIN_SETTINGS
+  local log_settings; log_settings=$(cat $tmp_settings | jq  -c '.log[]')
+  for i in $log_settings; do
+    log_settings_create $i
+  done
+}
+
+log_settings_create() {
+  local log_setting; log_setting=$1
+  local log_ip; log_ip=$(echo log_setting | jq -c '.ip')
+  local log_port; log_port=$(echo log_setting | jq -c '.port')
+  local log_messages; log_messages=$(echo log_setting | jq -c '.messages[]')
+
+  local log_remotedir=/var/log/socklog/main/toremote/"$log_ip"
+  mkdir -p $log_remotedir
+  echo "" > $log_remotedir/config
+  local log_iter
+  for log_iter in $log_messages; do
+    echo $log_iter >> $log_remotedir/config
+  done
+  echo "s1000" >> $log_remotedir/config
+  echo "n24" >> $log_remotedir/config
+  echo "N6" >> $log_remotedir/config
+  echo "t5" >> $log_remotedir/config
+  echo '!tryto -pv -k 10 -n 10 nc -q0 $(basename $(pwd))' "$log_port" >> $log_remotedir/config
+}
+
+log_enable() {
+  kill -HUP $(pidof svlogd)
+}
+
+main() {
+init "$@"
+log_settings_load
+log_settings_create
+log_enable
+
+cat /var/log/socklog/main/toremote/*/config
+}
+
+main "$@"

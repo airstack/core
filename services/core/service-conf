@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-set -x
+# set -x
 # Usage: $1 is the main settings. $2 is the service settings.          
 # example usage is: 
 # service-conf /etc/airstack/core/config.json /etc/airstack/dropbear/config.json

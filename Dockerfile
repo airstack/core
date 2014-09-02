@@ -10,25 +10,23 @@ WORKDIR /root
 #----
 
 # install commands
+# TODO: move PKG_INSTALL to services/core/service-install to get rid of evil eval below
 ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y
 ENV DEBIAN_FRONTEND noninteractive
 
-
-#base env vars
+# TODO: load all tags from json then remove these ENVs
 ENV AIRSTACK_TAGS_CLUSTERUUID airstack_cluster
-ENV AIRSTACK_RUNTIME_VARS ""
-
 ENV AIRSTACK_TAGS_NAME component
 ENV AIRSTACK_TAGS_ENV development
+ENV AIRSTACK_TAGS_ROLE base
 
-ENV AIRSTACK_USER_NAME airstack
-ENV AIRSTACK_USER_COMMENT airstack user
-ENV AIRSTACK_USER_UID 431
-ENV AIRSTACK_USER_GID 432
-ENV AIRSTACK_USER_SHELL /bin/nologin
-ENV AIRSTACK_USER_PASSWORD airstack
-
+# TODO: see PKG_INSTALL todo above
 # base packages install
+# RUN service-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
+# install development packages if in development environment
+# RUN [ $AIRSTACK_TAGS_ENV = "development" ] && service-install $AIRSTACK_PKGS_DEVELOPMENT
+
+# TODO: REMOVE THIS ....
 ENV AIRSTACK_PKGS_COMMON apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db psmisc
 RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
@@ -37,10 +35,14 @@ RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 # Services
 #----
 
+# TODO: do we need this?
+ENV AIRSTACK_RUNTIME_VARS ""
+
 #service env vars
+# TODO >>>>>> collaborate on how to handle AIRSTACK_SERVICES and /etc/airstack and core/config.json (or runtime.json), etc.
+#    We need to finialize mental model for defaults vs runtime configs.
 ENV AIRSTACK_SERVICES dropbear serf haproxy
-ENV AIRSTACK_TAGS_ROLE base
-ENV AIRSTACK_CONNECT base
+# TODO: remove service vars after finishing conversion to RUNTIME_VARS
 ENV AIRSTACK_SERVICE_VARS { "base": [{ "type": "base", "ports": { "80": "http", "443": "https" }}, { "type": "logger", "ports": { "514": "tcp" }}]}
 
 #password set in sshd/run script at ssh start. allows for override via env var.

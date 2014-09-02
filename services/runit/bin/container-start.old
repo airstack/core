@@ -44,4 +44,3 @@ shutdown() {
 }
 
 trap shutdown SIGHUP SIGKILL
-

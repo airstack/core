@@ -4,9 +4,9 @@
   "role": "base",
   "cluster": "airstack_cluster",
   "user": { "username": "airstack", "password": "airstack", "comment": "airstack user", "uid": "431", "gid": "432", "shell": "/bin/nologin" },
-  "log":  [ 
+  "log":  [
             {  "ip": "192.168.59.3", "port": "12000", "messages": [ "+*.*" ] },
-            {  "ip": "192.168.59.4", "port": "12000", "messages": [ "-*.*", "auth.*" ] } 
+            {  "ip": "192.168.59.4", "port": "12000", "messages": [ "-*.*", "auth.*" ] }
           ],
   "services": {
     "airstack-base": {

@@ -13,7 +13,7 @@ nfs_install() {
 	# wget https://downloads.sourceforge.net/project/unfs3/unfs3/0.9.22/unfs3-0.9.22.tar.gz
 
 
-	# #check sha 
+	# #check sha
 	# sha1="a6c83e1210ce75836c672cd76e66577bfef7a17a"
 	# ./configure", "--disable-debug", "--disable-dependency-tracking",
 	#                           "--prefix=#{prefix}"

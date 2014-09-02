@@ -3,8 +3,8 @@ set -e
 #set -x
 
 # Purpose: given a settings json file, configure the local svlogd to log remotely to the specified machines.
-# Usage: $1 is the main settings. $2 is the service settings.          
-# example usage is: 
+# Usage: $1 is the main settings. $2 is the service settings.
+# example usage is:
 # service-log-remote /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 

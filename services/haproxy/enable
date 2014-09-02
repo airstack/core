@@ -40,11 +40,11 @@ echo -n "Generating ssl cert for haproxy "
 
 if [ -z "$HAPROXY_USERNAME" ]; then
     export HAPROXY_USERNAME="admin"
-fi  
+fi
 
 if [ -z "$HAPROXY_URI" ]; then
     export HAPROXY_URI="/haproxy?stats"
-fi  
+fi
 
 if [ -n "$HAPROXY_PASSWORD" ]
 then
@@ -65,4 +65,3 @@ done
 
 # adding to init.d for service command compatibility
 ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE
-

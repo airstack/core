@@ -12,5 +12,3 @@ MYSCRIPT="
 #   "
 
 boot2docker ssh "$MYSCRIPT"
-
-#boot2docker ssh 

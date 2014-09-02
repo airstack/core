@@ -100,8 +100,8 @@ ADD services/core /package/admin/airstack/conf/core
 #env vars
 RUN \
   mkdir -vp /package/admin/airstack/conf/vars && \
-  echo $AIRSTACK_SERVICE_VARS | jq '' | tee /package/admin/airstack/conf/vars/service.json && \
-  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/vars/runtime.json && \
+  # echo $AIRSTACK_SERVICE_VARS | jq '' | tee /package/admin/airstack/conf/vars/service.json && \
+  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/runtime.json && \
   env | grep AIRSTACK_ | awk '{print ""$1"="$2""}' FS='[=]' | tee /etc/environment
 
 #----

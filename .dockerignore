@@ -2,7 +2,3 @@
 .git
 .gitignore
 .DS_Store
-.airstack
-cache
-_old
-_test

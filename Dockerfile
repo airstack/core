@@ -103,11 +103,6 @@ RUN \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/vars/runtime.json && \
   env | grep AIRSTACK_ | awk '{print ""$1"="$2""}' FS='[=]' | tee /etc/environment
 
-# RUN \
-#   curl -L https://github.com/progrium/pluginhook/archive/master.zip > pluginhook.zip && \
-
-
-
 #----
 # COMMON FOOTER
 #----

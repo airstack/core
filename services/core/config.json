@@ -5,21 +5,7 @@
   "cluster": "airstack_cluster",
   "user": { "username": "airstack", "password": "airstack", "comment": "airstack user", "uid": "431", "gid": "432", "shell": "/bin/nologin" },
   "log":  [
-            {  "ip": "192.168.59.3", "port": "12000", "messages": [ "+*.*" ] },
-            {  "ip": "192.168.59.4", "port": "12000", "messages": [ "-*.*", "auth.*" ] }
-          ],
-  "services": {
-    "airstack-base": {
-      "install": "",
-      "enable": "",
-      "disable": "",
-      "run": "while true; do echo \"HELLO \"airstack-base\"\"; sleep 1; done",
-      "check": "true",
-      "finish": "echo \"finished\"",
-      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
-      "tags": ["main-service"],
-      "input": [],
-      "output": []
-    }
-  }
+    {  "ip": "192.168.59.3", "port": "12000", "messages": [ "+*.*" ] },
+    {  "ip": "192.168.59.4", "port": "12000", "messages": [ "-*.*", "auth.*" ] }
+  ]
 }

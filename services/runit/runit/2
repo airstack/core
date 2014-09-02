@@ -58,6 +58,10 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # - if no "run" command, default to the respective enable script
 #echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/enable; done) | exec xargs -n1 sh
 
+# If not in runlevel "single", then supervise services.
+# When supervised services are added, the default runit command of "start" is called unless otherwise specified in config.json.
+# In other words, services can be supervised but not started if the default command is stop.
+# TODO: in service-conf, check the "state" key in config.json
 if [ "$TMP_RUNLEVEL" != "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /etc/airstack/$i/config.json; done) | exec xargs -n1 sh /etc/airstack/core/service-conf /etc/airstack/core/config.json
 fi

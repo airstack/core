@@ -6,6 +6,7 @@ set -e
 # service-conf /etc/airstack/core/config.json /etc/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
+# TODO: use the "state" key in config.json
 init() {
   BASEDIR="/etc/sv"
   # BASEDIR="/tmp"  

@@ -1,11 +1,7 @@
 #!/bin/sh -e
 
-# TODO: migrate contents to config.json and delete this file
-
 SOURCE=$0
 TMP_SERVICE=$(basename $(dirname $SOURCE))
-
-## end common head
 
 echo "Configuring $TMP_SERVICE"
 RUNIT_DIR="/etc/runit"
@@ -14,7 +10,7 @@ RUNSVDIR_DIR=$RUNIT_DIR/runsvdir
 # Remove any existing symlinked directory first.
 if [ -e $RUNIT_DIR ]; then
 	echo "Removing $RUNIT_DIR"
-	#TODO use msg_warn util
+	# TODO use msg_warn util
 	rm -rf $RUNIT_DIR
 fi
 
@@ -24,7 +20,7 @@ ln -s /package/admin/airstack/conf/$TMP_SERVICE/runit $RUNIT_DIR
 # Create runsvdir directories
 # See: http://smarden.org/runit/runlevels.html
 for i in single multi; do
-mkdir -p $RUNSVDIR_DIR/$i
+  mkdir -p $RUNSVDIR_DIR/$i
 done
 
 # /service should be canonical
@@ -47,5 +43,5 @@ ln -s /etc/runit/2 /usr/local/bin/container-start
 ln -s /etc/runit/3 /usr/local/bin/container-stop
 BIN_DIR="/package/admin/airstack/conf/$TMP_SERVICE/bin"
 for i in $(ls $BIN_DIR/); do
-[ -e /usr/local/bin/$i ] || ln -s $BIN_DIR/$i /usr/local/bin/$i
+  [ -e /usr/local/bin/$i ] || ln -s $BIN_DIR/$i /usr/local/bin/$i
 done

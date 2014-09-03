@@ -17,7 +17,7 @@ core_settings_load() {
   AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq --raw-output '.env')
   AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq --raw-output '.name')
   AIRSTACK_TAGS_CLUSTERNAME=$(cat $tmp_settings | jq --raw-output '.cluster')
-  AIRSTACK_IPLOG_SETTINGS=$(cat $tmp_settings | jq  -c '.log[]')
+  AIRSTACK_IPLOG_SETTINGS=$(cat $tmp_settings | jq  -c '.iplog[]')
   return 0
 }
 

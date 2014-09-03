@@ -1,0 +1,28 @@
+#!/bin/sh -e
+
+# Load the core config.json file into env variables.
+# Intended to simplify access/use of our core vars in scripts.
+# Usage: core-json2env /path/to/config.json
+
+core_settings_load() {
+  local tmp_settings; tmp_settings=$1
+
+  AIRSTACK_USER_NAME=$(cat $tmp_settings | jq --raw-output '.user.name')
+  AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq --raw-output '.user.password')
+  AIRSTACK_USER_COMMENT=$(cat $tmp_settings | jq --raw-output '.user.comment')
+  AIRSTACK_USER_UID=$(cat $tmp_settings | jq --raw-output '.user.uid')
+  AIRSTACK_USER_GID=$(cat $tmp_settings | jq --raw-output '.user.gid')
+  AIRSTACK_USER_SHELL=$(cat $tmp_settings | jq --raw-output '.user.shell')
+
+  AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq --raw-output '.env')
+  AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq --raw-output '.name')
+  AIRSTACK_TAGS_CLUSTERNAME=$(cat $tmp_settings | jq --raw-output '.cluster')
+  AIRSTACK_IPLOG_SETTINGS=$(cat $tmp_settings | jq  -c '.log[]')
+  return 0
+}
+
+main() {
+  core_settings_load "$@"
+}
+
+main "$@"

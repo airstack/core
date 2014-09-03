@@ -123,8 +123,13 @@ main() {
   # TODO: use /package/admin/airstack/conf/runtime.json instead of passed in file params
   #   runtime.json contains the combined service vars
   init "$@"
-  service_settings_load #$SERVICE_SETTINGS
-  main_settings_load #$MAIN_SETTINGS
+  # service_settings_load #$SERVICE_SETTINGS
+  # main_settings_load #$MAIN_SETTINGS
+
+  # Now using core functions
+  /package/admin/airstack/conf/core/core-json2env $MAIN_SETTINGS
+  /package/admin/airstack/conf/core/service-json2env $SERVICE_SETTINGS
+
   service_enable_pre
 
   service_run_init

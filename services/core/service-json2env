@@ -6,17 +6,17 @@
 
 service_settings_load() {
   local tmp_settings; tmp_settings=$1
-  SERVICE_NAME=$(cat $tmp_settings | jq --raw-output '.services | keys[]')
-  SERVICE_STATE=$(cat $tmp_settings | jq --raw-output '.services[].state')
-  SERVICE_ENABLE=$(cat $tmp_settings | jq --raw-output '.services[].enable')
-  SERVICE_DISABLE=$(cat $tmp_settings | jq --raw-output '.services[].disable')
-  SERVICE_RUN=$(cat $tmp_settings | jq --raw-output '.services[].run')
-  SERVICE_CHECK=$(cat $tmp_settings | jq --raw-output '.services[].check')
-  SERVICE_FINISH=$(cat $tmp_settings | jq --raw-output '.services[].finish')
-  SERVICE_LOG=$(cat $tmp_settings | jq --raw-output '.services[].log')
-  SERVICE_TAGS=$(cat $tmp_settings | jq --raw-output '.services[].tags[]')
-  SERVICE_INPUT=$(cat $tmp_settings | jq --raw-output '.services[].input[]')
-  SERVICE_OUTPUT=$(cat $tmp_settings | jq --raw-output '.services[].output[]')
+  SERVICE_NAME=$(cat $tmp_settings | jq -c '.services | keys[]')
+  SERVICE_STATE=$(cat $tmp_settings | jq -c '.services[].state')
+  SERVICE_ENABLE=$(cat $tmp_settings | jq -c '.services[].enable')
+  SERVICE_DISABLE=$(cat $tmp_settings | jq -c '.services[].disable')
+  SERVICE_RUN=$(cat $tmp_settings | jq -c '.services[].run')
+  SERVICE_CHECK=$(cat $tmp_settings | jq -c '.services[].check')
+  SERVICE_FINISH=$(cat $tmp_settings | jq -c '.services[].finish')
+  SERVICE_LOG=$(cat $tmp_settings | jq -c '.services[].log')
+  SERVICE_TAGS=$(cat $tmp_settings | jq -c '.services[].tags[]')
+  SERVICE_INPUT=$(cat $tmp_settings | jq -c '.services[].input[]')
+  SERVICE_OUTPUT=$(cat $tmp_settings | jq -c '.services[].output[]')
 
   return 0
 }

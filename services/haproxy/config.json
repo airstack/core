@@ -12,5 +12,5 @@
       "input": [ {"source": "", "port": "9999", "protocol": "tcp", "tags": [ "haproxy", "statistics" ]} ],
       "output": []
     }
-   }
+  }
 }

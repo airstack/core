@@ -1,7 +1,5 @@
 Example custom service.
 
-John, is the log section correct?
-
 ```json
 "services": {
   "myapp": {

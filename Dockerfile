@@ -97,9 +97,8 @@ ADD services/core /package/admin/airstack/conf/core
 
 #env vars
 RUN \
-  mkdir -vp /package/admin/airstack/conf/vars && \
-  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/runtime.json && \
-  env | grep AIRSTACK_ | awk '{print ""$1"="$2""}' FS='[=]' | tee /etc/environment
+  mkdir -vp /package/admin/airstack/conf/core && \
+  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/core/runtime.json
 
 #----
 # COMMON FOOTER

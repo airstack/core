@@ -22,9 +22,9 @@ main_settings_load() {
 }
 
 main() {
-init "$@"
-main_settings_load
-echo $AIRSTACK_TAGS
+  init "$@"
+  main_settings_load
+  echo $AIRSTACK_TAGS
 }
 
 main "$@"

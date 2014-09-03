@@ -49,12 +49,12 @@ log_enable() {
 }
 
 main() {
-init "$@"
-log_settings_load
-log_settings_create
-log_enable
+  init "$@"
+  log_settings_load
+  log_settings_create
+  log_enable
 
-cat /var/log/socklog/main/toremote/*/config
+  cat /var/log/socklog/main/toremote/*/config
 }
 
 main "$@"

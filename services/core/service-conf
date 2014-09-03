@@ -16,35 +16,6 @@ init() {
   return 0
 }
 
-#TODO: integrate the core-json2env script instead of this function.
-main_settings_load() {
-  local tmp_settings
-  tmp_settings=$MAIN_SETTINGS
-  AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq --raw-output '.name')
-  AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq --raw-output '.env')
-  AIRSTACK_USER_NAME=$(cat $tmp_settings | jq --raw-output '.user.username')
-  AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq --raw-output '.user.password')
-  AIRSTACK_USER_COMMENT=$(cat $tmp_settings | jq --raw-output '.user.comment')
-  AIRSTACK_USER_UID=$(cat $tmp_settings | jq --raw-output '.user.uid')
-  AIRSTACK_USER_GID=$(cat $tmp_settings | jq --raw-output '.user.gid')
-  AIRSTACK_USER_SHELL=$(cat $tmp_settings | jq --raw-output '.user.shell')
-
-  return 0
-}
-
-#TODO: integrate the service-json2env script here instead of this function.
-service_settings_load() {
-  local tmp_settings
-  tmp_settings=$SERVICE_SETTINGS
-  SERVICE_NAME=$(cat $tmp_settings | jq --raw-output '.services | keys[]')
-  SERVICE_ENABLE=$(cat $tmp_settings | jq --raw-output '.services[].enable')
-  SERVICE_RUN=$(cat $tmp_settings | jq --raw-output '.services[].run')
-  SERVICE_LOG=$(cat $tmp_settings | jq --raw-output '.services[].log')
-  SERVICE_CHECK=$(cat $tmp_settings | jq --raw-output '.services[].check')
-  SERVICE_FINISH=$(cat $tmp_settings | jq --raw-output '.services[].finish')
-  return 0
-}
-
 service_enable_pre() {
   set +e
   # eval the enable command
@@ -123,12 +94,13 @@ main() {
   # TODO: use /package/admin/airstack/conf/runtime.json instead of passed in file params
   #   runtime.json contains the combined service vars
   init "$@"
+
   # service_settings_load #$SERVICE_SETTINGS
   # main_settings_load #$MAIN_SETTINGS
 
-  # Now using core functions
-  /package/admin/airstack/conf/core/core-json2env $MAIN_SETTINGS
-  /package/admin/airstack/conf/core/service-json2env $SERVICE_SETTINGS
+  # Now use core loading functions to bring in the json objects.
+  . /package/admin/airstack/conf/core/core-json2env $MAIN_SETTINGS
+  . /package/admin/airstack/conf/core/service-json2env $SERVICE_SETTINGS
 
   service_enable_pre
 

@@ -6,7 +6,7 @@ TMP_SERVICE=$(basename $(dirname $SOURCE))
 ## end common head
 
 echo "Configuring $TMP_SERVICE"
-ln -sf /package/admin/airstack/conf/haproxy/haproxy.cfg /etc/haproxy/
+ln -sf /package/airstack/conf/haproxy/haproxy.cfg /etc/haproxy/
 
 printf "\tcreating runit directories\n"
 mkdir -p /etc/sv/$TMP_SERVICE/log

@@ -7,6 +7,12 @@
 core_settings_load() {
   local tmp_settings; tmp_settings=$1
 
+  AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq -c '.env')
+  AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq -c '.name')
+  AIRSTACK_TAGS_ROLE=$(cat $tmp_settings | jq -c '.role')
+  AIRSTACK_TAGS_CLUSTERNAME=$(cat $tmp_settings | jq -c '.cluster')
+  AIRSTACK_IPLOG_SETTINGS=$(cat $tmp_settings | jq  -c '.iplog[]')
+
   AIRSTACK_USER_NAME=$(cat $tmp_settings | jq -c '.user.name')
   AIRSTACK_USER_PASSWORD=$(cat $tmp_settings | jq -c '.user.password')
   AIRSTACK_USER_COMMENT=$(cat $tmp_settings | jq -c '.user.comment')
@@ -14,10 +20,6 @@ core_settings_load() {
   AIRSTACK_USER_GID=$(cat $tmp_settings | jq -c '.user.gid')
   AIRSTACK_USER_SHELL=$(cat $tmp_settings | jq -c '.user.shell')
 
-  AIRSTACK_TAGS_ENV=$(cat $tmp_settings | jq -c '.env')
-  AIRSTACK_TAGS_NAME=$(cat $tmp_settings | jq -c '.name')
-  AIRSTACK_TAGS_CLUSTERNAME=$(cat $tmp_settings | jq -c '.cluster')
-  AIRSTACK_IPLOG_SETTINGS=$(cat $tmp_settings | jq  -c '.iplog[]')
   return 0
 }
 

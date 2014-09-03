@@ -15,7 +15,7 @@ ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confd
 ENV DEBIAN_FRONTEND noninteractive
 
 # TODO: load all tags from json then remove these ENVs
-ENV AIRSTACK_TAGS_CLUSTERUUID airstack_cluster
+ENV AIRSTACK_TAGS_CLUSTERNAME airstack_cluster
 ENV AIRSTACK_TAGS_NAME component
 ENV AIRSTACK_TAGS_ENV development
 ENV AIRSTACK_TAGS_ROLE base

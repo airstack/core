@@ -4,7 +4,7 @@
       "state": "up",
       "enable": "SERF_DIR=/etc/serf; [ ! -e $SERF_DIR ] && mkdir -p $SERF_DIR; ln -s /package/admin/airstack/conf/serf/handlers $SERF_DIR/; ln -s /package/admin/airstack/conf/serf/config $SERF_DIR/",
       "disable": "SERF_DIR=/etc/serf; unlink  $SERF_DIR/handlers; unlink $SERF_DIR/config",
-      "run": "for i in $(set | grep -P \"^AIRSTACK_TAGS\"); do TMP_TAGS=\"$TMP_TAGS $(echo $i | awk '{print \"-tag \" tolower($3) \"=\" tolower($4)}' FS='[_=]')\"; done; exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERUUID:-airstack}",
+      "run": "for i in $(set | grep -P \"^AIRSTACK_TAGS\"); do TMP_TAGS=\"$TMP_TAGS $(echo $i | awk '{print \"-tag \" tolower($3) \"=\" tolower($4)}' FS='[_=]')\"; done; exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERNAME:-airstack}",
       "check": "",
       "finish": "",
       "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",

@@ -16,6 +16,7 @@ init() {
   return 0
 }
 
+#TODO: integrate the core-json2env script instead of this function.
 main_settings_load() {
   local tmp_settings
   tmp_settings=$MAIN_SETTINGS
@@ -31,6 +32,7 @@ main_settings_load() {
   return 0
 }
 
+#TODO: integrate the service-json2env script here instead of this function.
 service_settings_load() {
   local tmp_settings
   tmp_settings=$SERVICE_SETTINGS

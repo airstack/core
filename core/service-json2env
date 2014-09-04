@@ -1,6 +1,8 @@
 #!/bin/sh -e
 set -x
 
+# TODO: rewrite to use json2env; see runit/2 script
+
 # For a specified service, load its service config.json file into env variables.
 # Intended to simplify access/use of our service vars in scripts.
 # Usage: service-json2env /path/to/config.json

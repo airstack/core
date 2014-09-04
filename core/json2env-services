@@ -1,0 +1,18 @@
+#!/bin/sh -e
+set -x
+
+# Load the core /etc/airstack/runtime.json ".services" into env variables.
+# Intended to simplify access/use of our core vars in scripts.
+# Env var files are created in /service/<SERVICE>/env
+# Usage: json2env-services
+
+load_vars() {
+  local runtime; runtime=$(cat /etc/airstack/runtime.json)
+  for key in $(echo $runtime | jq -r -c '.services | keys[]'); do
+    mkdir -p /service/"$key"/env
+    cd /service/"$key"/env
+    /package/airstack/core/json2env ".services.\"$key\""
+  done
+}
+
+load_vars

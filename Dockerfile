@@ -6,13 +6,43 @@ ENV HOME /root
 WORKDIR /root
 
 #----
-# Base Environment
+# Packages
 #----
 
 # install commands
 # TODO: move PKG_INSTALL to core/service-install to get rid of evil eval below
 ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y
 ENV DEBIAN_FRONTEND noninteractive
+
+# TODO: refactor without eval. or remove and handle elsewhere so not distro-specific
+
+# Try and have binaries that are modified less often up at top of this package section.
+
+# Packages::Common
+RUN set -x; eval $PKG_INSTALL apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
+
+# Packages::Development-Utils
+RUN set -x; eval $PKG_INSTALL vim-tiny ethtool bwm-ng man-db psmisc
+
+# Packages::runit
+RUN set -x; eval $PKG_INSTALL runit
+
+# Packages::socklog
+RUN set -x; eval $PKG_INSTALL socklog ipsvd
+
+# Packages::dropbear
+RUN set -x; eval $PKG_INSTALL dropbear
+
+# Packages::haproxy
+RUN set -x; eval $PKG_INSTALL haproxy
+
+# Packages::serf
+RUN set -x; wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
+  unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
+
+#----
+# Base Environment
+#----
 
 # TODO: load all tags from json then remove these ENVs
 ENV AIRSTACK_TAGS_CLUSTERNAME airstack_cluster
@@ -25,11 +55,6 @@ ENV AIRSTACK_TAGS_ROLE base
 # RUN service-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 # install development packages if in development environment
 # RUN [ $AIRSTACK_TAGS_ENV = "development" ] && service-install $AIRSTACK_PKGS_DEVELOPMENT
-
-# TODO: REMOVE THIS ....
-ENV AIRSTACK_PKGS_COMMON apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
-ENV AIRSTACK_PKGS_DEVELOPMENT vim-tiny ethtool bwm-ng man-db psmisc
-RUN set -x; eval $PKG_INSTALL $AIRSTACK_PKGS_COMMON $AIRSTACK_PKGS_DEVELOPMENT
 
 #----
 # Services
@@ -44,14 +69,15 @@ ENV AIRSTACK_SERVICES dropbear serf haproxy
 
 #password set in sshd/run script at ssh start. allows for override via env var.
 RUN \
-  groupadd --system $AIRSTACK_USER_NAME --gid $AIRSTACK_USER_GID && \
-  useradd --uid $AIRSTACK_USER_UID --system --base-dir /home --create-home --gid $AIRSTACK_USER_NAME --shell $AIRSTACK_USER_SHELL --comment "$AIRSTACK_USER_COMMENT" $AIRSTACK_USER_NAME && \
-  chown -R $AIRSTACK_USER_NAME:$AIRSTACK_USER_NAME /home/$AIRSTACK_USER_NAME
+  set -e; groupadd --system airstack --gid 432 && \
+  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack && \
+  chown -R airstack:airstack /home/airstack
 
-#dev user:pass
+# passwordless sudo enabled for airstack user. should only do for development environment.
+# RUN [ $AIRSTACK_TAGS_ENV = "development" ] && echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && usermod --shell /bin/bash airstack
 RUN \
-  echo "$AIRSTACK_USER_NAME  ALL = NOPASSWD: ALL" > /etc/sudoers.d/$AIRSTACK_USER_NAME && \
-  usermod --shell /bin/bash $AIRSTACK_USER_NAME
+  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && \
+  usermod --shell /bin/bash airstack
 
 #runit install
 RUN set -x; eval $PKG_INSTALL runit
@@ -70,27 +96,16 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 # Runlevel 2
 #----
 
-#socklog-ucspi-tcp install
-ADD services/socklog-ucspi-tcp /package/airstack/conf/socklog-ucspi-tcp
-
 #dropbear install
 ADD services/dropbear /package/airstack/conf/dropbear
-RUN set -x; eval $PKG_INSTALL dropbear
 EXPOSE 22
 
 #haproxy install
 ADD services/haproxy /package/airstack/conf/haproxy
-RUN \
-  set -x; eval $PKG_INSTALL haproxy && \
-  rm -vf /etc/haproxy/haproxy.cfg && \
-  rm -vf /etc/rsyslog.d/haproxy.conf;
 EXPOSE 443 80
 
 #serf install
 ADD services/serf /package/airstack/conf/serf
-RUN \
-  wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
-  unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 EXPOSE 7946
 
 ADD core /package/airstack/conf/core

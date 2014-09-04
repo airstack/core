@@ -8,9 +8,9 @@
       "check": "",
       "finish": "",
       "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
-      "tags": ["ssh"],
-      "input": [{"location": "", "port": "22", "protocol": "tcp", "tags": [ "ssh" ]}],
-      "output": []
+      "tags": ["ssh", "dropbear"],
+      "input": [{"source": "any", "destination": "any", "port": "22", "protocol": "tcp", "tags": [ "" ]}],
+      "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp","tags": [ "" ]}]
     }
    }
 }

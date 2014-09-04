@@ -62,13 +62,16 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # NOTES FROM "HOW TO JSON2ENV" SESSION
 #
 # Directory structure for chpst -e environment vars
-# /package/airstack/env/
-#   services/
-#     core/
-#       env
-#       name
-#       role
-#     dropbear/
+# /etc/airstack/
+#   runtime.json
+#   env/
+#     env
+#     name
+#     role
+#     ...
+# /service/
+#   dropbear/
+#     env/
 #       dropbear_state
 #       dropbear_enable
 #       dropbear_disable
@@ -80,10 +83,12 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 #       dropbear_input_0_port   < 22
 #       dropbear_input_0_tags   < ["ssh"]
 #       dropbear_input_0_tags_0 < ssh
-#     serf/
+#       ...
+#   serf/
+#     env/
 #       serf_state
 #       serf_enable
-#     ...
+#       ...
 #
 # Load env vars with ...
 # $ chpst -e /package/airstack/env/serivces/dropbear -e /package/airstack/env/services/core
@@ -96,30 +101,23 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # make a <servie>_<key>=<json> env var and then iterate through the json value and create additional
 # env vars.
 #
-# IDEA TO SIMPLIFY THINGS: we should move services/core to core. Core is not a serice. This will make
-#   runtime.json and the directory structure more closely resemble each other.
-# base/
-#   gists/
-#   core/
-#   services/
-#     dropbear/
-#     ...
-#
 #
 # BIG QUESTION: how to write a script that iterates through json and creates the directories and env files???
 # ANSWER: sh + jq ???
 #
 # PSUEDO CODE:
 #
-# function process_val(parent, key) {
+# # process_val script
+#   parent = arg0
+#   key = arg1
 #   val = `cat runtime.json | jq -c ".$key"`
+#   # echo "$AIRSTACK_USER_NAME" > "$parent$key"
 #   echo val > "$parent$key"
 #   # Check for array or object
 #   if val[0] == '[' or val[0] == '{'
 #      keys = cat runtime.json | jq -c "$parent$key" | keys[]'
 #      for key in keys
-#        process_val "$parent$key_", key
-# }
+#        process_val "$parent$key_" key
 #
 # mkdir -p /etc/airstack/env
 # cd /etc/airstack/env
@@ -130,7 +128,7 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # for service in `cat runtime.json | jq -c '.services | keys[]'`
 #   mkdir -p "/package/airstack/env/services/$service"
 #   cd "/package/airstack/env/services/$services"
-#   process_val '', service
+#   chpst -e /package/airstack/env/core process_val '' service
 #
 #
 

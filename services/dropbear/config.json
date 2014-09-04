@@ -12,5 +12,5 @@
       "input": [{"source": "any", "destination": "any", "port": "22", "protocol": "tcp", "tags": [ "" ]}],
       "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp","tags": [ "" ]}]
     }
-   }
+  }
 }

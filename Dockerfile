@@ -40,6 +40,9 @@ RUN set -x; eval $PKG_INSTALL haproxy
 RUN set -x; wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 
+# Packages::Lua
+RUN set -x; eval $PKG_INSTALL luarocks
+
 #----
 # Base Environment
 #----

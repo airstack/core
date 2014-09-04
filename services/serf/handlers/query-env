@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # TODO: use /etc/airstack/runtime.json instead of AIRSTACK_SERVICE_VARS
-cat /etc/environment | grep AIRSTACK_SERVICE_VARS | cut -d '=' -f 2 > /package/airstack/conf/airstack_service_vars.json
+cat /etc/environment | grep AIRSTACK_SERVICE_VARS | cut -d '=' -f 2 > /package/airstack/airstack_service_vars.json
 
-cat /package/airstack/conf/airstack_service_vars.json
+cat /package/airstack/airstack_service_vars.json
 
 # cat /etc/environment | grep AIRSTACK_SERVICE_VARS
 # export $(set -o posix ; set| grep AIRSTACK_TAGS_ROLE)
@@ -11,7 +11,7 @@ cat /package/airstack/conf/airstack_service_vars.json
 # eval $(cat /etc/environment | while read -r TMP;do grep AIRSTACK_SERVICE_VARS | awk '{print $1"=\047"$2"\047"}' FS='[=]'; done)
 # export AIRSTACK_SERVICE_VARS
 
-# echo $(cat /etc/environment | while read -r TMP;do grep AIRSTACK_SERVICE_VARS; done) > /package/airstack/conf/services.json
+# echo $(cat /etc/environment | while read -r TMP;do grep AIRSTACK_SERVICE_VARS; done) > /package/airstack/services.json
 # set -o posix ; set| grep "AIRSTACK_"
 
 

@@ -3,7 +3,7 @@ set -e
 # set -x
 # Usage: $1 is the main settings. $2 is the service settings.
 # example usage is:
-# service-conf /package/airstack/conf/core/config.json /package/airstack/conf/dropbear/config.json
+# service-conf /package/airstack/core/config.json /package/airstack/dropbear/config.json
 # TODO: if the json has any missing options, it will assume defaults.
 
 # TODO: use the "state" key in config.json
@@ -99,10 +99,10 @@ main() {
   # main_settings_load #$MAIN_SETTINGS
 
   # Now use core loading functions to bring in the json objects.
-  . /package/airstack/conf/core/core-json2env $MAIN_SETTINGS && \
+  . /package/airstack/core/core-json2env $MAIN_SETTINGS && \
   core_settings_load
 
-  . /package/airstack/conf/core/service-json2env $SERVICE_SETTINGS && \
+  . /package/airstack/core/service-json2env $SERVICE_SETTINGS && \
   service_settings_load
 
   service_enable_pre

@@ -37,8 +37,8 @@ env - PATH=$PATH \
 /usr/bin/runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................' &
 
 msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
-# /package/airstack/conf/socklog-unix/enable 2>&1 && msg_ok
-/package/airstack/conf/core/service-conf /package/airstack/conf/core/config.json /package/airstack/conf/socklog-unix/config.json 2>&1 && msg_ok
+# /package/airstack/socklog-unix/enable 2>&1 && msg_ok
+/package/airstack/core/service-conf /package/airstack/core/config.json /package/airstack/socklog-unix/config.json 2>&1 && msg_ok
 
 # wait until socklog is up b4 proceeding
 # TODO put in healthcheck in check script instead of default
@@ -137,7 +137,7 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 #
 #
 
-#echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/conf/$i/enable; done) | exec xargs -n1 sh
+#echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/enable; done) | exec xargs -n1 sh
 
 # If not in runlevel "single", then supervise services.
 # When supervised services are added, the default runit command of "start" is called unless otherwise specified in config.json.
@@ -148,7 +148,7 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # 2. jq <SERVICES> * core/config.json * AIRSTACK_RUNTIME_VARS > runtime.json
 # 3. Use only runtime.json in service-conf
 if [ "$TMP_RUNLEVEL" != "single" ]; then
-	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/conf/$i/config.json; done) | exec xargs -n1 sh /package/airstack/conf/core/service-conf /package/airstack/conf/core/config.json
+	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf /package/airstack/core/config.json
 fi
 
 printf "services currently running:\n"

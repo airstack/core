@@ -86,12 +86,12 @@ RUN \
 RUN set -x; eval $PKG_INSTALL runit
 
 #socklog install
-ADD services/socklog-unix /package/airstack/conf/socklog-unix
+ADD services/socklog-unix /package/airstack/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
 
 #container init system
-ADD services/runit /package/airstack/conf/runit
-RUN /package/airstack/conf/runit/enable
+ADD services/runit /package/airstack/runit
+RUN /package/airstack/runit/enable
 
 CMD exec sudo -E sh /usr/local/bin/container-start
 
@@ -100,18 +100,18 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 #----
 
 #dropbear install
-ADD services/dropbear /package/airstack/conf/dropbear
+ADD services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
 #haproxy install
-ADD services/haproxy /package/airstack/conf/haproxy
+ADD services/haproxy /package/airstack/haproxy
 EXPOSE 443 80
 
 #serf install
-ADD services/serf /package/airstack/conf/serf
+ADD services/serf /package/airstack/serf
 EXPOSE 7946
 
-ADD core /package/airstack/conf/core
+ADD core /package/airstack/core
 
 #env vars
 RUN \

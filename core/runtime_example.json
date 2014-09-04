@@ -1,0 +1,51 @@
+{
+  "env": "development",
+  "name": "airstack-base",
+  "role": "base",
+  "cluster": "airstack_cluster",
+  "user": { "name": "airstack", "password": "airstack", "comment": "airstack user", "uid": "431", "gid": "432", "shell": "/bin/nologin" },
+  "iplog": [
+    {  "ip": "192.168.59.3", "port": "12000", "messages": [ "+*.*" ] },
+    {  "ip": "192.168.59.4", "port": "12000", "messages": [ "-*.*", "auth.*" ] }
+  ],
+  "services": {
+    "dropbear": {
+      "state": "down",
+      "enable": "echo \"$AIRSTACK_USER_NAME\":\"$AIRSTACK_USER_PASSWORD\" | chpasswd",
+      "disable": "",
+      "run": "exec chpst -u root /usr/sbin/dropbear -F -E -R",
+      "check": "",
+      "finish": "",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["ssh", "dropbear"],
+      "input": [{"source": "any", "destination": "any", "port": "22", "protocol": "tcp", "tags": [ "" ]}],
+      "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp","tags": [ "" ]}]
+    },
+    "haproxy": {
+      "state": "down",
+      "enable": "rm -vf /etc/haproxy/haproxy.cfg; ln -sf /package/airstack/haproxy/haproxy.cfg /etc/haproxy/",
+      "disable": "",
+      "run": "exec chpst -u root /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid); sleep 1; done",
+      "check": "",
+      "finish": "",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["proxy", "loadbalancer", "haproxy"],
+      "input": [{"source": "any", "destination": "any", "port": "9999", "protocol": "tcp", "tags": [ "statistics" ]}],
+      "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp", "tags": [ "" ]}]
+    },
+    {
+  "services": {
+    "serf": {
+      "state": "down",
+      "enable": "SERF_DIR=/etc/serf; [ ! -e $SERF_DIR ] && mkdir -p $SERF_DIR; ln -s /package/airstack/serf/handlers $SERF_DIR/; ln -s /package/airstack/serf/config $SERF_DIR/",
+      "disable": "SERF_DIR=/etc/serf; unlink  $SERF_DIR/handlers; unlink $SERF_DIR/config",
+      "run": "for i in $(set | grep -P \"^AIRSTACK_TAGS\"); do TMP_TAGS=\"$TMP_TAGS $(echo $i | awk '{print \"-tag \" tolower($3) \"=\" tolower($4)}' FS='[_=]')\"; done; exec chpst -u root serf agent $TMP_TAGS -tag start_time=`date +%s` -config-dir=/etc/serf/config/ -iface ${AIRSTACK_SERF_IFACE:-eth0} -discover=${AIRSTACK_TAGS_CLUSTERNAME:-airstack}",
+      "check": "",
+      "finish": "",
+      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "tags": ["autodiscovery", "autoclustering"],
+      "input": [ {"source": "", "port": "7946", "protocol": "tcp", "tags": [ "serf", "autodiscovery", "autoclustering" ] } ],
+      "output": [ {"destination": "", "port": "7946", "protocol": "tcp", "tags": [ "serf", "autodiscovery", "autoclustering" ] } ]
+    }
+  }
+}

@@ -118,6 +118,16 @@ RUN \
   mkdir -vp /etc/airstack && \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/runtime.json
 
+
+#----
+# DOCKER DEBUG
+# TODO: Delete before distributing
+#----
+
+RUN ln -vfs /package/airstack/core/runtime_example.json /etc/airstack/runtime.json
+
+
+
 #----
 # COMMON FOOTER
 #----

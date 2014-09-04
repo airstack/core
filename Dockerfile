@@ -10,7 +10,7 @@ WORKDIR /root
 #----
 
 # install commands
-# TODO: move PKG_INSTALL to services/core/service-install to get rid of evil eval below
+# TODO: move PKG_INSTALL to core/service-install to get rid of evil eval below
 ENV PKG_INSTALL apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -93,7 +93,7 @@ RUN \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 EXPOSE 7946
 
-ADD services/core /package/airstack/conf/core
+ADD core /package/airstack/conf/core
 
 #env vars
 RUN \

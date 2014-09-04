@@ -57,7 +57,85 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 #   - compile a new enable script with template header, footer, and the run command
 # - if no "run" command, default to the respective enable script
 
+
+##########################################################
+# NOTES FROM "HOW TO JSON2ENV" SESSION
+#
+# Directory structure for chpst -e environment vars
+# /package/airstack/env/
+#   services/
+#     core/
+#       env
+#       name
+#       role
+#     dropbear/
+#       dropbear_state
+#       dropbear_enable
+#       dropbear_disable
+#       dropbear_run
+#       dropbear_tags           < ["ssh"]
+#       dropbear_tags_0         < ssh
+#       dropbear_input          < [{"location": "", "port": "22", "protocol": "tcp", "tags": [ "ssh" ]}]
+#       dropbear_input_0        < {"location": "", "port": "22", "protocol": "tcp", "tags": [ "ssh" ]}
+#       dropbear_input_0_port   < 22
+#       dropbear_input_0_tags   < ["ssh"]
+#       dropbear_input_0_tags_0 < ssh
+#     serf/
+#       serf_state
+#       serf_enable
+#     ...
+#
+# Load env vars with ...
+# $ chpst -e /package/airstack/env/serivces/dropbear -e /package/airstack/env/services/core
+# Note that core is loaded last to prevent service definitions from clobbering it as a best practice.
+#
+# Handling Arrays and Objects
+# Since we don't know if a program would prefer json or verbose env vars, we make both available.
+# Nested objects should be fully enumerated and split into env vars at every nesting level.
+# See dropbear_input vs dropbear_input_0_tags_0 above. If the value of an object key is an array or object,
+# make a <servie>_<key>=<json> env var and then iterate through the json value and create additional
+# env vars.
+#
+# IDEA TO SIMPLIFY THINGS: we should move services/core to core. Core is not a serice. This will make
+#   runtime.json and the directory structure more closely resemble each other.
+# base/
+#   gists/
+#   core/
+#   services/
+#     dropbear/
+#     ...
+#
+#
+# BIG QUESTION: how to write a script that iterates through json and creates the directories and env files???
+# ANSWER: sh + jq ???
+#
+# PSUEDO CODE:
+#
+# function process_val(parent, key) {
+#   val = `cat runtime.json | jq -c ".$key"`
+#   echo val > "$parent$key"
+#   # Check for array or object
+#   if val[0] == '[' or val[0] == '{'
+#      keys = cat runtime.json | jq -c "$parent$key" | keys[]'
+#      for key in keys
+#        process_val "$parent$key_", key
+# }
+#
+# mkdir -p /package/airstack/env/core
+# cd /package/airstack/env/core
+# for key in `cat runtime.json | jq -c 'keys[]'`
+#   if key == 'services'; continue
+#   process_val '', key
+#
+# for service in `cat runtime.json | jq -c '.services | keys[]'`
+#   mkdir -p "/package/airstack/env/services/$service"
+#   cd "/package/airstack/env/services/$services"
+#   process_val '', service
+#
+#
+
 #echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/conf/$i/enable; done) | exec xargs -n1 sh
+
 # If not in runlevel "single", then supervise services.
 # When supervised services are added, the default runit command of "start" is called unless otherwise specified in config.json.
 # In other words, services can be supervised but not started if the default command is stop.

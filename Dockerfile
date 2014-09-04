@@ -57,12 +57,12 @@ RUN \
 RUN set -x; eval $PKG_INSTALL runit
 
 #socklog install
-ADD services/socklog-unix /package/admin/airstack/conf/socklog-unix
+ADD services/socklog-unix /package/airstack/conf/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
 
 #container init system
-ADD services/runit /package/admin/airstack/conf/runit
-RUN /package/admin/airstack/conf/runit/enable
+ADD services/runit /package/airstack/conf/runit
+RUN /package/airstack/conf/runit/enable
 
 CMD exec sudo -E sh /usr/local/bin/container-start
 
@@ -71,15 +71,15 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 #----
 
 #socklog-ucspi-tcp install
-ADD services/socklog-ucspi-tcp /package/admin/airstack/conf/socklog-ucspi-tcp
+ADD services/socklog-ucspi-tcp /package/airstack/conf/socklog-ucspi-tcp
 
 #dropbear install
-ADD services/dropbear /package/admin/airstack/conf/dropbear
+ADD services/dropbear /package/airstack/conf/dropbear
 RUN set -x; eval $PKG_INSTALL dropbear
 EXPOSE 22
 
 #haproxy install
-ADD services/haproxy /package/admin/airstack/conf/haproxy
+ADD services/haproxy /package/airstack/conf/haproxy
 RUN \
   set -x; eval $PKG_INSTALL haproxy && \
   rm -vf /etc/haproxy/haproxy.cfg && \
@@ -87,18 +87,18 @@ RUN \
 EXPOSE 443 80
 
 #serf install
-ADD services/serf /package/admin/airstack/conf/serf
+ADD services/serf /package/airstack/conf/serf
 RUN \
   wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 EXPOSE 7946
 
-ADD services/core /package/admin/airstack/conf/core
+ADD services/core /package/airstack/conf/core
 
 #env vars
 RUN \
-  mkdir -vp /package/admin/airstack/conf/core && \
-  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/admin/airstack/conf/core/runtime.json
+  mkdir -vp /package/airstack/conf/core && \
+  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /package/airstack/conf/core/runtime.json
 
 #----
 # COMMON FOOTER

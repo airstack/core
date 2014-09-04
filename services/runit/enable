@@ -15,7 +15,7 @@ if [ -e $RUNIT_DIR ]; then
 fi
 
 # enable runlevel scripts
-ln -s /package/admin/airstack/conf/$TMP_SERVICE/runit $RUNIT_DIR
+ln -s /package/airstack/conf/$TMP_SERVICE/runit $RUNIT_DIR
 
 # Create runsvdir directories
 # See: http://smarden.org/runit/runlevels.html
@@ -34,14 +34,14 @@ done
 ln /service /etc/service
 
 # enable custom rc.local
-[ -e /etc/rc.local ] && (rm -f /etc/rc.local && ln -s /package/admin/airstack/conf/$TMP_SERVICE/rc.local /etc/)
+[ -e /etc/rc.local ] && (rm -f /etc/rc.local && ln -s /package/airstack/conf/$TMP_SERVICE/rc.local /etc/)
 
 # enable init utils
 RUNSVSTART_DIR=$(which runsvdir-start)
 ln -sf /etc/runit/2 $RUNSVSTART_DIR
 ln -s /etc/runit/2 /usr/local/bin/container-start
 ln -s /etc/runit/3 /usr/local/bin/container-stop
-BIN_DIR="/package/admin/airstack/conf/$TMP_SERVICE/bin"
+BIN_DIR="/package/airstack/conf/$TMP_SERVICE/bin"
 for i in $(ls $BIN_DIR/); do
   [ -e /usr/local/bin/$i ] || ln -s $BIN_DIR/$i /usr/local/bin/$i
 done

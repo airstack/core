@@ -13,7 +13,7 @@ set -x
 main() {
   local key; key=$1
   local prefix; prefix=$2
-  local runtime; runtime=$(cat ./runtime.json)
+  local runtime; runtime=$(cat /etc/airstack/runtime.json)
   local val
   local filename
 
@@ -37,7 +37,7 @@ main() {
   echo $val > $filename
 
   local keys
-  keys=$(cat ./runtime.json | jq -r -c "$key | keys[]")
+  keys=$(echo $runtime | jq -r -c "$key | keys[]")
   # Array
   if [ $(echo "$val" | head -c 1) = "[" ]; then
     for k in $keys; do

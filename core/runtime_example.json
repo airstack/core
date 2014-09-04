@@ -33,8 +33,6 @@
       "input": [{"source": "any", "destination": "any", "port": "9999", "protocol": "tcp", "tags": [ "statistics" ]}],
       "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp", "tags": [ "" ]}]
     },
-    {
-  "services": {
     "serf": {
       "state": "down",
       "enable": "SERF_DIR=/etc/serf; [ ! -e $SERF_DIR ] && mkdir -p $SERF_DIR; ln -s /package/airstack/serf/handlers $SERF_DIR/; ln -s /package/airstack/serf/config $SERF_DIR/",

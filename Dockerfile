@@ -43,6 +43,11 @@ RUN set -x; wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_
 # Packages::Lua
 RUN set -x; eval $PKG_INSTALL luarocks
 
+# Packages::debug
+# TODO: delete before distributing
+RUN set -x; eval $PKG_INSTALL vim
+
+
 #----
 # Base Environment
 #----
@@ -125,7 +130,6 @@ RUN \
 #----
 
 RUN ln -vfs /package/airstack/core/runtime_example.json /etc/airstack/runtime.json
-
 
 
 #----

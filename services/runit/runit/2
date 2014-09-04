@@ -101,6 +101,11 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # make a <servie>_<key>=<json> env var and then iterate through the json value and create additional
 # env vars.
 #
+# CONVENTIONS:
+# - only root level keys of runtime.json are available for interpolation in service vals
+#   - e.g. $AIRSTACK_USER_NAME is available for DROPBEAR_ENABLE
+# - /package is immutable package repo
+# - /service/<service>/env contains runtime service configs
 #
 # BIG QUESTION: how to write a script that iterates through json and creates the directories and env files???
 # ANSWER: sh + jq ???

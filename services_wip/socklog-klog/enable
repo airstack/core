@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+SOURCE=$0
+TMP_SERVICE=$(basename $(dirname $SOURCE))
+
+## end common head
+
+echo "Configuring $TMP_SERVICE"
+socklog-conf klog nobody log
+
+## common footer start
+
+echo "Enabling $TMP_SERVICE"
+[ -e /etc/sv/$TMP_SERVICE/run ] && chmod ug+x /etc/sv/$TMP_SERVICE/run
+[ -e /etc/sv/$TMP_SERVICE/log/run ] && chmod ug+x /etc/sv/$TMP_SERVICE/log/run
+
+for i in ${TMP_RUNLEVELS:-multi}; do
+	[ ! -e /etc/runit/runsvdir/$i/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/runit/runsvdir/$i
+done
+
+# adding to init.d for service command compatibility
+ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE

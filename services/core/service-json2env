@@ -1,4 +1,5 @@
 #!/bin/sh -e
+set -x
 
 # For a specified service, load its service config.json file into env variables.
 # Intended to simplify access/use of our service vars in scripts.

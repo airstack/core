@@ -1,8 +1,11 @@
 #!/bin/sh -e
-
+set -x
 # Load the core config.json file into env variables.
 # Intended to simplify access/use of our core vars in scripts.
 # Usage: core-json2env /path/to/config.json
+
+
+
 
 core_settings_load() {
   local tmp_settings; tmp_settings=$1

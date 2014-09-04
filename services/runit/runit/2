@@ -121,8 +121,8 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 #        process_val "$parent$key_", key
 # }
 #
-# mkdir -p /package/airstack/env/core
-# cd /package/airstack/env/core
+# mkdir -p /etc/airstack/env
+# cd /etc/airstack/env
 # for key in `cat runtime.json | jq -c 'keys[]'`
 #   if key == 'services'; continue
 #   process_val '', key

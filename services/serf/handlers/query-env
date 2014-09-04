@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TODO: use /package/airstack/conf/runtime.json instead of AIRSTACK_SERVICE_VARS
+# TODO: use /etc/airstack/runtime.json instead of AIRSTACK_SERVICE_VARS
 cat /etc/environment | grep AIRSTACK_SERVICE_VARS | cut -d '=' -f 2 > /package/airstack/conf/airstack_service_vars.json
 
 cat /package/airstack/conf/airstack_service_vars.json

@@ -91,7 +91,7 @@ service_log_init() {
 }
 
 main() {
-  # TODO: use /package/airstack/conf/runtime.json instead of passed in file params
+  # TODO: use /etc/airstack/runtime.json instead of passed in file params
   #   runtime.json contains the combined service vars
   init "$@"
 

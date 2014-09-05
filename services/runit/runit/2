@@ -107,42 +107,12 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # - /package is immutable package repo
 # - /service/<service>/env contains runtime service configs
 #
-# BIG QUESTION: how to write a script that iterates through json and creates the directories and env files???
-# ANSWER: sh + jq ???
-#
-# PSUEDO CODE:
-#
-# # process_val script
-#   parent = arg0
-#   key = arg1
-#   val = `cat runtime.json | jq -c ".$key"`
-#   # echo "$AIRSTACK_USER_NAME" > "$parent$key"
-#   echo val > "$parent$key"
-#   # Check for array or object
-#   if val[0] == '[' or val[0] == '{'
-#      keys = cat runtime.json | jq -c "$parent$key" | keys[]'
-#      for key in keys
-#        process_val "$parent$key_" key
-#
-# mkdir -p /etc/airstack/env
-# cd /etc/airstack/env
-# for key in `cat runtime.json | jq -c 'keys[]'`
-#   if key == 'services'; continue
-#   process_val '', key
-#
-# for service in `cat runtime.json | jq -c '.services | keys[]'`
-#   mkdir -p "/package/airstack/env/services/$service"
-#   cd "/package/airstack/env/services/$services"
-#   chpst -e /package/airstack/env/core process_val '' service
-#
-#
-
-#echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/enable; done) | exec xargs -n1 sh
 
 # If not in runlevel "single", then supervise services.
 # When supervised services are added, the default runit command of "start" is called unless otherwise specified in config.json.
 # In other words, services can be supervised but not started if the default command is stop.
 # TODO: in service-conf, check the "state" key in config.json
+# >>>>>>>>>>>>> JOHN >>>>>>>>>>>>
 # TODO:
 # 1. combine each services config.json into one json object: <SERVICES>
 # 2. jq <SERVICES> * core/config.json * AIRSTACK_RUNTIME_VARS > runtime.json

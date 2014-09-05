@@ -37,14 +37,15 @@ main() {
   echo $val > $filename
 
   local keys
-  keys=$(echo $runtime | jq -r -c "$key | keys[]")
   # Array
   if [ $(echo "$val" | head -c 1) = "[" ]; then
+    keys=$(echo $runtime | jq -r -c "$key | keys[]")
     for k in $keys; do
       main "$key[$k]" $prefix
     done
   # Object
   elif [ $(echo "$val" | head -c 1) = "{" ]; then
+    keys=$(echo $runtime | jq -r -c "$key | keys[]")
     for k in $keys; do
       main "$key.\"$k\"" $prefix
     done

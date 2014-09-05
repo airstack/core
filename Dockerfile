@@ -94,6 +94,9 @@ RUN set -x; eval $PKG_INSTALL runit
 ADD services/socklog-unix /package/airstack/socklog-unix
 RUN set -x; eval $PKG_INSTALL socklog ipsvd
 
+# airstack core utilities
+ADD core /package/airstack/core
+
 #container init system
 ADD services/runit /package/airstack/runit
 RUN /package/airstack/runit/enable
@@ -116,13 +119,10 @@ EXPOSE 443 80
 ADD services/serf /package/airstack/serf
 EXPOSE 7946
 
-ADD core /package/airstack/core
-
 #env vars
 RUN \
   mkdir -vp /etc/airstack && \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/runtime.json
-
 
 #----
 # DOCKER DEBUG

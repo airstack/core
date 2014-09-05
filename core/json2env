@@ -36,6 +36,9 @@ main() {
   # Write value to file
   echo $val > $filename
 
+  # Return if val is empty
+  [ -z "$val" ] && return 0
+
   local keys
   # Array
   if [ $(echo "$val" | head -c 1) = "[" ]; then

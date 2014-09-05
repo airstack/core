@@ -1,5 +1,5 @@
 #!/bin/sh -e
-set -x
+# set -x
 
 # Usage:
 #   json2env .key prefix_

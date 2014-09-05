@@ -1,5 +1,5 @@
 #!/bin/sh -e
-set -x
+# set -x
 
 # Load the core config.json file into env variables.
 # Intended to simplify access/use of our core vars in scripts.

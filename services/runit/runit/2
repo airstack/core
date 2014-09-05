@@ -151,6 +151,10 @@ if [ "$TMP_RUNLEVEL" != "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf /package/airstack/core/config.json
 fi
 
+# Create env files in /etc/airstack/env and /service/<service>/env
+/package/airstack/core/json2env-core
+/package/airstack/core/json2env-services
+
 printf "services currently running:\n"
 update-service --list
 

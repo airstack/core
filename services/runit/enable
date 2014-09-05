@@ -9,12 +9,12 @@ ERROR_MESSAGE_DEFAULT="enable script failure"
 # usage: check_error <ERROR_MESSAGE> <ERROR_CODE>
 # Examples: check_error "The wheels just came off!" 110
 #           check_error "omgomgomg"
-#           check_error 113
 #           check_error
 #
 # Uses passed in string for error message if provided.
 # If string not present, will use ERROR_MESSAGE_DEFAULT variable if present.
-# Will use passed in error_code, or defaults to error 113
+# When a string is passed in, you can also pass in a custom error code.
+# Error code defaults to 113
 #
 # Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
 ###

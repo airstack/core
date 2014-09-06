@@ -1,34 +1,53 @@
 #!/bin/sh
 set -e
 # set -x
-# Usage: $1 is the main settings. $2 is the service settings.
-# example usage is:
-# service-conf /package/airstack/core/config.json /package/airstack/dropbear/config.json
-# TODO: if the json has any missing options, it will assume defaults.
+# Usage: pass in a list of services to configure
+# Example: service-conf serf haproxy
+
+# add airstack helpers if they exist:
+ERROR_MESSAGE_DEFAULT="[ERROR] service-conf -"
+[ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
+
+ln /service /service
+error_check "testing error"
 
 # TODO: use the "state" key in config.json
 init() {
-  BASEDIR="/etc/sv"
-  # BASEDIR="/tmp"
-  MAIN_SETTINGS=$1
-  SERVICE_SETTINGS=$2
-  ( [ -z "$MAIN_SETTINGS" ] || [ -z "$SERVICE_SETTINGS" ] ) && (echo 'all params not set.' && exit 1)
-  return 0
+  echo "hi"
 }
 
+###
+# Set up necessary service configs after running the enable var contents.
+# Usage: pass in the service name in all lowercase.
+###
+# run the enable command for a service.
 service_enable_pre() {
   set +e
-  # eval the enable command
-  eval "$SERVICE_ENABLE"
+  # don't do anything if blank
+  [ -z "$1" ] && return 1
+
+  local service_name; service_name="$1"
+  local service_name_upcase; service_name_upcase=$( echo "$1" | tr "[:lower:]" "[:upper:]" )
+  local enable_name; enable_name=$(find /service/$service_name/env/* -name '*_ENABLE' | head -n1)
+  # local enable_name; enable_name=$(find /service/$service_name/env/* -name '*_ENABLE' | head -n1)
+
+  # TODO: jq deep merge-ish. example of somethin...
+  # cat /etc/airstack/runtime.json | jq --argfile socklog_unix /package/airstack/socklog-unix/config.json ' .services + $socklog_unix[]'
+
+  chpst -e /service/$service_name/env -u root eval "$SERVICES$service_name_upcase_ENABLE"
+  error_check "service_enable_pre"
 
   if [ "$?" -ne 0 ]; then
-    echo "$SERVICE_NAME enable script failure." >&2
+    echo "$service_name enable script failure." >&2
     exit ${E_BAD_ENABLE}
-  else printf "$SERVICE_NAME enabled\n"
+  else printf "$service_name enabled\n"
   fi
   return 0
 }
 
+###
+# Set up necessary service configs after running the enable var contents.
+###
 service_enable_post() {
   set +e
   echo "Enabling $SERVICE_NAME"
@@ -93,29 +112,32 @@ service_log_init() {
 main() {
   # TODO: use /etc/airstack/runtime.json instead of passed in file params
   #   runtime.json contains the combined service vars
-  init "$@"
+
+  # delete # init "$@"
 
   # service_settings_load #$SERVICE_SETTINGS
   # main_settings_load #$MAIN_SETTINGS
 
-  # Now use core loading functions to bring in the json objects.
-  . /package/airstack/core/core-json2env $MAIN_SETTINGS && \
-  core_settings_load
+  # delete  # # Now use core loading functions to bring in the json objects.
+  # delete  # /package/airstack/core/json2env-core $MAIN_SETTINGS && \
+  # delete  # core_settings_load
+  # delete
+  # delete  # /package/airstack/core/service-json2env $SERVICE_SETTINGS && \
+  # delete  # service_settings_load
 
-  . /package/airstack/core/service-json2env $SERVICE_SETTINGS && \
-  service_settings_load
+  for i in "$@"; do
+    service_enable_pre $i
+  done
 
-  service_enable_pre
-
-  service_run_init
-  printf "$SERVICE_NAME run is now:\n"
-  printf "$(cat /etc/sv/$SERVICE_NAME/run)\n"
-
-  service_log_init
-  printf "$SERVICE_NAME log is now:\n"
-  printf "$(cat /etc/sv/$SERVICE_NAME/log/run)\n"
-
-  service_enable_post
+# redo  # service_run_init
+# redo  # printf "$SERVICE_NAME run is now:\n"
+# redo  # printf "$(cat /etc/sv/$SERVICE_NAME/run)\n"
+# redo
+# redo  # service_log_init
+# redo  # printf "$SERVICE_NAME log is now:\n"
+# redo  # printf "$(cat /etc/sv/$SERVICE_NAME/log/run)\n"
+# redo
+# redo  # service_enable_post
 }
 
 main "$@"

@@ -1,33 +1,19 @@
 #!/bin/sh -e
 
+
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
-msg() {
-    # bold
-    printf "\033[1m=> $@\033[m"
-}
+# add airstack helpers if they exist:
+ERROR_MESSAGE_DEFAULT="[ERROR] runit runlevel 2 -"
+[ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
-msg_ok() {
-    # bold/green
-    printf "\033[1m\033[32m OK\033[m\n"
-}
-
-msg_fail() {
-    # bold/red
-    printf "\033[1m\033[31m FAIL\033[m\n"
-}
-
-msg_warn() {
-    # bold/yellow
-    printf "\033[1m\033[33mWARNING: $@\033[m"
-}
-
-## END COMMON HEAD
 
 msg "Initializing Runit Level 2\n"
 
 # defaults to 'multi', but can pass in different runlevel.
 # /etc/runit/2 single
+
+set -x;
 
 TMP_RUNLEVEL=$1
 runsvchdir ${TMP_RUNLEVEL:="multi"} >/dev/null
@@ -35,10 +21,6 @@ runsvchdir ${TMP_RUNLEVEL:="multi"} >/dev/null
 # run in bg
 env - PATH=$PATH \
 /usr/bin/runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................' &
-
-msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
-# /package/airstack/socklog-unix/enable 2>&1 && msg_ok
-/package/airstack/core/service-conf /package/airstack/core/config.json /package/airstack/socklog-unix/config.json 2>&1 && msg_ok
 
 # wait until socklog is up b4 proceeding
 # TODO put in healthcheck in check script instead of default
@@ -117,13 +99,22 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # 1. combine each services config.json into one json object: <SERVICES>
 # 2. jq <SERVICES> * core/config.json * AIRSTACK_RUNTIME_VARS > runtime.json
 # 3. Use only runtime.json in service-conf
+
+# Create env files in /etc/airstack/env and /service/<service>/env
+
+/package/airstack/core/json2env-core
+/package/airstack/core/json2env-services
+
+msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
+# /package/airstack/socklog-unix/enable 2>&1 && msg_ok
+
+# chpst -e /etc/airstack/env chpst -e env
+# /package/airstack/core/service-conf /package/airstack/core/config.json /package/airstack/socklog-unix/config.json
+/package/airstack/core/service-conf socklog-unix 2>&1 && msg_ok
+error_check ""
 if [ "$TMP_RUNLEVEL" != "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf /package/airstack/core/config.json
 fi
-
-# Create env files in /etc/airstack/env and /service/<service>/env
-/package/airstack/core/json2env-core
-/package/airstack/core/json2env-services
 
 printf "services currently running:\n"
 update-service --list

@@ -51,6 +51,32 @@ error_check() {
   fi
 }
 
+###
+# usage: json_deepmerge file0 file1 file2 file3 ...
+# Examples: json_deepmerge /package/airstack/core/config.json /package/airstack/dropbear/config.json
+#           files="/package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json /package/airstack/haproxy/config.json"
+#           json_deepmerge $files
+#
+# Does a recursive deep merge on a list of json files.
+# Outputs results to stdout
+###
+
+json_deepmerge() {
+  local count; count=0
+  local params; params=""
+  local tmp_files; tmp_files="$@"
+  while [ $#  -gt 0 ]; do
+    params="$params.[$count]"
+    [ "$#" -gt 1 ] && params=$params" * "
+    count=$(( count+1 ));
+    shift
+  done
+
+  jq -s "$params" $tmp_files
+}
+
+json_deepmerge /package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json
+
 #=====
 
 ###

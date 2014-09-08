@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#load the helpers
+. /package/airstack/core/airstack-helpers
+ERROR_MESSAGE_DEFAULT="[ERROR] core-package-install"
+
+main() {
+  pkg_install "$@"
+  error_check "package installation"
+}
+
+main "$@"

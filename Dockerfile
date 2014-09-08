@@ -12,34 +12,29 @@ WORKDIR /root
 ################################################################################
 
 # install commands
-# TODO: move PKG_INSTALL to core/service-install to get rid of evil eval below
-ENV PKG_UPDATE set -x; apt-get update && apt-get upgrade -y
-ENV PKG_INSTALL set -x; apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y
-ENV DEBIAN_FRONTEND noninteractive
-
-# TODO: refactor without eval. or remove and handle elsewhere so not distro-specific
+# airstack core utilities
+ADD core /package/airstack/core
+RUN mkdir -v /command && ln -sv /package/airstack/core/command/* /command/
 
 # Try and have binaries that are modified less often up at top of this package section.
 
-RUN eval $PKG_UPDATE
-
 # Packages::Common
-RUN eval $PKG_INSTALL apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
+RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
-RUN eval $PKG_INSTALL vim-tiny ethtool bwm-ng man-db psmisc gcc
+RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db psmisc gcc
 
 # Packages::runit
-RUN eval $PKG_INSTALL runit
+RUN /command/core-package-install runit
 
 # Packages::socklog
-RUN eval $PKG_INSTALL socklog ipsvd
+RUN /command/core-package-install socklog ipsvd
 
 # Packages::dropbear
-RUN eval $PKG_INSTALL dropbear
+RUN /command/core-package-install dropbear
 
 # Packages::haproxy
-RUN eval $PKG_INSTALL haproxy
+RUN /command/core-package-install haproxy
 
 # Packages::serf
 RUN wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
@@ -47,8 +42,8 @@ RUN wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zi
 
 # Packages::Lua
 RUN \
-  eval $PKG_INSTALL libssl-dev && \
-  eval $PKG_INSTALL luajit luarocks && \
+  /command/core-package-install libssl-dev && \
+  /command/core-package-install luajit luarocks && \
   luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/ && \
   luarocks install --server=https://rocks.moonscript.org moonrocks
 
@@ -99,14 +94,11 @@ RUN \
   usermod --shell /bin/bash airstack
 
 #runit install
-RUN set -x; eval $PKG_INSTALL runit
+RUN /command/core-package-install runit
 
 #socklog install
 ADD services/socklog-unix /package/airstack/socklog-unix
-RUN set -x; eval $PKG_INSTALL socklog ipsvd
-
-# airstack core utilities
-ADD core /package/airstack/core
+RUN /command/core-package-install socklog ipsvd
 
 #container init system
 ADD services/runit /package/airstack/runit

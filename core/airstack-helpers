@@ -57,8 +57,10 @@ error_check() {
 #           files="/package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json /package/airstack/haproxy/config.json"
 #           json_deepmerge $files
 #
-# Does a recursive deep merge on a list of json files.
+# Does a recursive deep merge on a list of json files. Posix-shell compatible.
+# Dependencies: jq
 # Outputs results to stdout
+# Reference: http://stackoverflow.com/questions/19529688/how-to-merge-2-json-file-using-jq
 ###
 
 json_deepmerge() {

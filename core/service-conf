@@ -35,13 +35,8 @@ service_enable_pre() {
   # cat /etc/airstack/runtime.json | jq --argfile socklog_unix /package/airstack/socklog-unix/config.json ' .services + $socklog_unix[]'
 
   chpst -e /service/$service_name/env -u root eval "$SERVICES$service_name_upcase_ENABLE"
-  error_check "service_enable_pre"
+  error_check "failure in service_enable_pre"
 
-  if [ "$?" -ne 0 ]; then
-    echo "$service_name enable script failure." >&2
-    exit ${E_BAD_ENABLE}
-  else printf "$service_name enabled\n"
-  fi
   return 0
 }
 

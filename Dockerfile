@@ -6,7 +6,6 @@ ENV HOME /root
 WORKDIR /root
 
 
-
 ################################################################################
 # Packages
 ################################################################################
@@ -99,7 +98,6 @@ RUN /package/airstack/runit/enable
 CMD exec sudo -E sh /usr/local/bin/container-start
 
 
-
 ################################################################################
 # Runlevel 2
 ################################################################################
@@ -144,4 +142,3 @@ ADD test /package/airstack/test
 USER airstack
 ENV HOME /home/airstack
 WORKDIR /home/airstack
-

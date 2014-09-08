@@ -13,12 +13,15 @@ WORKDIR /root
 
 # install commands
 # TODO: move PKG_INSTALL to core/service-install to get rid of evil eval below
+ENV PKG_UPDATE set -x; apt-get update && apt-get upgrade -y
 ENV PKG_INSTALL set -x; apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y
 ENV DEBIAN_FRONTEND noninteractive
 
 # TODO: refactor without eval. or remove and handle elsewhere so not distro-specific
 
 # Try and have binaries that are modified less often up at top of this package section.
+
+RUN eval $PKG_UPDATE
 
 # Packages::Common
 RUN eval $PKG_INSTALL apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq

@@ -1,4 +1,4 @@
-describe("busted", function()
+describe("dummy", function()
   it("has tests", function()
     local obj1 = { test = "yes" }
     local obj2 = { test = "yes" }

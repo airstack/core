@@ -117,7 +117,6 @@ EXPOSE 7946
 #env vars
 RUN \
   set -e; mkdir -vp /etc/airstack; \
-  echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/runtime.json
 
 
 ################################################################################

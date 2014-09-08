@@ -1,0 +1,28 @@
+#!/bin/sh
+
+###
+# usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
+# Examples: error_check "The wheels just came off!" 110
+#           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
+#           error_check
+#
+# If ERROR_MESSAGE_DEFAULT variable is defined, will prefix messages with it.
+# Uses passed in string for error message if provided.
+# When a string is passed in, you can also pass in a custom error code.
+# Error code defaults to 113
+#
+# Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
+###
+error_check() {
+  if [ "$?" -ne 0 ]; then
+    local err_value; err_value="$?"
+    printf "${ERROR_MESSAGE_DEFAULT-"[ERROR] script command failure"} ${1}\n" >&2
+    exit ${2-113}
+  fi
+}
+
+main() {
+  error_check()
+}
+
+main "$@"

@@ -5,9 +5,11 @@ USER root
 ENV HOME /root
 WORKDIR /root
 
-#----
+
+
+################################################################################
 # Packages
-#----
+################################################################################
 
 # install commands
 # TODO: move PKG_INSTALL to core/service-install to get rid of evil eval below
@@ -48,9 +50,9 @@ RUN set -x; eval $PKG_INSTALL luarocks
 RUN set -x; eval $PKG_INSTALL vim
 
 
-#----
+################################################################################
 # Base Environment
-#----
+################################################################################
 
 # TODO: load all tags from json then remove these ENVs
 ENV AIRSTACK_TAGS_CLUSTERNAME airstack_cluster
@@ -64,9 +66,11 @@ ENV AIRSTACK_TAGS_ROLE base
 # install development packages if in development environment
 # RUN [ $AIRSTACK_TAGS_ENV = "development" ] && service-install $AIRSTACK_PKGS_DEVELOPMENT
 
-#----
+
+
+################################################################################
 # Services
-#----
+################################################################################
 
 # TODO: do we need this?
 ENV AIRSTACK_RUNTIME_VARS ""
@@ -103,9 +107,11 @@ RUN /package/airstack/runit/enable
 
 CMD exec sudo -E sh /usr/local/bin/container-start
 
-#----
+
+
+################################################################################
 # Runlevel 2
-#----
+################################################################################
 
 #dropbear install
 ADD services/dropbear /package/airstack/dropbear
@@ -124,17 +130,20 @@ RUN \
   mkdir -vp /etc/airstack && \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/runtime.json
 
-#----
+
+
+################################################################################
 # DOCKER DEBUG
 # TODO: Delete before distributing
-#----
+################################################################################
 
 RUN ln -vfs /package/airstack/core/runtime_example.json /etc/airstack/runtime.json
 
 
-#----
+
+################################################################################
 # COMMON FOOTER
-#----
+################################################################################
 
 USER airstack
 ENV HOME /home/airstack

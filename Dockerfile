@@ -15,7 +15,7 @@ WORKDIR /root
 ADD core /package/airstack/core
 RUN set -e; mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
 
-# Try and have binaries that are modified less often up at top of this package section.
+# To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
 # Packages::Common
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq

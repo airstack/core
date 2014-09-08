@@ -37,8 +37,27 @@ RUN /command/core-package-install dropbear
 RUN /command/core-package-install haproxy
 
 # Packages::serf
-RUN wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zip && \
-  unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
+RUN \
+  set -e; \
+  VER="0.6.3"; PKG_NAME="serf" PKG_DIR="/package/$PKG_NAME"; mkdir -vp "$PKG_DIR-$VER"/command; \
+  cd $PKG_DIR-$VER; \
+  wget -v -O "$PKG_NAME-$VER".zip https://dl.bintray.com/mitchellh/serf/"$VER"_linux_amd64.zip; \
+  unzip -o "$PKG_NAME-$VER".zip; rm -v "$PKG_NAME-$VER".zip; \
+  echo "Creating custom command..."; \
+  rm -f "$PKG_DIR-$VER/command/"*; \
+  ln -vs "$PKG_DIR-$VER/serf" "$PKG_DIR-$VER/command/"; \
+  echo "Creating symlink $PKG_NAME -> $PKG_NAME-$VER..."; \
+  rm -f "$PKG_DIR"; \
+  ln -s "$PKG_DIR"-"$VER" "$PKG_DIR"; \
+  echo 'Making command links in /command...'; \
+  i=serf; rm -f /command/$i'{new}'; \
+  rm -f /command/"$i"; \
+  ln -vs "$PKG_DIR"/command/"$i" /command/"$i"'{new}'; \
+  mv -f /command/"$i"'{new}' /command/"$i"; \
+  echo 'Making compatibility links in /usr/local/bin...'; \
+  rm -f /usr/local/bin/$i'{new}'; \
+  ln -s /command/$i /usr/local/bin/$i'{new}'; \
+  mv -f /usr/local/bin/$i'{new}' /usr/local/bin/$i
 
 # Packages::Lua
 RUN \

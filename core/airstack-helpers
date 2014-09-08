@@ -42,7 +42,7 @@ msg_warn() {
 #           pkg_install openssh-server wget
 #
 # Refs: apt-config dump; dpkg --force-help;
-# http://www.tecmint.com/useful-basic-commands-of-apt-get-and-apt-cache-for-package-management/
+#       http://www.tecmint.com/useful-basic-commands-of-apt-get-and-apt-cache-for-package-management/
 ###
 pkg_install() {
     set -x

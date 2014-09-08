@@ -9,11 +9,14 @@
 # Note that jq requires special handling of object keys with hyphens.
 # Quotes must be added after the period or jq will throw an error.
 # Ex: json2env ."some-key"
+#
+# Defaults: runtime in /env/runtime.json
 
-main() {
-  local key; key=$1
-  local prefix; prefix=$2
-  local runtime; runtime=$(cat /etc/airstack/runtime.json)
+
+json2env() {
+  local key; key="$1"
+  local prefix; prefix="$2"
+  local runtime; runtime=$(cat "/env/RUNTIME")
   local val
   local filename
 
@@ -53,6 +56,10 @@ main() {
       main "$key.\"$k\"" $prefix
     done
   fi
+}
+
+main() {
+  json2env "$@"
 }
 
 main "$@"

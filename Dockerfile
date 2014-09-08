@@ -69,20 +69,6 @@ RUN \
 RUN moonrocks install --server=https://rocks.moonscript.org busted
 
 
-
-################################################################################
-# Base Environment
-################################################################################
-
-
-# TODO: see PKG_INSTALL todo above
-# base packages install
-# RUN service-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
-# install development packages if in development environment
-# RUN [ $AIRSTACK_TAGS_ENV = "development" ] && service-install $AIRSTACK_PKGS_DEVELOPMENT
-
-
-
 ################################################################################
 # Services
 ################################################################################

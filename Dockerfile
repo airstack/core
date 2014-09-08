@@ -148,6 +148,10 @@ RUN ln -vfs /package/airstack/core/runtime_example.json /etc/airstack/runtime.js
 # COMMON FOOTER
 ################################################################################
 
+# Change {RAONDOM_STRING} to force upgrade on each build
+RUN eval $PKG_UPDATE && echo '{RANDOM_STRING}'
+
 USER airstack
 ENV HOME /home/airstack
 WORKDIR /home/airstack
+

@@ -87,8 +87,9 @@ build: init
 
 rebuild: clean build
 
-test:
-	@env NAME=$(NAME) VERSION=$(VERSION) ./test/runner.sh
+test: init set_test_cmd debug
+set_test_cmd:
+	$(eval CMD = /bin/bash -c "cd /package/airstack/test && busted *.lua")
 
 tag_latest:
 	@docker tag $(NAME):$(VERSION) $(NAME):latest

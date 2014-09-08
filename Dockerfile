@@ -114,10 +114,6 @@ EXPOSE 443 80
 ADD services/serf /package/airstack/serf
 EXPOSE 7946
 
-#env vars
-RUN \
-  set -e; mkdir -vp /etc/airstack; \
-
 
 ################################################################################
 # DEBUG
@@ -128,6 +124,10 @@ RUN \
 RUN \
   set -e; ln -vfs /package/airstack/core/runtime_example.json /package/airstack/core/runtime.json; \
   ln -vs /package/airstack/core /etc/airstack/
+
+# TODO: remove this later. /command symlinks should be setup by each command.
+RUN \
+  ln -vs /command/core-* /usr/local/bin/
 
 
 ################################################################################

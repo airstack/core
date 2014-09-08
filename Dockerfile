@@ -48,9 +48,6 @@ RUN wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zi
 # Packages::Lua
 RUN set -x; eval $PKG_INSTALL luarocks
 
-# Packages::debug
-# TODO: delete before distributing
-RUN set -x; eval $PKG_INSTALL vim
 
 
 ################################################################################

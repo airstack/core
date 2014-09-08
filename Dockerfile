@@ -122,9 +122,12 @@ RUN \
 ################################################################################
 # DEBUG
 # TODO: Delete before distributing
+# TODO: Joe do we need the symlink to /etc/airstack? or only /package/airstack/core?
 ################################################################################
 
-RUN ln -vfs /package/airstack/core/runtime_example.json /etc/airstack/runtime.json
+RUN \
+  set -e; ln -vfs /package/airstack/core/runtime_example.json /package/airstack/core/runtime.json; \
+  ln -vs /package/airstack/core /etc/airstack/
 
 
 ################################################################################

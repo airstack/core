@@ -75,11 +75,6 @@ json_deepmerge() {
   jq --slurp "$params" $tmp_files
 }
 
-json_deepmerge /package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json
-
-# Alternative jq call for reference and quick testing
-# jq -n "$(cat haproxy/config.json) * $(cat dropbear/config.json)"
-
 #=====
 
 ###

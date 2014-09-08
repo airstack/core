@@ -40,6 +40,8 @@ help:
 	Usage of airstack Makefile:\n\
 	  repair  		attempt to repair boot2docker subsystem\n\
 	  build  		locally build current image\n\
+	  rebuild		clean and build\n\
+	  clean			remove docker image tree\n\
 	  init  		initialize local environment\n\
 	  debug  		run without starting any programs. useful for debugging\n\
 	  runit-init  		run with runit init system at PID 1.\n\
@@ -71,11 +73,17 @@ endif
 export DOCKER_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
 endif
 
+clean: init
+	@echo "Removing docker image tree for $(NAME):$(VERSION) ..."
+	@docker rmi $(NAME):$(VERSION)
+
 ps: init
 	@docker ps
 
 build: init
 	@docker build --tag $(NAME):$(VERSION) --force-rm .
+
+rebuild: clean build
 
 test:
 	@env NAME=$(NAME) VERSION=$(VERSION) ./test/runner.sh

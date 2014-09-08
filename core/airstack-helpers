@@ -150,3 +150,6 @@ json_deepmerge() {
 
 # bash references:
 # http://www.gnu.org/software/bash/manual/bashref.html
+
+# man vs info
+# http://unix.stackexchange.com/questions/77514/what-is-gnu-info-for

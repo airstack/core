@@ -29,3 +29,9 @@ Tests are written as lua busted scripts using BDD style.
 cd /package/airstack/test
 busted *.lua
 ```
+
+
+### Linting
+
+shell scripts for errors and posix compliance:
+- [shellcheck](http://www.shellcheck.net/)

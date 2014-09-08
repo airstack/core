@@ -53,7 +53,7 @@ RUN \
   luarocks install --server=https://rocks.moonscript.org moonrocks
 
 # Packages::test
-RUN moonrocks install busted
+RUN moonrocks install --server=https://rocks.moonscript.org busted
 
 
 

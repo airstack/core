@@ -21,7 +21,7 @@ RUN set -e; mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
-RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db psmisc gcc
+RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc
 
 # Packages::runit
 RUN /command/core-package-install runit

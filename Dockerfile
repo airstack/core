@@ -46,7 +46,14 @@ RUN wget -vO serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_amd64.zi
   unzip serf.zip && mv serf /usr/local/bin && rm -vf ./serf.zip
 
 # Packages::Lua
-RUN set -x; eval $PKG_INSTALL luarocks
+RUN \
+  eval $PKG_INSTALL libssl-dev && \
+  eval $PKG_INSTALL luajit luarocks && \
+  luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/ && \
+  luarocks install --server=https://rocks.moonscript.org moonrocks
+
+# Packages::test
+RUN moonrocks install busted
 
 
 

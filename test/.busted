@@ -1,5 +1,6 @@
 return {
   default = {
     verbose = true
+    pattern = "_spec"
   }
 }

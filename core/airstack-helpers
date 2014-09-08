@@ -71,11 +71,14 @@ json_deepmerge() {
     count=$(( count+1 ));
     shift
   done
-
-  jq -s "$params" $tmp_files
+  # slurp tmp_files into a big array and multiply them
+  jq --slurp "$params" $tmp_files
 }
 
 json_deepmerge /package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json
+
+# Alternative jq call for reference and quick testing
+# jq -n "$(cat haproxy/config.json) * $(cat dropbear/config.json)"
 
 #=====
 

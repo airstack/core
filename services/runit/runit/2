@@ -100,10 +100,14 @@ env - PATH=$PATH \
 # 1. combine each services config.json into one json object: <SERVICES>
 # 2. jq <SERVICES> * core/config.json * AIRSTACK_RUNTIME_VARS > runtime.json
 # 3. Use only runtime.json in service-conf
+set -x
+
 /command/core-json-deepmerge $(ls /package/airstack/*/config.json) | tee /etc/airstack/runtime.json
 
+[ $(echo $AIRSTACK_RUNTIME_VARS | wc -m) -lt 4 ] && AIRSTACK_RUNTIME_VARS="{}"
 echo $AIRSTACK_RUNTIME_VARS | tee /tmp/runtime.json
-/command/core-json-deepmerge /etc/airstack/runtime.json /tmp/runtime.json | tee /etc/airstack/runtime.json
+/command/core-json-deepmerge /etc/airstack/runtime.json /tmp/runtime.json | tee /etc/airstack/runtime'{news}'.json
+mv -f /etc/airstack/runtime'{news}'.json /etc/airstack/runtime.json
 
 # Create env files in /etc/airstack/env and /service/<service>/env
 

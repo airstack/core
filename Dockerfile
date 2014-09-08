@@ -95,7 +95,7 @@ ENV AIRSTACK_RUNTIME_VARS ""
 # TODO: remove AIRSTACK_SERVICES; use runtime.json
 ENV AIRSTACK_SERVICES dropbear serf haproxy
 
-#password set in sshd/run script at ssh start. allows for override via env var.
+# password set in sshd/run script at ssh start. allows for override via env var.
 RUN \
   set -e; groupadd --system airstack --gid 432 && \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack && \

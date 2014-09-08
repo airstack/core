@@ -87,6 +87,7 @@ env - PATH=$PATH \
 # - only root level keys of runtime.json are available for interpolation in service vals
 #   - e.g. $AIRSTACK_USER_NAME is available for DROPBEAR_ENABLE
 # - /package is immutable package repo
+# - /command is a location to symlink binaries from the /package dir
 # - /service/<service>/env contains runtime service configs
 #
 
@@ -94,12 +95,11 @@ env - PATH=$PATH \
 # When supervised services are added, the default runit command of "start" is called unless otherwise specified in config.json.
 # In other words, services can be supervised but not started if the default command is stop.
 # TODO: in service-conf, check the "state" key in config.json
-# >>>>>>>>>>>>> JOHN >>>>>>>>>>>>
-# TODO:
+
+
 # 1. combine each services config.json into one json object: <SERVICES>
 # 2. jq <SERVICES> * core/config.json * AIRSTACK_RUNTIME_VARS > runtime.json
 # 3. Use only runtime.json in service-conf
-
 /command/core-json-deepmerge $(ls /package/airstack/*/config.json) | tee /etc/airstack/runtime.json
 
 echo $AIRSTACK_RUNTIME_VARS | tee /tmp/runtime.json

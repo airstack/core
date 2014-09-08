@@ -87,7 +87,7 @@ build: init
 
 rebuild: clean build
 
-test: init set_test_cmd debug
+test: build set_test_cmd debug
 set_test_cmd:
 	$(eval CMD = /bin/bash -c "cd /package/airstack/test && busted *_spec.*")
 

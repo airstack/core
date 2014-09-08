@@ -75,11 +75,6 @@ RUN moonrocks install busted
 # Base Environment
 ################################################################################
 
-# TODO: load all tags from json then remove these ENVs
-ENV AIRSTACK_TAGS_CLUSTERNAME airstack_cluster
-ENV AIRSTACK_TAGS_NAME component
-ENV AIRSTACK_TAGS_ENV development
-ENV AIRSTACK_TAGS_ROLE base
 
 # TODO: see PKG_INSTALL todo above
 # base packages install

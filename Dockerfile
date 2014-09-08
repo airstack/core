@@ -150,9 +150,6 @@ ADD test /package/airstack/test
 # COMMON FOOTER
 ################################################################################
 
-# Change {RAONDOM_STRING} to force upgrade on each build
-RUN eval $PKG_UPDATE && echo '{RANDOM_STRING}'
-
 USER airstack
 ENV HOME /home/airstack
 WORKDIR /home/airstack

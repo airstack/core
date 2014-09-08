@@ -29,7 +29,8 @@ VERSION = latest
 USERNAME = $(USERDIR)
 # ######################################
 
-.PHONY: all dockerfile build test tag_latest release debug run run_daemon init_share
+# TODO: John, do we need to list all the command here?
+.PHONY: all dockerfile clean build rebuild test tag_latest release debug run run_daemon
 
 all: build
 

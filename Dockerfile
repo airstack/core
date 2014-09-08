@@ -88,9 +88,6 @@ RUN moonrocks install --server=https://rocks.moonscript.org busted
 # Services
 ################################################################################
 
-# TODO: do we need this?
-ENV AIRSTACK_RUNTIME_VARS ""
-
 #service env vars
 # TODO: remove AIRSTACK_SERVICES; use runtime.json
 ENV AIRSTACK_SERVICES dropbear serf haproxy

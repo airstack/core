@@ -73,10 +73,6 @@ RUN moonrocks install --server=https://rocks.moonscript.org busted
 # Services
 ################################################################################
 
-#service env vars
-# TODO: remove AIRSTACK_SERVICES; use runtime.json
-ENV AIRSTACK_SERVICES dropbear serf haproxy
-
 # password set in sshd/run script at ssh start. allows for override via env var.
 RUN \
   set -e; groupadd --system airstack --gid 432; \

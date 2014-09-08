@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# TODO use shellcheck on build to ensure we aren't using bashisms.
+# switch to mksh-static for dash
+# http://lowendbox.com/blog/replacing-big-fat-bash-with-dash-for-scripting/
+# http://rgeissert.blogspot.com/2012/03/bash-way-is-faster-but-only-with-bash.html
+
 # Useful helper functions for airstack shell scripts.
 # Add the following block (uncommented of course) in your scripts:
 
@@ -35,6 +40,9 @@ msg_warn() {
 # usage: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: pkg_install haproxy
 #           pkg_install openssh-server wget
+#
+# Refs: apt-config dump; dpkg --force-help;
+# http://www.tecmint.com/useful-basic-commands-of-apt-get-and-apt-cache-for-package-management/
 ###
 pkg_install() {
     set -x

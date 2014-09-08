@@ -8,9 +8,6 @@ set -e
 ERROR_MESSAGE_DEFAULT="[ERROR] service-conf -"
 [ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
-ln /service /service
-error_check "testing error"
-
 # TODO: use the "state" key in config.json
 init() {
   echo "hi"

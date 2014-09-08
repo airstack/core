@@ -123,7 +123,7 @@ EXPOSE 7946
 
 RUN \
   set -e; ln -vfs /package/airstack/core/runtime_example.json /package/airstack/core/runtime.json; \
-  ln -vs /package/airstack/core /etc/airstack/
+  ln -vs /package/airstack/core /etc/airstack
 
 # TODO: remove this later. /command symlinks should be setup by each command.
 RUN \

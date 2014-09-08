@@ -13,7 +13,7 @@ WORKDIR /root
 # install commands
 # airstack core utilities
 ADD core /package/airstack/core
-RUN set -e; mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
+RUN mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
@@ -36,8 +36,7 @@ RUN /command/core-package-install dropbear
 RUN /command/core-package-install haproxy
 
 # Packages::serf
-RUN \
-  set -e; \
+RUN set -e; \
   VER="0.6.3"; PKG_NAME="serf" PKG_DIR="/package/$PKG_NAME"; mkdir -vp "$PKG_DIR-$VER"/command; \
   cd $PKG_DIR-$VER; \
   wget -v -O "$PKG_NAME-$VER".zip https://dl.bintray.com/mitchellh/serf/"$VER"_linux_amd64.zip; \
@@ -59,8 +58,8 @@ RUN \
   mv -f /usr/local/bin/$i'{new}' /usr/local/bin/$i
 
 # Packages::Lua
-RUN \
-  set -e; /command/core-package-install libssl-dev luajit luarocks; \
+RUN set -e; \
+  /command/core-package-install libssl-dev luajit luarocks; \
   luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/; \
   luarocks install --server=https://rocks.moonscript.org moonrocks
 
@@ -73,20 +72,21 @@ RUN /command/core-package-install aria2
 RUN /command/core-package-install mksh
 RUN /command/core-package-install
 
+
 ################################################################################
 # Services
 ################################################################################
 
 # password set in sshd/run script at ssh start. allows for override via env var.
-RUN \
-  set -e; groupadd --system airstack --gid 432; \
+RUN set -e; \
+  groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
   chown -R airstack:airstack /home/airstack
 
-# passwordless sudo enabled for airstack user. should only do for development environment.
-# RUN [ $AIRSTACK_TAGS_ENV = "development" ] && echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && usermod --shell /bin/bash airstack
-RUN \
-  set -e; echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
+# TODO: passwordless sudo enabled for airstack user. should only do for development environment.
+#       RUN [ $AIRSTACK_TAGS_ENV = "development" ] && echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && usermod --shell /bin/bash airstack
+RUN set -e; \
+  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
 #runit install
@@ -122,17 +122,10 @@ EXPOSE 7946
 
 ################################################################################
 # DEBUG
-# TODO: Delete before distributing
-# TODO: Joe do we need the symlink to /etc/airstack? or only /package/airstack/core?
 ################################################################################
 
-RUN \
-  set -e; ln -vfs /package/airstack/core/runtime_example.json /package/airstack/core/runtime.json; \
-  ln -vs /package/airstack/core /etc/airstack
-
 # TODO: remove this later. /command symlinks should be setup by each command.
-RUN \
-  ln -vs /command/core-* /usr/local/bin/
+RUN ln -vs /command/core-* /usr/local/bin/
 
 
 ################################################################################

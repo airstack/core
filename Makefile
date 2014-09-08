@@ -39,14 +39,14 @@ all: build
 help:
 	@printf "\
 	Usage of airstack Makefile:\n\
-	  repair		attempt to repair boot2docker subsystem\n\
 	  build			locally build current image\n\
 	  rebuild		clean and build\n\
 	  clean			remove docker image tree\n\
-	  init			initialize local environment\n\
 	  debug			run shell without starting any services\n\
 	  test			run tests and exit\n\
-	  runit-init		run with runit init system at PID 1.\n\
+	  run_daemon	run as a daemon\n\
+	  repair		destroy and re-init boot2docker (osx-only)\n\
+
 	"
 repair:
 ifeq ($(uname_S),Darwin)

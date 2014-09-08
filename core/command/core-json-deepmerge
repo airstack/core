@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+#load the helpers
+. /package/airstack/core/airstack-helpers
+ERROR_MESSAGE_DEFAULT="[ERROR] core-json-deepmerge"
+set +e
+
+main() {
+  json_deepmerge "$@"
+  error_check "json merge"
+}
+
+main "$@"

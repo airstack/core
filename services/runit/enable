@@ -31,9 +31,6 @@ for i in single multi; do
 # See: http://smarden.org/runit/runlevels.html
   mkdir -p $RUNSVDIR_DIR/$i
   error_check "create runsvdir directory"
-# Create runsvdir env directories
-  mkdir -p $RUNSVDIR_DIR/$i/env
-  error_check "create runsvdir env directory"
 done
 
 # set default level of single
@@ -42,9 +39,6 @@ error_check "symlink runsvdir default level"
 
 # /service should be canonical
 [ ! -L /service ] && ln -sf $RUNSVDIR_DIR/current /service
-
-# /env should be canonical
-[ ! -L /env ] && ln -sf $RUNSVDIR_DIR/current/env /env
 
 # for debian compatibility, set up /etc/service.
 [ -L /etc/service ] && unlink /etc/service || true && \

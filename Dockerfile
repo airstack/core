@@ -14,7 +14,7 @@ WORKDIR /root
 # install commands
 # airstack core utilities
 ADD core /package/airstack/core
-RUN mkdir -v /command && ln -sv /package/airstack/core/command/* /command/
+RUN set -e; mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
 
 # Try and have binaries that are modified less often up at top of this package section.
 
@@ -61,9 +61,8 @@ RUN \
 
 # Packages::Lua
 RUN \
-  /command/core-package-install libssl-dev && \
-  /command/core-package-install luajit luarocks && \
-  luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/ && \
+  set -e; /command/core-package-install libssl-dev luajit luarocks; \
+  luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/; \
   luarocks install --server=https://rocks.moonscript.org moonrocks
 
 # Packages::test
@@ -94,14 +93,14 @@ ENV AIRSTACK_SERVICES dropbear serf haproxy
 
 # password set in sshd/run script at ssh start. allows for override via env var.
 RUN \
-  set -e; groupadd --system airstack --gid 432 && \
-  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack && \
+  set -e; groupadd --system airstack --gid 432; \
+  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
   chown -R airstack:airstack /home/airstack
 
 # passwordless sudo enabled for airstack user. should only do for development environment.
 # RUN [ $AIRSTACK_TAGS_ENV = "development" ] && echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && usermod --shell /bin/bash airstack
 RUN \
-  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && \
+  set -e; echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
 #runit install
@@ -137,9 +136,8 @@ EXPOSE 7946
 
 #env vars
 RUN \
-  mkdir -vp /etc/airstack && \
+  set -e; mkdir -vp /etc/airstack; \
   echo $AIRSTACK_RUNTIME_VARS | jq '' | tee /etc/airstack/runtime.json
-
 
 
 ################################################################################

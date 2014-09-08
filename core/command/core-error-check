@@ -22,7 +22,7 @@ error_check() {
 }
 
 main() {
-  error_check()
+  error_check "$@"
 }
 
 main "$@"

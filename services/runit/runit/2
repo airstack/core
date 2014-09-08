@@ -104,7 +104,9 @@ set -x
 
 /command/core-json-deepmerge $(ls /package/airstack/*/config.json) | tee /etc/airstack/runtime.json
 
-[ $(echo $AIRSTACK_RUNTIME_VARS | wc -m) -lt 4 ] && AIRSTACK_RUNTIME_VARS="{}"
+# set a sane default for AIRSTACK_RUNTIME_VARS TODO: more
+( [ -z $AIRSTACK_RUNTIME_VARS ] || [ $(echo $AIRSTACK_RUNTIME_VARS | wc -m) -lt 4 ] ) && AIRSTACK_RUNTIME_VARS="{}"
+
 echo $AIRSTACK_RUNTIME_VARS | tee /tmp/runtime.json
 /command/core-json-deepmerge /etc/airstack/runtime.json /tmp/runtime.json | tee /etc/airstack/runtime'{news}'.json
 mv -f /etc/airstack/runtime'{news}'.json /etc/airstack/runtime.json

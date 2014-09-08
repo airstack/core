@@ -89,7 +89,7 @@ rebuild: clean build
 
 test: init set_test_cmd debug
 set_test_cmd:
-	$(eval CMD = /bin/bash -c "cd /package/airstack/test && busted *.lua")
+	$(eval CMD = /bin/bash -c "cd /package/airstack/test && busted *_spec.*")
 
 tag_latest:
 	@docker tag $(NAME):$(VERSION) $(NAME):latest

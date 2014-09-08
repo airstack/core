@@ -30,6 +30,21 @@ msg_warn() {
 }
 
 ###
+# Install packages
+#
+# usage: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Examples: pkg_install haproxy
+#           pkg_install openssh-server wget
+###
+pkg_install() {
+    set -x
+    DEBIAN_FRONTEND=noninteractive
+    apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y "$@"
+    set +x
+}
+
+
+###
 # usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
 # Examples: error_check "The wheels just came off!" 110
 #           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
@@ -42,7 +57,6 @@ msg_warn() {
 #
 # Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
 ###
-
 error_check() {
   if [ "$?" -ne 0 ]; then
     local err_value; err_value="$?"

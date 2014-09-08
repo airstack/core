@@ -111,7 +111,8 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # chpst -e /etc/airstack/env chpst -e env
 # /package/airstack/core/service-conf /package/airstack/core/config.json /package/airstack/socklog-unix/config.json
 /package/airstack/core/service-conf socklog-unix 2>&1 && msg_ok
-error_check ""
+error_check "enabling socklog-unix "
+
 if [ "$TMP_RUNLEVEL" != "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf /package/airstack/core/config.json
 fi

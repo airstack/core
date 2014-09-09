@@ -2,12 +2,12 @@
   "services": {
     "dropbear": {
       "state": "down",
-      "enable": "echo \"$AIRSTACK_USER_NAME\":\"$AIRSTACK_USER_PASSWORD\" | chpasswd",
+      "enable": "echo \"airstack\":\"airstack\" | chpasswd",
       "disable": "",
       "run": "/usr/sbin/dropbear -F -E -R",
       "check": "",
       "finish": "",
-      "log": "exec chpst -u root logger -t $SERVICE_NAME -p local0.notice",
+      "log": "exec chpst -u root logger -t dropbear -p local0.notice",
       "tags": ["ssh", "dropbear"],
       "input": [{"source": "any", "destination": "any", "port": "22", "protocol": "tcp", "tags": [ "" ]}],
       "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp","tags": [ "" ]}]

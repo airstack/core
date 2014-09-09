@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
-# set -x
+
+#
 # Usage: pass in a list of services to configure
 # Example: service-conf serf haproxy
 
@@ -8,128 +9,117 @@ set -e
 ERROR_MESSAGE_DEFAULT="[ERROR] service-conf -"
 [ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
-# TODO: use the "state" key in config.json
-init() {
-  echo "hi"
-}
 
 ###
 # Set up necessary service configs after running the enable var contents.
 # Usage: pass in the service name in all lowercase.
 ###
 # run the enable command for a service.
+# TODO: use the "state" key in config.json
 service_enable_pre() {
   set +e
+
   # don't do anything if blank
-  [ -z "$1" ] && return 1
+  [ -z "$1" ] && return 0
 
   local service_name; service_name="$1"
-  local service_name_upcase; service_name_upcase=$( echo "$1" | tr "[:lower:]" "[:upper:]" )
-  local enable_name; enable_name=$(find /service/$service_name/env/* -name '*_ENABLE' | head -n1)
-  # local enable_name; enable_name=$(find /service/$service_name/env/* -name '*_ENABLE' | head -n1)
-
-  # TODO: jq deep merge-ish. example of somethin...
-  # cat /etc/airstack/runtime.json | jq --argfile socklog_unix /package/airstack/socklog-unix/config.json ' .services + $socklog_unix[]'
-
-  chpst -e /service/$service_name/env -u root eval "$SERVICES$service_name_upcase_ENABLE"
-  error_check "failure in service_enable_pre"
+  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_ENABLE' | head -n1)
+  chpst -e /env/$service_name/ -u root sh $cmd_name
+  # error_check "failure in service_enable_pre"
 
   return 0
 }
 
-###
-# Set up necessary service configs after running the enable var contents.
-###
-service_enable_post() {
-  set +e
-  echo "Enabling $SERVICE_NAME"
-  [ -e /etc/sv/$SERVICE_NAME/run ] && chmod ug+x /etc/sv/$SERVICE_NAME/run
-  [ -e /etc/sv/$SERVICE_NAME/log/run ] && chmod ug+x /etc/sv/$SERVICE_NAME/log/run
-
-  for i in ${TMP_RUNLEVELS:-multi}; do
-    [ ! -e /etc/runit/runsvdir/$i/$SERVICE_NAME ] && ln -s /etc/sv/$SERVICE_NAME /etc/runit/runsvdir/$i
-  done
-
-  # adding to init.d for service command compatibility
-  ln -sf /usr/bin/sv /etc/init.d/$SERVICE_NAME
-  return 0
-}
 
 service_run_init() {
   set +e
 
-  # don't do anything if blank
-  [ -z "$SERVICE_RUN" ] && return 1
+  local service_name; service_name="$1"
+  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_RUN' | head -n1)
 
+  # don't do anything if blank
+  [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
+
+  BASEDIR=/etc/sv
   # create runit service dir
-  [ ! -e $BASEDIR/$SERVICE_NAME/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/
+  [ -e $BASEDIR/$service_name/ ] || mkdir -p $BASEDIR/$service_name/
+
+  # create env directory for service
+  ln -s /env/"$service_name" $BASEDIR/$service_name/env
 
   # create runit service file
-  echo "#!/bin/sh" > $BASEDIR/$SERVICE_NAME/run
-  echo "exec 2>&1" >> $BASEDIR/$SERVICE_NAME/run
+  echo "#!/bin/sh" > $BASEDIR/$service_name/run
+  echo "exec 2>&1" >> $BASEDIR/$service_name/run
   echo "socklog-check || exit 1"
-  echo "$SERVICE_RUN" >> $BASEDIR/$SERVICE_NAME/run
+  cat "$cmd_name" >> $BASEDIR/$service_name/run
 
-  if [ "$?" -ne 0 ]; then
-    echo "$SERVICE_NAME run script failure.\n" >&2
-    exit ${E_BAD_RUN}
-  fi
+  # core-error-check "service_run_init error"
 
   return 0
 }
+
 
 service_log_init() {
   set +e
 
+  local service_name; service_name="$1"
+  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_LOG' | head -n1)
+
   # don't do anything if blank
-  [ -z "$SERVICE_LOG" ] && return 1
+  [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
+
+  BASEDIR=/etc/sv
 
   # create runit service log dir
-  [ ! -e $BASEDIR/$SERVICE_NAME/log/ ] && mkdir -p $BASEDIR/$SERVICE_NAME/log/
+  [ ! -e $BASEDIR/$service_name/log/ ] && mkdir -p $BASEDIR/$service_name/log/
 
   # create runit service log file
-  local logdir; logdir="$BASEDIR/$SERVICE_NAME/log/run"
+  local logdir; logdir="$BASEDIR/$service_name/log/run"
   echo "#!/bin/sh" > "$logdir"
   echo "exec 2>&1" >> "$logdir"
-  echo $(eval echo "$SERVICE_LOG") >> "$logdir"
+  cat "$cmd_name" >> "$logdir"
 
-  if [ "$?" -ne 0 ]; then
-    echo "$SERVICE_NAME log script failure.\n" >&2
-    exit ${E_BAD_RUN}
-  fi
+  # core-error-check "log script failure"
 
   return 0
 }
 
+
+###
+# Set up necessary service configs after running the enable, run and log var contents.
+###
+service_enable_post() {
+  set +e
+
+  local service_name; service_name="$1"
+  echo "Enabling $service_name"
+
+  chmod ug+x /etc/sv/$service_name/run
+  chmod ug+x /etc/sv/$service_name/log/run
+
+  # TODO: hook up runlevels to not hard-code this.
+  [ $service_name="socklog-unix" ] && tmp_runlevels="single multi"
+
+  local i;
+  for i in ${tmp_runlevels:-multi}; do
+    [ ! -e /etc/runit/runsvdir/$i/$service_name ] && ln -sv /etc/sv/$service_name /etc/runit/runsvdir/$i/
+  done
+
+  # adding to init.d for service command compatibility
+  ln -sf /usr/bin/sv /etc/init.d/$service_name
+  return 0
+}
+
+
 main() {
-  # TODO: use /etc/airstack/runtime.json instead of passed in file params
-  #   runtime.json contains the combined service vars
-
-  # delete # init "$@"
-
-  # service_settings_load #$SERVICE_SETTINGS
-  # main_settings_load #$MAIN_SETTINGS
-
-  # delete  # # Now use core loading functions to bring in the json objects.
-  # delete  # /package/airstack/core/json2env-core $MAIN_SETTINGS && \
-  # delete  # core_settings_load
-  # delete
-  # delete  # /package/airstack/core/service-json2env $SERVICE_SETTINGS && \
-  # delete  # service_settings_load
 
   for i in "$@"; do
     service_enable_pre $i
+    service_run_init $i
+    service_log_init $i
+    service_enable_post $i
   done
-
-# redo  # service_run_init
-# redo  # printf "$SERVICE_NAME run is now:\n"
-# redo  # printf "$(cat /etc/sv/$SERVICE_NAME/run)\n"
-# redo
-# redo  # service_log_init
-# redo  # printf "$SERVICE_NAME log is now:\n"
-# redo  # printf "$(cat /etc/sv/$SERVICE_NAME/log/run)\n"
-# redo
-# redo  # service_enable_post
 }
+
 
 main "$@"

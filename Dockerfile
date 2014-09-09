@@ -1,3 +1,15 @@
+#
+# Conventions Used in this Dockerfile
+#
+# RUN:
+# - single command on one line
+# - multiple commands with `set -e`
+#
+# Packages:
+# - use core helper functions to install packages
+# - /command/core-package-install
+#
+
 FROM debian:jessie
 MAINTAINER airstack team <support@airstack.io>
 

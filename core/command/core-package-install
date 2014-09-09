@@ -1,6 +1,11 @@
 #!/bin/sh
 
-#load the helpers
+#
+# Package install function wrapper
+# @see core/airstack-helpers
+#
+
+
 . /package/airstack/core/airstack-helpers
 ERROR_MESSAGE_DEFAULT="[ERROR] core-package-install"
 

@@ -12,7 +12,6 @@
 # ERROR_MESSAGE_DEFAULT="[ERROR] CHANGEME -"
 # [ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
-## begin helper functions
 
 msg() {
     # bold
@@ -34,15 +33,18 @@ msg_warn() {
     printf "\033[1m\033[33mWARNING: $@\033[m"
 }
 
-###
-# Install packages
+###*
+# Package install helper.
 #
-# usage: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Always use this function to install packages.
+#
+# Use: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: pkg_install haproxy
 #           pkg_install openssh-server wget
 #
-# Refs: apt-config dump; dpkg --force-help;
-#       http://www.tecmint.com/useful-basic-commands-of-apt-get-and-apt-cache-for-package-management/
+# @param package  Space separated list of package names
+# @return 0 on success
+# @see docs/references.md#apt
 ###
 pkg_install() {
     set -x
@@ -51,8 +53,10 @@ pkg_install() {
     set +x
 }
 
-###
-# Install packages in parallel.
+###*
+# WIP: Install packages in parallel.
+#
+# This should not be used yet. Testing out faster pkg install.
 #
 # aria2 is a lightweight multi-protocol & multi-source,
 # cross platform download utility operated in command-line.
@@ -61,7 +65,6 @@ pkg_install() {
 # Refs: https://github.com/tatsuhiro-t/aria2
 #       http://ubuntuforums.org/showthread.php?t=1493421
 ###
-
 pkg_install_fast() {
   apt-get -y --print-uris -qq upgrade|awk '
       BEGIN {
@@ -81,8 +84,12 @@ pkg_install_fast() {
       }'|aria2c -M- --file-allocation=none -d /var/cache/apt/archives/
 }
 
-###
-# usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
+###*
+# Checks error code of last command and exits if error.
+#
+# Prints message or ERROR_MESSAGE_DEFAULT and optionally return code if specified.
+#
+# usage: error_check <message> <code>
 # Examples: error_check "The wheels just came off!" 110
 #           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
 #           error_check
@@ -92,7 +99,10 @@ pkg_install_fast() {
 # When a string is passed in, you can also pass in a custom error code.
 # Error code defaults to 113
 #
-# Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
+# @param message  Optional string message to stdout; Defaults to ERROR_MESSAGE_DEFAULT
+# @param code     Optional error code to exit with if error is found
+# @return 0 if no error was found
+# @see [Bash exit code values](http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF)
 ###
 error_check() {
   if [ "$?" -ne 0 ]; then
@@ -102,7 +112,9 @@ error_check() {
   fi
 }
 
-###
+###*
+# Recursively merge contents of two or more json files.
+#
 # usage: json_deepmerge file0 file1 file2 file3 ...
 # Examples: json_deepmerge /package/airstack/core/config.json /package/airstack/dropbear/config.json
 #           files="/package/airstack/core/config.json /package/airstack/dropbear/config.json /package/airstack/serf/config.json /package/airstack/haproxy/config.json"
@@ -111,9 +123,11 @@ error_check() {
 # Does a recursive deep merge on a list of json files. Posix-shell compatible.
 # Dependencies: jq
 # Outputs results to stdout
+#
+# @param filenames  Space separated list of two or more json files
+# @return 0 on success, jq error codes on failure
 # Reference: http://stackoverflow.com/questions/19529688/how-to-merge-2-json-file-using-jq
 ###
-
 json_deepmerge() {
   local count; count=0
   local params; params=""
@@ -128,11 +142,12 @@ json_deepmerge() {
   jq --slurp "$params" $tmp_files
 }
 
-#=====
 
-###
+
+
+################################################################################
 # secret shell scripting reference stuff:
-###
+################################################################################
 
 # posix shell scripting - http://pubs.opengroup.org/onlinepubs/009604599/utilities/xcu_chap02.html#tag_02_09_04
 # http://pubs.opengroup.org/onlinepubs/009604599/utilities/xcu_chap02.html

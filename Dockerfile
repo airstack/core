@@ -24,7 +24,8 @@ RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo 
 RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc
 
 # Packages::runit
-RUN /command/core-package-install runit
+RUN set -e; \
+  touch /etc/inittab; /command/core-package-install runit
 
 # Packages::socklog
 RUN /command/core-package-install socklog ipsvd

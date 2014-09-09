@@ -2,8 +2,8 @@
 
 # Load the core /env/runtime.json ".services" into env variables.
 # Intended to simplify access/use of our core vars in scripts.
-# Env var files are created in /service/<SERVICE>/env
-# And available as symlinks in /env/<SERVICE>/env
+# Env var files are created in /env/<SERVICE>/env
+# And available as symlinks in /service/<SERVICE>/env
 #
 # Loads specific file location or defaults to /env/runtime.json
 # Params: $1  path/to/json/file
@@ -12,9 +12,9 @@
 
 load_vars() {
   local runtime; runtime=$(cat /env/RUNTIME)
-  for key in $(printf "%" "$runtime" | jq -r -c '.services | keys[]'); do
-    mkdir -p /service/"$key"/env
-    cd /service/"$key"/env
+  for key in $(echo "$runtime" | jq -r -c '.services | keys[]'); do
+    mkdir -p /env/"$key";
+    cd /env/"$key"/
     /package/airstack/core/json2env ".services[\"$key\"]"
   done
 }

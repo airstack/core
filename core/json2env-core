@@ -3,14 +3,16 @@
 
 # Load the core config.json file into env variables.
 # Intended to simplify access/use of our core vars in scripts.
-# Env var files are created in /etc/airstack/env
+# Env var files are created in /env
+# Loads specific file location or defaults to /env/runtime.json
+# Params: $1  path/to/json/file
+#
 # Usage: json2env-core
-
+#        json2env-core /env/RUNTIME
 load_vars() {
-  local runtime; runtime=$(cat /etc/airstack/runtime.json)
-  mkdir -p /etc/airstack/env
-  cd /etc/airstack/env
-  for key in $(echo $runtime | jq -r -c 'keys[]'); do
+  local runtime; runtime=$(cat ${1:-/env/RUNTIME})
+  cd /env
+  for key in $(echo "$runtime" | jq -r -c 'keys[]'); do
     [ "$key" = "services" ] && continue
     /package/airstack/core/json2env ".\"$key\""
   done

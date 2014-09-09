@@ -104,15 +104,18 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
+  set -e
   [ -f /env ] || mkdir -vp /env
   local json_new="/env/RUNTIME_NEW"
   printf ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
   /command/core-json-deepmerge \
     $(ls /package/airstack/*/config.json) $json_new > /env/RUNTIME
+  set +e
 }
-set +x
 
 merge_runtime_jsons
+error_check "merge failure. ohnoes."
+
 
 # Create env files in /etc/airstack/env and /service/<service>/env
 

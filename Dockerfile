@@ -114,9 +114,6 @@ EXPOSE 22
 
 #haproxy install
 ADD services/haproxy /package/airstack/haproxy
-# TODO: John, what service runs in core and needs ports 443 and 80?
-#   Move these to a webapp container, yes?
-EXPOSE 443 80
 
 #serf install
 ADD services/serf /package/airstack/serf

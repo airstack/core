@@ -140,6 +140,7 @@ json_deepmerge() {
 # posix error codes: (tl;dr users should use exit codes 64-113 only)
 # "The author of this document proposes restricting user-defined exit codes to the range 64 - 113 (in addition to 0, for success), to conform with the C/C++ standard. This would allot 50 valid codes, and make troubleshooting scripts more straightforward."
 # http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
+# http://stackoverflow.com/questions/4419952/difference-between-return-and-exit-in-bash-functions
 
 # posix shell guide for bash devs.
 # http://mywiki.wooledge.org/Bashism

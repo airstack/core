@@ -35,10 +35,10 @@ USERNAME = $(USERDIR)
 all: build
 
 #boot2docker functions
-
 help:
 	@printf "\
 	Usage of airstack Makefile:\n\
+	  console   start container w/services and bash prompt\n\
 	  build			locally build current image\n\
 	  rebuild		clean and build\n\
 	  clean			remove docker image tree\n\
@@ -46,7 +46,6 @@ help:
 	  test			run tests and exit\n\
 	  run_daemon	run as a daemon\n\
 	  repair		destroy and re-init boot2docker (osx-only)\n\
-
 	"
 repair:
 ifeq ($(uname_S),Darwin)
@@ -118,6 +117,12 @@ runit-init-vars:
 	$(eval CMD = runit-init)
 
 runit-init: runit-init-vars debug
+
+console-vars:
+	$(eval USERNAME = root)
+	$(eval CMD = sh -c "{ /etc/runit/2 &}; chpst -u airstack bash")
+
+console: console-vars debug
 
 debug: init
 	@if [ `boot2docker ssh 'ifconfig docker0 | grep -io multicast | wc -w'` -lt 1 ]; \

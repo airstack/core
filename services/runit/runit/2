@@ -13,8 +13,6 @@ msg "Initializing Runit Level 2\n"
 # defaults to 'multi', but can pass in different runlevel.
 # /etc/runit/2 single
 
-set -x;
-
 TMP_RUNLEVEL=$1
 runsvchdir ${TMP_RUNLEVEL:="multi"} >/dev/null
 
@@ -104,7 +102,7 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
-  [ -f /env ] || mkdir -vp /env
+  [ -d /env ] || mkdir -vp /env
   local json_new="/env/RUNTIME_NEW"
   echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
   /command/core-json-deepmerge \
@@ -126,11 +124,16 @@ msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 
 # chpst -e /etc/airstack/env chpst -e env
 # /package/airstack/core/service-conf /package/airstack/core/config.json /package/airstack/socklog-unix/config.json
-/package/airstack/core/service-conf socklog-unix 2>&1 && msg_ok
-error_check "enabling socklog-unix "
+
+# TODO: remove
+# /package/airstack/core/service-conf socklog-unix 2>&1 && msg_ok
+# error_check "enabling socklog-unix "
+
+# TODO: enable all for now?
+AIRSTACK_SERVICES=$(cat /env/RUNTIME | jq -r '.services | keys[]')
 
 if [ "$TMP_RUNLEVEL" != "single" ]; then
-	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf
+	echo $AIRSTACK_SERVICES | xargs -n1 sh /package/airstack/core/service-conf
 fi
 
 printf "%s\n" "services currently running:"
@@ -138,9 +141,9 @@ update-service --list
 
 printf "\n%s\n" "Showing log entries from: /var/log/syslog"
 
-# tail syslog in foreground
+# tail syslog in foreground if file larger than 0
 while true; do
-[ -e /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog
+[ -s /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog
 #printf '.' &&
 sleep 0.1
 done

@@ -28,7 +28,7 @@ json2env() {
   # Convert '.' '[' ']' to '_'
   filename=$(echo $filename | sed -e 's/\(\[\|\]\|\.\)/_/g')
   # Remove non alphanumeric, '_', or '-' chars
-  filename=$(echo $filename | sed -e 's/[^[:alnum:]|_|-]//g')
+  filename=$(echo $filename | sed -e 's/[^[:alnum:]]//g')
   # Remove double underscores
   filename=$(echo $filename | sed -e 's/__/_/g')
   # Remove trailing underscores

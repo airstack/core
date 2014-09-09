@@ -97,7 +97,7 @@ pkg_install_fast() {
 error_check() {
   if [ "$?" -ne 0 ]; then
     local err_value; err_value="$?"
-    printf "${ERROR_MESSAGE_DEFAULT-"[ERROR] script command failure"} ${1}\n" >&2
+    printf "%s\n" "${ERROR_MESSAGE_DEFAULT-"[ERROR] script command failure"} ${1}" >&2
     exit ${2-113}
   fi
 }

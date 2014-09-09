@@ -55,6 +55,10 @@ ifeq ($(uname_S),Darwin)
 	Repairing boot2docker\n\
 	=====================\n\
 	"
+	@printf "\nTurning off existing boot2docker VMs..."
+	@boot2docker poweroff
+	@printf "DONE\n"
+
 	@printf "\nRemoving existing boot2docker setup..."
 	@boot2docker destroy
 	@printf "DONE\n"

@@ -104,23 +104,22 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
-  set -e
   [ -f /env ] || mkdir -vp /env
   local json_new="/env/RUNTIME_NEW"
-  printf ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
+  echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
   /command/core-json-deepmerge \
     $(ls /package/airstack/*/config.json) $json_new > /env/RUNTIME
-  set +e
 }
 
 merge_runtime_jsons
 error_check "merge failure. ohnoes."
 
 
-# Create env files in /etc/airstack/env and /service/<service>/env
+# Create env files in /env and /service/<service>/env
 
 /package/airstack/core/json2env-core
 /package/airstack/core/json2env-services
+
 
 msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 # /package/airstack/socklog-unix/enable 2>&1 && msg_ok
@@ -134,10 +133,10 @@ if [ "$TMP_RUNLEVEL" != "single" ]; then
 	echo $(for i in $AIRSTACK_SERVICES; do echo /package/airstack/$i/config.json; done) | exec xargs -n1 sh /package/airstack/core/service-conf
 fi
 
-printf "services currently running:\n"
+printf "%s\n" "services currently running:"
 update-service --list
 
-printf "\nShowing log entries from: /var/log/syslog\n"
+printf "\n%s\n" "Showing log entries from: /var/log/syslog"
 
 # tail syslog in foreground
 while true; do

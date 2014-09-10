@@ -124,12 +124,12 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 ADD services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
-#haproxy install
-ADD services/haproxy /package/airstack/haproxy
-
 #serf install
 ADD services/serf /package/airstack/serf
 EXPOSE 7946
+
+#haproxy install
+ADD services/haproxy /package/airstack/haproxy
 
 
 ################################################################################

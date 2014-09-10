@@ -68,7 +68,7 @@ focus on app development. For devops, Aircore provides best practices, a clear
 mental model, and predictable patterns so the devop can focus on mission
 critical infrastructure decisions.
 
-### Design Concerns
+# Design Concerns
 
 - Microservice architecture
 - Small image disk footprint: <200MB
@@ -96,7 +96,7 @@ consideration when building Aircore:
 
 - Systemd vs The World
   - Aircore uses runit
-  – See [init_system.md](init_system.md)
+  - See [init_system.md](init_system.md)
 - Containers vs Virtual Machines
   - Aircore currently builds Docker containers
   - Aircore is an abstraction layer that will support VMs in the future

@@ -16,6 +16,7 @@
 - [Organization and Standards](standards.md)
 - [Init System](init_system.md)
 - [Services](services/README.md)
+- [Service Discovery](services/discovery.md)
 - [Service Configuration](services/config.md)
 - [Runtime Configuration](runtime_config.md)
 - [Logging](logging.md)

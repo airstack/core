@@ -27,7 +27,7 @@
 - [Security](security.md)
 - [References](references.md) – links to articles, snippets, attributions, etc.
 
-# Developer Documentation
+# Contributor Documentation
 
 - [Contributing](contributors/contributing.md)
 - [Documentation Style Guide](contributors/documentation.md)

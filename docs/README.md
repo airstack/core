@@ -29,6 +29,6 @@
 
 # Developer Documentation
 
-- [Contributing](contributing/contributing.md)
-- [Documentation Style Guide](contributing/documentation.md)
+- [Contributing](contributors/contributing.md)
+- [Documentation Style Guide](contributors/documentation.md)
 - [License](/LICENSE)

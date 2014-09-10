@@ -13,7 +13,7 @@ Three hashes to end the block.
 No spaces after comment block and function.
 At least two spaces before comment block and any code above it.
 
-```
+```bash
 ###*
 # Short description sentence.
 #

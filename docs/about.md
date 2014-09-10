@@ -70,19 +70,19 @@ critical infrastructure decisions.
 
 ### Design Concerns
 
-- microservice architecture
-- small image disk footprint: <200MB
-- small memory + cpu footprint of core services
-- short lived processes for non-daemon scripts
-- common tools across distros
-- opinionated micro framework vs universal swiss army knife
-- intuitive, simple mental model
-- aggressively opinionated best practices for core services
-- clear separation of framework vs underlying tools
+- Microservice architecture
+- Small image disk footprint: <200MB
+- Small memory + cpu footprint of core services
+- Short lived processes for non-daemon scripts
+- Common tools across distros
+- Opinionated micro framework vs universal swiss army knife
+- Intuitive, simple mental model
+- Aggressively opinionated best practices for core services
+- Clear separation of framework vs underlying tools
 - 80/20 rule
   - super simple for 80% use cases
   - easily extensible for 20% use cases
-- support [12 factor apps](http://12factor.net/)
+- Support [12 factor apps](http://12factor.net/)
 
 
 # Controversies

@@ -1,5 +1,7 @@
-We're using modified versions of [JavaDoc](http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments)
-syntax for documenting all things Airstack.
+################################################################################
+
+Aircore uses a modified versions of [JavaDoc](http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments)
+syntax for documenting code.
 
 
 # Bash Scripts

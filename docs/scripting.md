@@ -1,6 +1,6 @@
 ################################################################################
 
-WIP
+### Doc Status: WIP
 
 Airstack aims to make developers and devops more productive. One of the biggest productivity
 impediments with servers is dealing with inconsistent tool versions and limitations of

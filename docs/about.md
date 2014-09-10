@@ -90,7 +90,6 @@ critical infrastructure decisions.
 The *nix (Unix/Linux) world is not without its controversies. Many open source
 projects live and die by which philosophical camp they belong to.
 
-################################################################################
 There are a few raging debates in the devops world that were taken into careful
 consideration when building Aircore:
 

@@ -1,8 +1,8 @@
 ################################################################################
 
-# Product Comparison Matrix
+### Doc Status: WIP
 
-WIP
+# Product Comparison Matrix
 
 Docker is a lower level Linux container API and therefore cannot be overly opinionated.
 Docker makes using Linux kernel cgroups much easier, but it's too low level to make devops

@@ -26,6 +26,7 @@
 - [Errors](errors.md)
 - [Tests](tests.md)
 - [Security](security.md)
+- [Troubleshooting](troubleshooting.md)
 - [References](references.md) – links to articles, snippets, attributions, etc.
 
 # Contributor Documentation

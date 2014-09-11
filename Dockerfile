@@ -40,7 +40,7 @@ RUN set -e; \
   touch /etc/inittab; /command/core-package-install runit
 
 # Packages::socklog
-RUN /command/core-package-install socklog ipsvd
+RUN /command/core-package-install socklog ipsvd nc
 
 # Packages::dropbear
 RUN /command/core-package-install dropbear

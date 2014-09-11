@@ -1,0 +1,29 @@
+{
+  "services": {
+    "socklog-remote": {
+      "install": "",
+      "state": "up",
+      "enable": [
+        "printf '%s\\n' '*.*' 's1000' 'N6' 't5' '!tryto -pv -k 10 -n 10 nc -q0 $(basename $(pwd)) 12000' > config",
+        "mkdir -vp /var/log/socklog/main/toremote/192.168.59.3 && mv config /var/log/socklog/main/toremote/192.168.59.3/",
+        "sv hup svlogd"
+      ],
+      "disable": "",
+      "run": "sv check socklog-unix/log >/dev/null || exit 1; ",
+      "check": "",
+      "finish": "rm -rf /var/log/socklog/main/toremote/; sv hup svlogd",
+      "log": "",
+      "tags": ["logger", "remote"],
+      "input": [],
+      "output": [
+        {
+          "source:":"any",
+          "destination": "192.168.59.3",
+          "port": "514",
+          "protocol": "tcp",
+          "tags": [ "syslog", "tcp" ]
+        }
+      ]
+    }
+  }
+}

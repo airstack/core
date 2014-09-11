@@ -23,8 +23,29 @@ service_enable_pre() {
   [ -z "$1" ] && return 0
 
   local service_name; service_name="$1"
-  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_ENABLE' | head -n1)
-  chpst -e /env/$service_name/ -u root sh $cmd_name
+
+  # if multiple entries, run each numbered command in order
+  # otherwise just run the single one.
+  local cmd_files;
+  cmd_files=$(ls /env/$service_name/*_ENABLE*)
+  if [ $(printf "%s" "$cmd_files" | wc -w) -gt 1 ]; then
+    # multiple
+    cmd_run=$(printf "%s\n" "$cmd_files" | tail -n+2)
+    set -e
+    for i in $cmd_run; do
+      chpst -e /env/$service_name/ -u root sh $i
+    done
+    set +e
+  elif [ $(printf "%s" "$cmd_files" | wc -w) -eq 1 ]; then
+    # single
+    cmd_run=$(printf "%s\n" "$cmd_files" | head -n1)
+    chpst -e /env/$service_name/ -u root sh $cmd_run
+  else
+    echo "no enable script" && return 0
+  fi
+
+  # TODO: delete this
+  # chpst -e /env/$service_name/ -u root sh $cmd_name
   # error_check "failure in service_enable_pre"
 
   return 0

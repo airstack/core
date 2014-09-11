@@ -23,8 +23,29 @@ service_enable_pre() {
   [ -z "$1" ] && return 0
 
   local service_name; service_name="$1"
-  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_ENABLE' | head -n1)
-  chpst -e /env/$service_name/ -u root sh $cmd_name
+
+  # if multiple entries, run each numbered command in order
+  # otherwise just run the single one.
+  local cmd_files;
+  cmd_files=$(ls /env/$service_name/*_ENABLE*)
+  if [ $(printf "%s" "$cmd_files" | wc -w) -gt 1 ]; then
+    # multiple
+    cmd_run=$(printf "%s\n" "$cmd_files" | tail -n+2)
+    set -e
+    for i in $cmd_run; do
+      chpst -e /env/$service_name/ -u root sh $i
+    done
+    set +e
+  elif [ $(printf "%s" "$cmd_files" | wc -w) -eq 1 ]; then
+    # single
+    cmd_run=$(printf "%s\n" "$cmd_files" | head -n1)
+    chpst -e /env/$service_name/ -u root sh $cmd_run
+  else
+    echo "no enable script" && return 0
+  fi
+
+  # TODO: delete this
+  # chpst -e /env/$service_name/ -u root sh $cmd_name
   # error_check "failure in service_enable_pre"
 
   return 0
@@ -32,7 +53,7 @@ service_enable_pre() {
 
 
 service_run_init() {
-  set +e
+  set -e -x
 
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_RUN' | head -n1)
@@ -41,18 +62,21 @@ service_run_init() {
   [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
 
   BASEDIR=/etc/sv
+
   # create runit service dir
   [ -e $BASEDIR/$service_name/ ] || mkdir -p $BASEDIR/$service_name/
 
-  # create env directory for service
+  # symlink env directory for service
   ln -s /env/"$service_name" $BASEDIR/$service_name/env
 
   # create runit service file
-  echo "#!/bin/sh" > $BASEDIR/$service_name/run
-  echo "exec 2>&1" >> $BASEDIR/$service_name/run
-  echo "socklog-check || exit 1"
-  cat "$cmd_name" >> $BASEDIR/$service_name/run
+  local cmd_file; cmd_file="$BASEDIR/$service_name/run"
+  echo "#!/bin/sh" > $cmd_file
+  echo "exec 2>&1" >> $cmd_file
+  echo "socklog-check || exit 1" >> $cmd_file
+  cat "$cmd_name" >> $cmd_file
 
+  chmod ug+x $cmd_file
   # core-error-check "service_run_init error"
 
   return 0
@@ -60,7 +84,7 @@ service_run_init() {
 
 
 service_log_init() {
-  set +e
+  set -x +e
 
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_LOG' | head -n1)
@@ -74,28 +98,53 @@ service_log_init() {
   [ ! -e $BASEDIR/$service_name/log/ ] && mkdir -p $BASEDIR/$service_name/log/
 
   # create runit service log file
-  local logdir; logdir="$BASEDIR/$service_name/log/run"
-  echo "#!/bin/sh" > "$logdir"
-  echo "exec 2>&1" >> "$logdir"
-  cat "$cmd_name" >> "$logdir"
+  local cmd_file; cmd_file="$BASEDIR/$service_name/log/run"
+  echo "#!/bin/sh" > "$cmd_file"
+  echo "exec 2>&1" >> "$cmd_file"
+  cat "$cmd_name" >> "$cmd_file"
 
+  chmod ug+x $cmd_file
   # core-error-check "log script failure"
 
   return 0
 }
 
+###
+# Enable the finish command for our services
+###
+service_finish_init() {
+  set +e -x
+
+  local service_name; service_name="$1"
+  local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_FINISH' | head -n1)
+
+
+  # don't do anything if blank
+  [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
+
+  BASEDIR=/etc/sv
+
+  # create runit service finish file
+  local cmdfile; cmd_file=$BASEDIR/$service_name/finish
+  echo "#!/bin/sh" > "$cmdfile"
+  echo "exec 2>&1" >> "$cmdfile"
+  cat "$cmd_name" >> "$cmdfile"
+
+  chmod ug+x $cmd_file
+  # core-error-check "log script failure"
+
+  return 0
+
+}
 
 ###
 # Set up necessary service configs after running the enable, run and log var contents.
 ###
 service_enable_post() {
-  set +e
+  set +e -x
 
   local service_name; service_name="$1"
   echo "Enabling $service_name"
-
-  chmod ug+x /etc/sv/$service_name/run
-  chmod ug+x /etc/sv/$service_name/log/run
 
   # TODO: hook up runlevels to not hard-code this.
   [ $service_name="socklog-unix" ] && tmp_runlevels="single multi"

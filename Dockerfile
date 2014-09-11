@@ -131,6 +131,8 @@ EXPOSE 7946
 #haproxy install
 ADD services/haproxy /package/airstack/haproxy
 
+#socklog-remote install
+ADD services/socklog-remote /package/airstack/socklog-remote
 
 ################################################################################
 # DEBUG

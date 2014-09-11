@@ -17,8 +17,6 @@ ERROR_MESSAGE_DEFAULT="[ERROR] service-conf -"
 # run the enable command for a service.
 # TODO: use the "state" key in config.json
 service_enable_pre() {
-  set +e
-
   # don't do anything if blank
   [ -z "$1" ] && return 0
 
@@ -53,8 +51,6 @@ service_enable_pre() {
 
 
 service_run_init() {
-  set -e -x
-
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_RUN' | head -n1)
 
@@ -76,7 +72,7 @@ service_run_init() {
   echo "socklog-check || exit 1" >> $cmd_file
   cat "$cmd_name" >> $cmd_file
 
-  chmod ug+x $cmd_file
+  chmod 750 $cmd_file
   # core-error-check "service_run_init error"
 
   return 0
@@ -84,8 +80,6 @@ service_run_init() {
 
 
 service_log_init() {
-  set -x +e
-
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_LOG' | head -n1)
 
@@ -103,18 +97,17 @@ service_log_init() {
   echo "exec 2>&1" >> "$cmd_file"
   cat "$cmd_name" >> "$cmd_file"
 
-  chmod ug+x $cmd_file
+  chmod 750 $cmd_file
   # core-error-check "log script failure"
 
   return 0
 }
 
+
 ###
 # Enable the finish command for our services
 ###
 service_finish_init() {
-  set +e -x
-
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_FINISH' | head -n1)
 
@@ -130,19 +123,18 @@ service_finish_init() {
   echo "exec 2>&1" >> "$cmdfile"
   cat "$cmd_name" >> "$cmdfile"
 
-  chmod ug+x $cmd_file
+  chmod 750 $cmd_file
   # core-error-check "log script failure"
 
   return 0
 
 }
 
+
 ###
 # Set up necessary service configs after running the enable, run and log var contents.
 ###
 service_enable_post() {
-  set +e -x
-
   local service_name; service_name="$1"
   echo "Enabling $service_name"
 
@@ -161,7 +153,6 @@ service_enable_post() {
 
 
 main() {
-
   for i in "$@"; do
     service_enable_pre $i
     service_run_init $i

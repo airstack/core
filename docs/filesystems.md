@@ -85,3 +85,11 @@ to live-restart samba services if the config file changes:
 ```bash
 ps -a | grep "[s]mbd -F" | awk '{print $1}' | xargs kill -HUP
 ```
+
+
+# Experimental
+
+ZFS on OSX:
+- https://openzfsonosx.org/
+- mount ZFS volume in to VM and then into container?
+

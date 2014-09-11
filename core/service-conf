@@ -27,7 +27,7 @@ service_enable_pre() {
   # if multiple entries, run each numbered command in order
   # otherwise just run the single one.
   local cmd_files;
-  cmd_files=$(ls /env/$service_name/*_ENABLE*)
+  cmd_files=$(ls /env/$service_name/*_ENABLE* | sort -n)
   if [ $(printf "%s" "$cmd_files" | wc -w) -gt 1 ]; then
     # multiple
     cmd_run=$(printf "%s\n" "$cmd_files" | tail -n+2)

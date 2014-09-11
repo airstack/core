@@ -1,20 +1,22 @@
 set -e
-mkdir -vp /var/log/socklog/main/toremote/192.168.59.3
+mkdir -vp /var/log/socklog/toremote/192.168.59.3
 
-cat > /var/log/socklog/main/toremote/192.168.59.3/config << "EOF"
+cat > /var/log/socklog/toremote/192.168.59.3/config << "EOF"
 *.*
 s1000
 N6
 t5
 !tryto -pv -k 10 -n 10 nc -q0 192.168.59.3 12000
 EOF
-chown -R log:nogroup /var/log/socklog/main/toremote
+chown -R log:nogroup /var/log/socklog/toremote
+chown root:root /var/log/socklog/toremote/192.168.59.3/config
 
 cat > /etc/service/socklog-unix/log/run << "EOF"
+#!/bin/sh
 exec chpst -ulog svlogd \
   main/main main/auth main/cron main/daemon main/debug main/ftp \
   main/kern main/local main/mail main/news main/syslog main/user main/toremote/192.168.59.3
 EOF
 chmod ug+x /etc/service/socklog-unix/log/run
 
-pidof svlogd && kill -HUP $(pidof svlogd) || return 0
+#pidof svlogd && kill -HUP $(pidof svlogd) || return 0

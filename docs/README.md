@@ -7,7 +7,6 @@
 - [How to Build Aircore?](guides/building_images.md)
 - [How to Run Aircore?](guides/running_images.md)
 - [How to Extend Aircore?](guides/extending_images.md)
-- [How to Debug Aircore?](debugging.md)
 - [What OSs are supported?](operating_systems.md)
 
 # Core Documentation
@@ -26,6 +25,7 @@
 - [Errors](errors.md)
 - [Tests](tests.md)
 - [Security](security.md)
+- [Debugging](debugging.md)
 - [Troubleshooting](troubleshooting.md)
 - [References](references.md) – links to articles, snippets, attributions, etc.
 

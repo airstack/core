@@ -98,6 +98,10 @@ type in a message and then press ctrl-c to exit.
 
 ## resources:
 
+svlogd:
+
+- http://smarden.org/runit/svlogd.8.html
+
 runit:
 
 - http://rubyists.github.io/2011/05/02/runit-for-ruby-and-everything-else.html

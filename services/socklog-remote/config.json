@@ -3,7 +3,7 @@
     "socklog-remote": {
       "install": "",
       "state": "up",
-      "enable": ". /package/airstack/socklog-remote/enable",
+      "enable": "chpst -e /env/socklog-remote -u root sh /package/airstack/socklog-remote/enable",
       "disable": "",
       "run": "sv check socklog-unix/log >/dev/null || exit 1; ",
       "check": "",

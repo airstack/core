@@ -7,7 +7,7 @@
       "disable": "",
       "run": "sv check socklog-unix/log >/dev/null || exit 1; ",
       "check": "",
-      "finish": "rm -rf /var/log/socklog/main/toremote/; pidof svlogd && kill -HUP $(pidof svlogd) || return 0",
+      "finish": "",
       "log": "",
       "tags": ["logger", "remote"],
       "input": [],

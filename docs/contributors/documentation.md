@@ -51,7 +51,7 @@ See [Dockerfile](/Dockerfile) for example.
 
 - http://stackoverflow.com/questions/1190427/shell-documentation-bash-ksh
 - http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments
-
+- https://google-styleguide.googlecode.com/svn/trunk/shell.xml
 
 
 

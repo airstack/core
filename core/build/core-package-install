@@ -1,0 +1,70 @@
+#!/bin/sh
+
+###*
+# Package install helper.
+#
+# Always use this function to install packages.
+#
+# Use: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Examples: pkg_install haproxy
+#           pkg_install openssh-server wget
+#
+# @param package  Space separated list of package names
+# @return 0 on success
+# @see docs/references.md#apt
+###
+pkg_install() {
+    set -x
+    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+    apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y "$@"
+    set +x
+}
+
+
+###*
+# WIP: Install packages in parallel.
+#
+# This should not be used yet. Testing out faster pkg install.
+#
+# aria2 is a lightweight multi-protocol & multi-source,
+# cross platform download utility operated in command-line.
+# It supports HTTP/HTTPS, FTP, BitTorrent and Metalink.
+#
+# Refs: https://github.com/tatsuhiro-t/aria2
+#       http://ubuntuforums.org/showthread.php?t=1493421
+###
+pkg_install_fast() {
+  apt-get -y --print-uris -qq upgrade|awk '
+      BEGIN {
+        print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        print "<metalink xmlns=\"urn:ietf:params:xml:ns:metalink\">"
+      }
+      { gsub(/\x27/,"",$1);
+        split($4, chksum, /:/)
+        printf "<file name=\"%s\">",$2
+        printf "<size>%d</size>", $3
+        printf "<hash type=\"%s\">%s</hash>", chksum[1], chksum[2]
+        printf "<url priority=\"1\">%s</url>", $1
+        print "</file>"
+      }
+      END {
+        print "</metalink>"
+      }'|aria2c -M- --file-allocation=none -d /var/cache/apt/archives/
+}
+
+
+pkg_install_error_check() {
+  if [ "$?" -ne 0 ]; then
+    local err_value; err_value="$?"
+    printf "%s\n" "[ERROR] core-package-install failed" >&2
+    exit ${2-113}
+  fi
+}
+
+# Main
+# Only run script if params are provided.
+# Useful for sourcing the file for testing or direct access to functions.
+if [ "$#" -gt 0 ]; then
+  pkg_install "$@"
+  pkg_install_error_check
+fi

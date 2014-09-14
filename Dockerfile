@@ -22,10 +22,11 @@ WORKDIR /root
 # Packages
 ################################################################################
 
-# install commands
-# airstack core utilities
-ADD core /package/airstack/core
-RUN mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
+# Add commands required for building images.
+ADD core/build /package/airstack/build
+RUN set -e; \
+  mkdir -v /command; \
+  ln -sv /package/airstack/build/core-* /command/
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
@@ -104,6 +105,11 @@ RUN set -e; \
 
 #runit install
 RUN /command/core-package-install runit
+# Add Airstack core commands
+# This should appear as late in the Dockerfile as possible to make builds as
+# fast as possible.
+ADD core /package/airstack/core
+RUN ln -sv /package/airstack/core/command/core-* /command/
 
 #socklog install
 ADD services/socklog-unix /package/airstack/socklog-unix

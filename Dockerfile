@@ -34,7 +34,9 @@ RUN set -e; \
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
-RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc
+RUN set -e; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc make; \
+  ln -s /usr/bin/vim.tiny /usr/bin/vim
 
 # Packages::runit
 RUN set -e; \

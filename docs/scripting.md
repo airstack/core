@@ -33,6 +33,29 @@ Since bash sucks for productivity, Airstack provides a higher level scripting fr
 - [Martin Fowler language comparison](http://martinsprogrammingblog.blogspot.com/2013/01/embedding-new-runtime-into-your-legacy.html?m=1)
 
 
+# Shell
+
+Airstack uses /bin/sh instead of /bin/bash to ensure POSIX compatibility and smaller memory usage.
+
+- [Bash FAQ](http://tiswww.case.edu/php/chet/bash/FAQ)
+- [Google Shell Style Guide](https://google-styleguide.googlecode.com/svn/trunk/shell.xml)
+- [posix shell scripting](http://pubs.opengroup.org/onlinepubs/009604599/utilities/xcu_chap02.html#tag_02_09_04)
+- [posix error codes](http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF)
+  - tl;dr users should use exit codes 64-113 only
+  - "The author of this document proposes restricting user-defined exit codes to the range 64 - 113 (in addition to 0, for success), to conform with the C/C++ standard. This would allot 50 valid codes, and make troubleshooting scripts more straightforward."
+  - http://stackoverflow.com/questions/4419952/difference-between-return-and-exit-in-bash-functions
+- posix shell guide for bash devs
+  - http://mywiki.wooledge.org/Bashism
+  - https://wiki.ubuntu.com/DashAsBinSh
+- [bash posix mode](http://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html#Bash-POSIX-Mode)
+- [bash references](http://www.gnu.org/software/bash/manual/bashref.html)
+- [man vs info](http://unix.stackexchange.com/questions/77514/what-is-gnu-info-for)
+
+Use shellcheck on build to ensure we aren't using bashisms
+- switch to mksh-static for dash
+- http://lowendbox.com/blog/replacing-big-fat-bash-with-dash-for-scripting/
+- http://rgeissert.blogspot.com/2012/03/bash-way-is-faster-but-only-with-bash.html
+
 
 # Lua
 

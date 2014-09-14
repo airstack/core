@@ -1,7 +1,6 @@
 #!/bin/sh
-
-###
-# usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
+###*
+# Usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
 # Examples: error_check "The wheels just came off!" 110
 #           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
 #           error_check
@@ -14,11 +13,40 @@
 # Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
 ###
 
-#load the helpers
-. /package/airstack/core/airstack-helpers
-
-main() {
-  error_check "$@"
+###*
+# Checks error code of last command and exits if error.
+#
+# Prints message or ERROR_MESSAGE_DEFAULT and optionally return code if specified.
+#
+# Usage: error_check <message> <code>
+# Examples: error_check "The wheels just came off!" 110
+#           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
+#           error_check
+#
+# If ERROR_MESSAGE_DEFAULT variable is defined, it will be used to prefix the error messages.
+# If ERROR_MESSAGE_DEFAULT is not defined, the calling script name will be used as the prefix.
+# Uses passed in string for error message if provided.
+# When a string is passed in, you can also pass in a custom error code.
+# Error code defaults to 113
+#
+# @param message  Optional string message to stdout; Defaults to ERROR_MESSAGE_DEFAULT
+# @param code     Optional error code to exit with if error is found
+# @return 0 if no error was found
+# @see [Bash exit code values](http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF)
+###
+error_check() {
+  if [ "$?" -ne 0 ]; then
+    local err_value; err_value="$?"
+    local default; default="[ERROR] ${basename $0}"
+    printf "%s\n" "${ERROR_MESSAGE_DEFAULT-"$default"} ${1}" >&2
+    exit ${2-113}
+  fi
 }
 
-main "$@"
+
+# Main
+# Only run script if params are provided.
+# Useful for sourcing the file for testing or direct access to functions.
+if [ "$#" -gt 0 ]; then
+  error_check "$@"
+fi

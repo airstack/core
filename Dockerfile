@@ -19,7 +19,7 @@ WORKDIR /root
 
 
 ################################################################################
-# Packages
+# PACKAGES
 ################################################################################
 
 # Add commands required for building images.
@@ -30,7 +30,7 @@ RUN set -e; \
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
-# Packages::Common
+# Packages::Base
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
@@ -89,10 +89,10 @@ RUN /command/core-package-install mksh
 
 
 ################################################################################
-# Services
+# CONFIG
 ################################################################################
 
-# password set in sshd/run script at ssh start. allows for override via env var.
+# Password set in sshd/run script at ssh start. allows for override via env var.
 RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
@@ -104,39 +104,51 @@ RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
+# Default run command
+CMD exec sudo -E sh /usr/local/bin/container-start
+
+
+################################################################################
+# SERVICES
+################################################################################
+
 # Add Airstack core commands
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
 ADD core /package/airstack/core
 RUN ln -sv /package/airstack/core/command/core-* /command/
 
-#socklog install
+#
+# RUNLEVEL 1
+# Start socklog and runit
+#
+
+# socklog
 ADD services/socklog-unix /package/airstack/socklog-unix
 
-#container init system
+# Container init system
 ADD services/runit /package/airstack/runit
 RUN /package/airstack/runit/enable
 
-CMD exec sudo -E sh /usr/local/bin/container-start
+#
+# RUNLEVEL 2
+#
 
-
-################################################################################
-# Runlevel 2
-################################################################################
-
-#dropbear install
+# dropbear
 ADD services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
-#serf install
+# serf
 ADD services/serf /package/airstack/serf
 EXPOSE 7946
 
-#haproxy install
+# haproxy
 ADD services/haproxy /package/airstack/haproxy
 
-#socklog-remote install
+# socklog-remote
 ADD services/socklog-remote /package/airstack/socklog-remote
+
+
 
 ################################################################################
 # DEBUG

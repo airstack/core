@@ -86,7 +86,6 @@ RUN moonrocks install --server=https://rocks.moonscript.org busted
 # Packages::staging
 RUN /command/core-package-install aria2
 RUN /command/core-package-install mksh
-RUN /command/core-package-install
 
 
 ################################################################################
@@ -105,8 +104,6 @@ RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
-#runit install
-RUN /command/core-package-install runit
 # Add Airstack core commands
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
@@ -115,7 +112,6 @@ RUN ln -sv /package/airstack/core/command/core-* /command/
 
 #socklog install
 ADD services/socklog-unix /package/airstack/socklog-unix
-RUN /command/core-package-install socklog ipsvd
 
 #container init system
 ADD services/runit /package/airstack/runit

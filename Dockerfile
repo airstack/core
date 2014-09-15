@@ -56,7 +56,7 @@ RUN /command/core-package-install dropbear
 RUN /command/core-package-install haproxy
 
 # Packages::serf
-RUN /command/core-slashpackage-install serf
+RUN /command/core-slashpackage-install serf-0.6.3
 
 # Packages::Lua
 RUN set -e; \

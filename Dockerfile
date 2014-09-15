@@ -17,23 +17,30 @@ USER root
 ENV HOME /root
 WORKDIR /root
 
+ONBUILD USER airstack
+ONBUILD ENV HOME /home/airstack
+ONBUILD WORKDIR /home/airstack
+
 
 ################################################################################
-# Packages
+# PACKAGES
 ################################################################################
 
-# install commands
-# airstack core utilities
-ADD core /package/airstack/core
-RUN mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
+# Add commands required for building images.
+ADD core/build /package/airstack/build
+RUN set -e; \
+  mkdir -v /command; \
+  ln -sv /package/airstack/build/core-* /command/
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
-# Packages::Common
+# Packages::Base
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
-RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc
+RUN set -e; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc make; \
+  ln -s /usr/bin/vim.tiny /usr/bin/vim
 
 # Packages::runit
 RUN set -e; \
@@ -79,18 +86,12 @@ RUN set -e; \
 # Packages::test
 RUN moonrocks install --server=https://rocks.moonscript.org busted
 
-# Putting these installs here until we decide we permanently want them.
-# Packages::staging
-RUN /command/core-package-install aria2
-RUN /command/core-package-install mksh
-RUN /command/core-package-install
-
 
 ################################################################################
-# Services
+# CONFIG
 ################################################################################
 
-# password set in sshd/run script at ssh start. allows for override via env var.
+# Password set in sshd/run script at ssh start. allows for override via env var.
 RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
@@ -102,37 +103,50 @@ RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
-#runit install
-RUN /command/core-package-install runit
-
-#socklog install
-ADD services/socklog-unix /package/airstack/socklog-unix
-RUN /command/core-package-install socklog ipsvd
-
-#container init system
-ADD services/runit /package/airstack/runit
-RUN /package/airstack/runit/enable
-
+# Default run command
 CMD exec sudo -E sh /usr/local/bin/container-start
 
 
 ################################################################################
-# Runlevel 2
+# SERVICES
 ################################################################################
 
-#dropbear install
+# Add Airstack core commands
+# This should appear as late in the Dockerfile as possible to make builds as
+# fast as possible.
+ADD core /package/airstack/core
+RUN ln -sv /package/airstack/core/command/core-* /command/
+
+#
+# RUNLEVEL 1
+# Start socklog and runit
+#
+
+# socklog
+ADD services/socklog-unix /package/airstack/socklog-unix
+
+# Container init system
+ADD services/runit /package/airstack/runit
+RUN /package/airstack/runit/enable
+
+#
+# RUNLEVEL 2
+#
+
+# dropbear
 ADD services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
-#serf install
+# serf
 ADD services/serf /package/airstack/serf
 EXPOSE 7946
 
-#haproxy install
+# haproxy
 ADD services/haproxy /package/airstack/haproxy
 
-#socklog-remote install
+# socklog-remote
 ADD services/socklog-remote /package/airstack/socklog-remote
+
 
 ################################################################################
 # DEBUG
@@ -147,12 +161,3 @@ RUN ln -vs /command/core-* /usr/local/bin/
 ################################################################################
 
 ADD test /package/airstack/test
-
-
-################################################################################
-# COMMON FOOTER
-################################################################################
-
-USER airstack
-ENV HOME /home/airstack
-WORKDIR /home/airstack

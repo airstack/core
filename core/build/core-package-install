@@ -1,0 +1,38 @@
+#!/bin/sh
+
+###*
+# Package install helper.
+#
+# Always use this function to install packages.
+#
+# Use: pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Examples: pkg_install haproxy
+#           pkg_install openssh-server wget
+#
+# @param package  Space separated list of package names
+# @return 0 on success
+# @see docs/references.md#apt
+###
+pkg_install() {
+    set -x
+    echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+    apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y "$@"
+    set +x
+}
+
+
+pkg_install_error_check() {
+  if [ "$?" -ne 0 ]; then
+    local err_value; err_value="$?"
+    printf "%s\n" "[ERROR] core-package-install failed" >&2
+    exit ${2-113}
+  fi
+}
+
+# Main
+# Only run script if params are provided.
+# Useful for sourcing the file for testing or direct access to functions.
+if [ "$#" -gt 0 ]; then
+  pkg_install "$@"
+  pkg_install_error_check
+fi

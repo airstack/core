@@ -2,7 +2,7 @@
   "services": {
     "haproxy": {
       "state": "down",
-      "enable": "rm -vf /etc/haproxy/haproxy.cfg; ln -sf /package/airstack/haproxy/haproxy.cfg /etc/haproxy/",
+      "enable": "rm -f /etc/haproxy/haproxy.cfg; ln -sf /package/airstack/haproxy/haproxy.cfg /etc/haproxy/",
       "disable": "",
       "run": "exec chpst -u root /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid); sleep 1; done",
       "check": "",

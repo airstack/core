@@ -1,0 +1,16 @@
+#!/bin/sh
+
+main() {
+set -e
+[ -e /etc/sv/socklog-unix/log ] || socklog-conf unix nobody log
+
+tmp_file=/etc/sv/socklog-unix/log/main/main/config
+
+echo \"s999999\" > $tmp_file
+echo \"n11\" >> $tmp_file
+
+[ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog
+set +e
+}
+
+main "$@"

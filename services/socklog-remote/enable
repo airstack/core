@@ -1,7 +1,8 @@
 #!/bin/sh
-set -e
+
 
 socklog_config_create() {
+  set -e
   local i; i=$1
   local tmp_ip=$(cat "$i"_IP)
   local tmp_port=$(cat "$i"_PORT)
@@ -27,10 +28,12 @@ socklog_config_create() {
   # set permissions
   chown -R log:nogroup /var/log/socklog/toremote
   chown root:root /var/log/socklog/toremote/$tmp_ip:$tmp_port/config
+  set +e
 }
 
 
 socklog_facilities_create() {
+  set -e
   local tmp_facilities; tmp_facilities="$@"
 
   local tmp_file; tmp_file=/etc/service/socklog-unix/log/run
@@ -38,11 +41,12 @@ socklog_facilities_create() {
   echo "exec chpst -ulog svlogd $tmp_facilities" >> $tmp_file
 
   chmod ug+x $tmp_file
+  set +e
 }
 
 
 main() {
-
+  set -e
   local i; local default_facilities;
   default_facilities="main/main main/auth main/cron main/daemon main/debug \
   main/ftp main/kern main/local main/mail main/news main/syslog main/user"
@@ -62,6 +66,7 @@ main() {
   done
   # hup (reload) svlogd
   sv hup socklog-unix/log
+  set +e
 }
 
 main "$@"

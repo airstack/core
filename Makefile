@@ -102,7 +102,7 @@ release: test tag_latest
 	@docker push $(NAME)
 	@echo "*** Don't forget to create a tag. git tag rel-$(VERSION) && git push origin rel-$(VERSION)"
 
-COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERDIR) --user $(USERNAME) $(NAME):$(VERSION)
+COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERDIR) -e HOME=$(USERDIR) --user $(USERNAME) $(NAME):$(VERSION)
 LINUX_RUNFLAGS = --volume $(USERDIR)/output:/home/$(USERDIR)/output --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 OSX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume /home/docker/base0:/home/$(USERDIR)/base0 --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 

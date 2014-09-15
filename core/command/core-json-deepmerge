@@ -12,6 +12,7 @@
 #           json_deepmerge $files
 #
 # Does a recursive deep merge on a list of json files. Posix-shell compatible.
+# New key values overwrite old values.
 # Dependencies: jq
 # Outputs results to stdout
 #

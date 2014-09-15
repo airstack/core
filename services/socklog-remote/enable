@@ -7,7 +7,7 @@ socklog_config_create() {
   local tmp_port=$(cat "$i"_PORT)
 
   local tmp_dir; tmp_dir=/var/log/socklog/toremote/$tmp_ip:$tmp_port
-  [ -d $tmp_dir ] || mkdir -vp $tmp_dir
+  [ -d $tmp_dir ] || mkdir -p $tmp_dir
 
   # create config file
   local tmp_configfile; tmp_configfile=$tmp_dir/config

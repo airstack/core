@@ -29,8 +29,8 @@ ONBUILD WORKDIR /home/airstack
 # Add commands required for building images.
 COPY core/build /package/airstack/build
 RUN set -e; \
-  mkdir -v /command; \
-  ln -sv /package/airstack/build/core-* /command/
+  mkdir /command; \
+  ln -s /package/airstack/build/core-* /command/
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
@@ -153,7 +153,7 @@ COPY services/socklog-remote /package/airstack/socklog-remote
 ################################################################################
 
 # TODO: remove this later. /command symlinks should be setup by each command.
-RUN ln -vs /command/core-* /usr/local/bin/
+RUN ln -s /command/core-* /usr/local/bin/
 
 
 ################################################################################

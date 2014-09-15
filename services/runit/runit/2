@@ -102,7 +102,7 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
-  [ -d /env ] || mkdir -vp /env
+  [ -d /env ] || mkdir -p /env
   local json_new="/env/RUNTIME_NEW"
   echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
   /command/core-json-deepmerge \

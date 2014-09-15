@@ -143,7 +143,7 @@ service_enable_post() {
 
   local i;
   for i in ${tmp_runlevels:-multi}; do
-    [ ! -e /etc/runit/runsvdir/$i/$service_name ] && ln -sv /etc/sv/$service_name /etc/runit/runsvdir/$i/
+    [ ! -e /etc/runit/runsvdir/$i/$service_name ] && ln -s /etc/sv/$service_name /etc/runit/runsvdir/$i/
   done
 
   # adding to init.d for service command compatibility

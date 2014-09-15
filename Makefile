@@ -86,7 +86,7 @@ ps: init
 	@docker ps
 
 build: init
-	@docker build --force-rm --tag $(NAME):$(VERSION) .
+	@docker build --rm --tag $(NAME):$(VERSION) .
 
 rebuild: clean build
 

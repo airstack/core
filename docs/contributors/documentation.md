@@ -26,7 +26,7 @@ Tags that can appear multiple times:
 ```
 
 
-# Bash Scripts
+# Shell Scripts
 
 ### Function Headers
 

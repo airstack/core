@@ -4,7 +4,7 @@ Aircore uses a modified versions of [JavaDoc](http://javaworkshop.sourceforge.ne
 syntax for documenting code.
 
 
-# Bash Scripts
+# Shell Scripts
 
 ### Function Headers
 

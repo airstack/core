@@ -46,7 +46,7 @@ RUN set -e; \
 
 # Packages::runit
 RUN set -e; \
-  touch /etc/inittab; /command/core-package-install runit
+  touch /etc/inittab; /command/core-slashpackage-install runit-2.1.2
 
 # Packages::socklog
 RUN /command/core-package-install socklog ipsvd netcat

@@ -4,6 +4,28 @@ Aircore uses a modified versions of [JavaDoc](http://javaworkshop.sourceforge.ne
 syntax for documenting code.
 
 
+# Code Documentation
+
+Order of function [comment tags](http://javaworkshop.sourceforge.net/chapter4.html#N10228):
+```
+@author
+@version
+@param
+@return
+@throws
+@see
+@since
+@deprecated
+```
+
+Tags that can appear multiple times:
+```
+@author
+@param
+@throws
+```
+
+
 # Bash Scripts
 
 ### Function Headers

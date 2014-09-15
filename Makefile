@@ -23,7 +23,7 @@ uname_S = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 # `make USERNAME=root CMD=runit-init debug`
 # `make VERSION=debug build
 
-CMD = /bin/sh
+CMD = /bin/bash
 USERDIR = airstack
 VERSION = latest
 USERNAME = $(USERDIR)

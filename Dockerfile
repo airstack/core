@@ -27,7 +27,7 @@ ONBUILD WORKDIR /home/airstack
 ################################################################################
 
 # Add commands required for building images.
-ADD core/build /package/airstack/build
+COPY core/build /package/airstack/build
 RUN set -e; \
   mkdir -v /command; \
   ln -sv /package/airstack/build/core-* /command/
@@ -114,8 +114,8 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 # Add Airstack core commands
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
-ADD core /package/airstack/core
-RUN ln -sv /package/airstack/core/command/core-* /command/
+COPY core /package/airstack/core
+RUN ln -s /package/airstack/core/command/core-* /command/
 
 #
 # RUNLEVEL 1
@@ -123,10 +123,10 @@ RUN ln -sv /package/airstack/core/command/core-* /command/
 #
 
 # socklog
-ADD services/socklog-unix /package/airstack/socklog-unix
+COPY services/socklog-unix /package/airstack/socklog-unix
 
 # Container init system
-ADD services/runit /package/airstack/runit
+COPY services/runit /package/airstack/runit
 RUN /package/airstack/runit/enable
 
 #
@@ -134,18 +134,18 @@ RUN /package/airstack/runit/enable
 #
 
 # dropbear
-ADD services/dropbear /package/airstack/dropbear
+COPY services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
 # serf
-ADD services/serf /package/airstack/serf
+COPY services/serf /package/airstack/serf
 EXPOSE 7946
 
 # haproxy
-ADD services/haproxy /package/airstack/haproxy
+COPY services/haproxy /package/airstack/haproxy
 
 # socklog-remote
-ADD services/socklog-remote /package/airstack/socklog-remote
+COPY services/socklog-remote /package/airstack/socklog-remote
 
 
 ################################################################################
@@ -160,4 +160,4 @@ RUN ln -vs /command/core-* /usr/local/bin/
 # TESTS
 ################################################################################
 
-ADD test /package/airstack/test
+COPY test /package/airstack/test

@@ -60,13 +60,23 @@ Use shellcheck on build to ensure we aren't using bashisms
 # Lua
 
 - [Lua Manual](http://www.lua.org/manual/5.2/)
-- [Lua CJSON](http://www.kyne.com.au/~mark/software/lua-cjson-manual.html) – [fast json](http://lua-users.org/wiki/JsonModules) implementation for lua
-- https://github.com/stevedonovan/Penlight/
-- http://cellux.github.io/articles/introduction-to-luajit-part-1/
+- [LuaRocks](https://rocks.moonscript.org) – Lua package manager
+- [Intro to Lua](http://cellux.github.io/articles/introduction-to-luajit-part-1/)
+- [LuaJIT](http://luajit.org)
 - https://github.com/justincormack/ljsyscall/blob/master/examples/vlan.lua
 - https://github.com/justincormack/ljsyscall/blob/master/examples/lxc.lua
-- [LuaRocks](http://luarocks.org/en/Rockspec_format) – Lua package manager
-- [LuaJIT](http://luajit.org/install.html)
+
+### Installed Lua Modules
+
+- [luaposix](http://luaposix.github.io/luaposix/docs/modules/posix.html) – posix bindings, including curses
+- [Penlight](https://github.com/stevedonovan/Penlight/) – library for strings, tables, map/reduce, OS path
+- [LuaFilesystem](http://keplerproject.github.io/luafilesystem/) – unified filesystem library
+- [CJSON](http://www.kyne.com.au/~mark/software/lua-cjson-manual.html) – fast json library
+- [LuaSocket](http://w3.impa.br/~diego/software/luasocket/) – TCP/UDP library
+
+### Troubleshooting
+
+- [Install luarocks](http://linuxclues.blogspot.com/2014/07/luarocks-install-source-debian-how-to.html) with lua5.2 on debian
 
 
 # JavaScript

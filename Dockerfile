@@ -77,7 +77,9 @@ RUN set -e; \
 RUN set -e; \
   /command/core-package-install libssl-dev luajit luarocks; \
   luarocks install --server=http://rocks.moonscript.org luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu/; \
-  luarocks install --server=https://rocks.moonscript.org moonrocks
+  luarocks install --server=https://rocks.moonscript.org moonrocks; \
+  moonrocks install --server=https://rocks.moonscript.org luaposix; \
+  ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua
 
 # Packages::test
 RUN moonrocks install --server=https://rocks.moonscript.org busted

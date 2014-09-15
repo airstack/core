@@ -3,7 +3,7 @@
 ###*
 # Slashpackage install helper.
 #
-# Use this function to install packages from the airstack slashpackage collection.
+# Use this function to install packages from an aircore-compatible slashpackage collection.
 #
 # Use: core_slashpackage_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: core_slashpackage_install haproxy
@@ -14,16 +14,17 @@
 # @see docs/references.md#apt
 ###
 core_slashpackage_install() {
+    #TODO: decide what to do about private installs that require a token.
     local tmp_pkgs; tmp_pkgs="$@"
-    local tmp_token; tmp_token="1683995__eyJzY29wZSI6IlJhd0Jsb2I6YWlyc3RhY2svc2xhc2hwYWNrYWdlL21hc3Rlci9zZXJmL2luc3RhbGwiLCJleHBpcmVzIjoxNDExMzg1MDU2fQ%3D%3D--777a7edf0bd542282481c439f829fab5cd8c645a"
+    local tmp_token; tmp_token="1683995__eyJzY29wZSI6IlJhd0Jsb2I6YWlyc3RhY2svc2xhc2hwYWNrYWdlL21hc3Rlci9zZXJmLTAuNi4zL2luc3RhbGwiLCJleHBpcmVzIjoxNDExMzg5Mzc4fQ%3D%3D--a6830257af8356c6a39a1da992dae0e73c5958c5"
     local i; local tmp_dir
     for i in $tmp_pkgs; do
       tmp_dir=/tmp/$i
       mkdir -p $tmp_dir; cd $tmp_dir
-      set -x
+      set -ex
       wget -O ./install https://raw.githubusercontent.com/airstack/slashpackage/master/$i/install?token="$tmp_token"
       chmod +x ./install; ./install $i
-      set +x
+      set +ex
       cd /tmp; rm -rf $tmp_dir
     done
 }

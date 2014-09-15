@@ -17,6 +17,10 @@ USER root
 ENV HOME /root
 WORKDIR /root
 
+ONBUILD USER airstack
+ONBUILD ENV HOME /home/airstack
+ONBUILD WORKDIR /home/airstack
+
 
 ################################################################################
 # PACKAGES
@@ -151,7 +155,6 @@ ADD services/haproxy /package/airstack/haproxy
 ADD services/socklog-remote /package/airstack/socklog-remote
 
 
-
 ################################################################################
 # DEBUG
 ################################################################################
@@ -165,12 +168,3 @@ RUN ln -vs /command/core-* /usr/local/bin/
 ################################################################################
 
 ADD test /package/airstack/test
-
-
-################################################################################
-# COMMON FOOTER
-################################################################################
-
-USER airstack
-ENV HOME /home/airstack
-WORKDIR /home/airstack

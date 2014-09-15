@@ -88,11 +88,6 @@ RUN set -e; \
 # Packages::test
 RUN moonrocks install --server=https://rocks.moonscript.org busted
 
-# Putting these installs here until we decide we permanently want them.
-# Packages::staging
-RUN /command/core-package-install aria2
-RUN /command/core-package-install mksh
-
 
 ################################################################################
 # CONFIG

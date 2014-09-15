@@ -16,15 +16,15 @@
 core_slashpackage_install() {
     #TODO: decide what to do about private installs that require a token.
     local tmp_pkgs; tmp_pkgs="$@"
-    local tmp_token; tmp_token="1683995__eyJzY29wZSI6IlJhd0Jsb2I6YWlyc3RhY2svc2xhc2hwYWNrYWdlL21hc3Rlci9zZXJmLTAuNi4zL2luc3RhbGwiLCJleHBpcmVzIjoxNDExMzg5Mzc4fQ%3D%3D--a6830257af8356c6a39a1da992dae0e73c5958c5"
     local i; local tmp_dir
     for i in $tmp_pkgs; do
       tmp_dir=/tmp/$i
+      local tmp_name; tmp_name=$(echo $i | cut -d "-" -f 1)
       mkdir -p $tmp_dir; cd $tmp_dir
-      set -ex
-      wget -O ./install https://raw.githubusercontent.com/airstack/slashpackage/master/$i/install?token="$tmp_token"
+      set -e
+      wget -O ./install https://raw.githubusercontent.com/airstack/slashpackage/master/$tmp_name/$i/install
       chmod +x ./install; ./install $i
-      set +ex
+      set +e
       cd /tmp; rm -rf $tmp_dir
     done
 }

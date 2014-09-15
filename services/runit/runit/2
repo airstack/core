@@ -105,8 +105,11 @@ merge_runtime_jsons() {
   [ -d /env ] || mkdir -p /env
   local json_new="/env/RUNTIME_NEW"
   echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
+  # ensure config.json is first
+  local tmp_cfg_json; tmp_cfg_json="/package/airstack/core/config.json"
+  local tmp_dirs; tmp_dirs=$(ls /package/airstack/*/config.json | grep -Pv 'core')
   /command/core-json-deepmerge \
-    $(ls /package/airstack/*/config.json) $json_new > /env/RUNTIME
+    $(echo "$tmp_cfg_json") $(echo "$tmp_dirs") "$json_new" > /env/RUNTIME
 }
 
 merge_runtime_jsons

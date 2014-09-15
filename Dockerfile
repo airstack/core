@@ -27,8 +27,10 @@ ONBUILD WORKDIR /home/airstack
 ################################################################################
 
 # Add commands required for building images.
-COPY core/build /package/airstack/build
+COPY core/build /package/airstack-0.1.0/build
 RUN set -e; \
+  ln -s /package/airstack-0.1.0 /package/airstack; \
+  chmod -R 1755 /package; \
   mkdir /command; \
   ln -s /package/airstack/build/core-* /command/
 

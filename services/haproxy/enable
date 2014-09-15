@@ -1,35 +1,13 @@
-#!/bin/sh -e
+#!/bin/sh
 
-SOURCE=$0
-TMP_SERVICE=$(basename $(dirname $SOURCE))
+## STATUS: WIP! Not fully refactored yet to use new config.json.
+# TODO: refactor similar to socklog-remote/enable
 
-## end common head
+set -e
 
-echo "Configuring $TMP_SERVICE"
 ln -sf /package/airstack/haproxy/haproxy.cfg /etc/haproxy/
 
-printf "\tcreating runit directories\n"
-mkdir -p /etc/sv/$TMP_SERVICE/log
 
-printf "\tcreating runit service file\n"
-cat > /etc/sv/$TMP_SERVICE/run << "EOF"
-#!/bin/sh
-# sv -w2 check socklog-unix >/dev/null || exit 1
-exec 2>&1
-
-exec /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
-EOF
-
-printf "\tcreating runit log file\n"
-cat > /etc/sv/$TMP_SERVICE/log/run << "EOF"
-#!/bin/sh
-SERVICE_NAME=$(basename $(dirname $(pwd)))
-
-exec chpst -u root logger -t $SERVICE_NAME -p local0.notice
-EOF
-
-# TODO: move to config.json enable???
-#   This file should be deleted; now handled by config.json
 echo -n "Generating ssl cert for haproxy "
 	mkdir -p /etc/ssl && \
 	export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo) && \
@@ -54,16 +32,3 @@ then
   echo "	stats auth $HAPROXY_USERNAME:$HAPROXY_PASSWORD" >> /etc/haproxy/haproxy.cfg
   echo "	stats uri $HAPROXY_URI" >> /etc/haproxy/haproxy.cfg
 fi
-
-## common footer start
-
-echo "Enabling $TMP_SERVICE"
-[ -e /etc/sv/$TMP_SERVICE/run ] && chmod ug+x /etc/sv/$TMP_SERVICE/run
-[ -e /etc/sv/$TMP_SERVICE/log/run ] && chmod ug+x /etc/sv/$TMP_SERVICE/log/run
-
-for i in ${TMP_RUNLEVELS:-multi}; do
-	[ ! -e /etc/runit/runsvdir/$i/$TMP_SERVICE ] && ln -s /etc/sv/$TMP_SERVICE /etc/runit/runsvdir/$i
-done
-
-# adding to init.d for service command compatibility
-ln -sf /usr/bin/sv /etc/init.d/$TMP_SERVICE

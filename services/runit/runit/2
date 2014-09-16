@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
@@ -7,7 +7,7 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 ERROR_MESSAGE_DEFAULT="[ERROR] runit runlevel 2 -"
 [ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
-
+set -e
 msg "Initializing Runit Level 2\n"
 
 # defaults to 'multi', but can pass in different runlevel.
@@ -20,22 +20,7 @@ runsvchdir ${TMP_RUNLEVEL:="multi"} >/dev/null
 env - PATH=$PATH \
 /usr/bin/runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................' &
 
-# wait until socklog is up b4 proceeding
-# TODO put in healthcheck in check script instead of default
-# while sv check socklog-unix >/dev/null && false; do
-# sv up socklog-unix >/dev/null
-# done
-
-# while socklog-check >/dev/null && false; do
-# sv up socklog-unix >/dev/null
-# done
-
 # Enable all services in parallel if not in single runlevel. See [TODO service docs] for details.
-# TODO:
-# - loop through AIRSTACK_RUNTIME_VARS.services
-# - for each service, check if it has a "run" command set in the json
-#   - compile a new enable script with template header, footer, and the run command
-# - if no "run" command, default to the respective enable script
 
 
 ##########################################################
@@ -102,16 +87,18 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
-  [ -d /env ] || mkdir -vp /env
+  [ -d /env ] || mkdir -p /env
   local json_new="/env/RUNTIME_NEW"
   echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
+  # ensure config.json is first
+  local tmp_cfg_json; tmp_cfg_json="/package/airstack/core/config.json"
+  local tmp_dirs; tmp_dirs=$(ls /package/airstack/*/config.json | grep -Pv 'core')
   /command/core-json-deepmerge \
-    $(ls /package/airstack/*/config.json) $json_new > /env/RUNTIME
+    $(echo "$tmp_cfg_json") $(echo "$tmp_dirs") "$json_new" > /env/RUNTIME
 }
 
 merge_runtime_jsons
 error_check "merge failure. ohnoes."
-
 
 # Create env files in /env and /service/<service>/env
 
@@ -119,27 +106,23 @@ error_check "merge failure. ohnoes."
 /package/airstack/core/json2env-services
 
 msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
-#/package/airstack/socklog-unix/enable 2>&1 && msg_ok
-
-# TODO: remove
-/package/airstack/core/service-conf socklog-unix 2>&1 && msg_ok
+/package/airstack/core/service-conf socklog-unix 2>&1
 # error_check "enabling socklog-unix "
+while [ ! -e /dev/log ]; do sleep 0.01; done;
 
-# TODO: remove socklog-unix from list of services to enable. already enabled.
 AIRSTACK_SERVICES=$(cat /env/RUNTIME | jq -r '.services | keys[]' | awk '{ gsub(/socklog-unix/, ""); print $0}')
 
 if [ "$TMP_RUNLEVEL" != "single" ]; then
-	echo $AIRSTACK_SERVICES | xargs -n1 sh /package/airstack/core/service-conf
+	echo $AIRSTACK_SERVICES | xargs -n1 -P0 sh /package/airstack/core/service-conf
 fi
 
 printf "%s\n" "services currently running:"
 update-service --list
 
-printf "\n%s\n" "Showing log entries from: /var/log/syslog"
-
 # tail syslog in foreground if file larger than 0
 while true; do
-[ -s /var/log/syslog ] && printf "\n" && tail -n10 -F /var/log/syslog
-#printf '.' &&
-sleep 0.1
+[ -s /var/log/syslog ] && break
+sleep 0.01
 done
+printf "\n%s\n" "Showing log entries from: /var/log/syslog"
+printf "\n" && tail -n10 -F /var/log/syslog

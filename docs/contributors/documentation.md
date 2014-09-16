@@ -4,7 +4,7 @@ Airstack/core uses a modified versions of [JavaDoc](http://javaworkshop.sourcefo
 syntax for documenting code.
 
 
-# Bash Scripts
+# Shell Scripts
 
 ### Function Headers
 

@@ -17,30 +17,39 @@ USER root
 ENV HOME /root
 WORKDIR /root
 
+ONBUILD USER airstack
+ONBUILD ENV HOME /home/airstack
+ONBUILD WORKDIR /home/airstack
+
 
 ################################################################################
-# Packages
+# PACKAGES
 ################################################################################
 
-# install commands
-# airstack core utilities
-ADD core /package/airstack/core
-RUN mkdir -v /command; ln -sv /package/airstack/core/command/* /command/
+# Add commands required for building images.
+COPY core/build /package/airstack-0.1.0/build
+RUN set -e; \
+  ln -s /package/airstack-0.1.0 /package/airstack; \
+  chmod -R 1755 /package; \
+  mkdir /command; \
+  ln -s /package/airstack/build/core-* /command/
 
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
-# Packages::Common
+# Packages::Base
 RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
-RUN /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc
+RUN set -e; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc make; \
+  ln -s /usr/bin/vim.tiny /usr/bin/vim
 
 # Packages::runit
 RUN set -e; \
   touch /etc/inittab; /command/core-package-install runit
 
 # Packages::socklog
-RUN /command/core-package-install socklog ipsvd netcat
+RUN /command/core-package-install socklog ipsvd netcat-openbsd
 
 # Packages::dropbear
 RUN /command/core-package-install dropbear
@@ -49,26 +58,7 @@ RUN /command/core-package-install dropbear
 RUN /command/core-package-install haproxy
 
 # Packages::serf
-RUN set -e; \
-  VER="0.6.3"; PKG_NAME="serf" PKG_DIR="/package/$PKG_NAME"; mkdir -vp "$PKG_DIR-$VER"/command; \
-  cd $PKG_DIR-$VER; \
-  wget -v -O "$PKG_NAME-$VER".zip https://dl.bintray.com/mitchellh/serf/"$VER"_linux_amd64.zip; \
-  unzip -o "$PKG_NAME-$VER".zip; rm -v "$PKG_NAME-$VER".zip; \
-  echo "Creating custom command..."; \
-  rm -f "$PKG_DIR-$VER/command/"*; \
-  ln -vs "$PKG_DIR-$VER/serf" "$PKG_DIR-$VER/command/"; \
-  echo "Creating symlink $PKG_NAME -> $PKG_NAME-$VER..."; \
-  rm -f "$PKG_DIR"; \
-  ln -s "$PKG_DIR"-"$VER" "$PKG_DIR"; \
-  echo 'Making command links in /command...'; \
-  i=serf; rm -f /command/$i'{new}'; \
-  rm -f /command/"$i"; \
-  ln -vs "$PKG_DIR"/command/"$i" /command/"$i"'{new}'; \
-  mv -f /command/"$i"'{new}' /command/"$i"; \
-  echo 'Making compatibility links in /usr/local/bin...'; \
-  rm -f /usr/local/bin/$i'{new}'; \
-  ln -s /command/$i /usr/local/bin/$i'{new}'; \
-  mv -f /usr/local/bin/$i'{new}' /usr/local/bin/$i
+RUN /command/core-slashpackage-install serf-0.6.3
 
 # Packages::Lua
 RUN set -e; \
@@ -79,18 +69,12 @@ RUN set -e; \
 # Packages::test
 RUN moonrocks install --server=https://rocks.moonscript.org busted
 
-# Putting these installs here until we decide we permanently want them.
-# Packages::staging
-RUN /command/core-package-install aria2
-RUN /command/core-package-install mksh
-RUN /command/core-package-install
-
 
 ################################################################################
-# Services
+# CONFIG
 ################################################################################
 
-# password set in sshd/run script at ssh start. allows for override via env var.
+# Password set in sshd/run script at ssh start. allows for override via env var.
 RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
@@ -102,57 +86,59 @@ RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 
-#runit install
-RUN /command/core-package-install runit
-
-#socklog install
-ADD services/socklog-unix /package/airstack/socklog-unix
-RUN /command/core-package-install socklog ipsvd
-
-#container init system
-ADD services/runit /package/airstack/runit
-RUN /package/airstack/runit/enable
-
+# Default run command
 CMD exec sudo -E sh /usr/local/bin/container-start
 
 
 ################################################################################
-# Runlevel 2
+# SERVICES
 ################################################################################
 
-#dropbear install
-ADD services/dropbear /package/airstack/dropbear
+# Add Airstack core commands
+# This should appear as late in the Dockerfile as possible to make builds as
+# fast as possible.
+
+COPY core /package/airstack/core
+RUN ln -s /package/airstack/core/command/core-* /command/
+
+#
+# RUNLEVEL 1
+# Start socklog and runit
+#
+
+# socklog
+COPY services/socklog-unix /package/airstack/socklog-unix
+
+# Container init system
+COPY services/runit /package/airstack/runit
+RUN /package/airstack/runit/enable
+
+#
+# RUNLEVEL 2
+#
+
+# dropbear
+COPY services/dropbear /package/airstack/dropbear
 EXPOSE 22
 
-#serf install
-ADD services/serf /package/airstack/serf
+# serf
+COPY services/serf /package/airstack/serf
 EXPOSE 7946
 
-#haproxy install
-ADD services/haproxy /package/airstack/haproxy
+# haproxy
+COPY services/haproxy /package/airstack/haproxy
 
-#socklog-remote install
-ADD services/socklog-remote /package/airstack/socklog-remote
 
 ################################################################################
 # DEBUG
 ################################################################################
 
 # TODO: remove this later. /command symlinks should be setup by each command.
-RUN ln -vs /command/core-* /usr/local/bin/
+RUN ln -s /command/core-* /usr/local/bin/
 
 
 ################################################################################
 # TESTS
 ################################################################################
 
-ADD test /package/airstack/test
-
-
-################################################################################
-# COMMON FOOTER
-################################################################################
-
-USER airstack
-ENV HOME /home/airstack
-WORKDIR /home/airstack
+COPY test /package/airstack/test

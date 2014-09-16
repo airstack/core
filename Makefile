@@ -22,7 +22,7 @@ uname_S = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 # `make USERNAME=root CMD=runit-init debug`
 # `make VERSION=debug build
 
-CMD = /bin/sh
+CMD = /bin/bash
 USERDIR = airstack
 VERSION = latest
 USERNAME = $(USERDIR)
@@ -85,7 +85,7 @@ ps: init
 	@docker ps
 
 build: init
-	@docker build --force-rm --tag $(NAME):$(VERSION) .
+	@docker build --rm --tag $(NAME):$(VERSION) .
 
 rebuild: clean build
 
@@ -101,7 +101,7 @@ release: test tag_latest
 	@docker push $(NAME)
 	@echo "*** Don't forget to create a tag. git tag rel-$(VERSION) && git push origin rel-$(VERSION)"
 
-COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERDIR) --user $(USERNAME) $(NAME):$(VERSION)
+COMMON_RUNFLAGS = --publish-all --workdir /home/$(USERDIR) -e HOME=$(USERDIR) --user $(USERNAME) $(NAME):$(VERSION)
 LINUX_RUNFLAGS = --volume $(USERDIR)/output:/home/$(USERDIR)/output --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 OSX_RUNFLAGS = --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume /home/docker/base0:/home/$(USERDIR)/base0 --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 

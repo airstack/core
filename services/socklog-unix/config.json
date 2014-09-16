@@ -2,7 +2,7 @@
   "services": {
     "socklog-unix": {
       "state": "up",
-      "enable": "[ ! -e /etc/sv/socklog-unix/log ] && socklog-conf unix nobody log || echo \"\"; tmp_file=/etc/sv/socklog-unix/log/main/main/config; echo \"s999999\" > $tmp_file; echo \"n11\" >> $tmp_file; { [ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog;}",
+      "enable": "chpst -e /env/socklog-unix -u root sh /package/airstack/socklog-unix/enable",
       "disable": "unlink /var/log/syslog; rm -rf /etc/sv/socklog-unix",
       "run": "",
       "check": "",

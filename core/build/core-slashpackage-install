@@ -1,0 +1,47 @@
+#!/bin/sh
+
+###*
+# Slashpackage install helper.
+#
+# Use this function to install packages from an aircore-compatible slashpackage collection.
+#
+# Use: core_slashpackage_install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Examples: core_slashpackage_install haproxy
+#           core_slashpackage_install openssh-server wget
+#
+# @param package  Space separated list of package names
+# @return 0 on success
+# @see docs/references.md#apt
+###
+core_slashpackage_install() {
+    #TODO: decide what to do about private installs that require a token.
+    local tmp_pkgs; tmp_pkgs="$@"
+    local i; local tmp_dir
+    for i in $tmp_pkgs; do
+      tmp_dir=/tmp/$i
+      local tmp_name; tmp_name=$(echo $i | cut -d "-" -f 1)
+      mkdir -p $tmp_dir; cd $tmp_dir
+      set -e
+      wget -O ./install https://raw.githubusercontent.com/airstack/slashpackage/master/$tmp_name/$i/install
+      chmod +x ./install; ./install $i
+      set +e
+      cd /tmp; rm -rf $tmp_dir
+    done
+}
+
+
+core_slashpackage_install_error_check() {
+  if [ "$?" -ne 0 ]; then
+    local err_value; err_value="$?"
+    printf "%s\n" "[ERROR] core_slashpackage_install failed" >&2
+    exit ${2-113}
+  fi
+}
+
+# Main
+# Only run script if params are provided.
+# Useful for sourcing the file for testing or direct access to functions.
+if [ "$#" -gt 0 ]; then
+  core_slashpackage_install "$@"
+  core_slashpackage_install_error_check
+fi

@@ -99,6 +99,7 @@ CMD exec sudo -E sh /usr/local/bin/container-start
 # Add Airstack core commands
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
+
 COPY core /package/airstack/core
 RUN ln -s /package/airstack/core/command/core-* /command/
 

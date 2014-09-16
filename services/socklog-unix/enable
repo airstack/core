@@ -1,16 +1,78 @@
 #!/bin/sh
 
-main() {
-set -e
-[ -e /etc/sv/socklog-unix/log ] || socklog-conf unix nobody log
+socklog_config_create() {
+  set -e
+  local i; i=$1
+  local tmp_ip=$(cat "$i"_IP)
+  local tmp_port=$(cat "$i"_PORT)
 
-tmp_file=/etc/sv/socklog-unix/log/main/main/config
+  local tmp_dir; tmp_dir=/var/log/socklog/toremote/$tmp_ip:$tmp_port
+  [ -d $tmp_dir ] || mkdir -p $tmp_dir
 
-echo \"s999999\" > $tmp_file
-echo \"n11\" >> $tmp_file
+  # create config file
+  local tmp_configfile; tmp_configfile=$tmp_dir/config
+  > $tmp_configfile
 
-[ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog
-set +e
+  # handle multiple patterns
+  local tmp_pattern;local x;
+  for x in $(ls "$i"_PATTERN_* | sort -n); do
+    tmp_pattern=$(cat "$x")
+    echo $tmp_pattern >> $tmp_configfile
+  done
+  echo "s2000" >> $tmp_configfile
+  echo "N10" >> $tmp_configfile
+  echo "n5" >> $tmp_configfile
+  echo "t2" >> $tmp_configfile
+  echo p"$(hostname) " >> $tmp_configfile
+  echo "!tryto -pv -k 2 -n 5 nc -q0 $tmp_ip $tmp_port" >> $tmp_configfile
+
+  # set permissions
+  chown -R log:nogroup /var/log/socklog/toremote
+  chown root:root /var/log/socklog/toremote/$tmp_ip:$tmp_port/config
+  set +e
 }
+
+
+socklog_facilities_create() {
+  set -e
+  local tmp_facilities; tmp_facilities="$@"
+
+  local tmp_file; tmp_file=/etc/sv/socklog-unix/log/run
+  echo "#!/bin/sh" > $tmp_file
+  echo "exec chpst -ulog svlogd -tt -b 10000 -l 1000 $tmp_facilities" >> $tmp_file
+
+  chmod ug+x $tmp_file
+  set +e
+}
+
+
+main() {
+  set -e
+  [ -e /etc/sv/socklog-unix/log ] || socklog-conf unix nobody log
+
+  tmp_file=/etc/sv/socklog-unix/log/main/main/config
+
+  echo \"s999999\" > $tmp_file
+  echo \"n11\" >> $tmp_file
+
+  [ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog
+  set +e
+
+  set -e
+  local i; local default_facilities;
+  default_facilities="main/main main/auth main/cron main/daemon main/debug \
+  main/ftp main/kern main/local main/mail main/news main/syslog main/user"
+
+  for i in $(ls /env/IPLOG_? | sort -n); do
+    socklog_config_create $i
+  done
+
+  local tmp_dirs;
+  for i in $(ls /var/log/socklog/toremote/ | sort -n); do
+    tmp_dirs="$tmp_dirs main/toremote/$i"
+  done
+  socklog_facilities_create "$default_facilities $tmp_dirs"
+}
+
 
 main "$@"

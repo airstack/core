@@ -120,9 +120,9 @@ printf "%s\n" "services currently running:"
 update-service --list
 
 # tail syslog in foreground if file larger than 0
-while true; do
-[ -s /var/log/syslog ] && break
-sleep 0.01
-done
-printf "\n%s\n" "Showing log entries from: /var/log/syslog"
-printf "\n" && tail -n10 -F /var/log/syslog
+# while true; do
+# [ -s /var/log/syslog ] && break
+# sleep 0.01
+# done
+# printf "\n%s\n" "Showing log entries from: /var/log/syslog"
+# printf "\n" && tail -n10 -F /var/log/syslog

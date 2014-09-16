@@ -28,7 +28,7 @@ VERSION = latest
 USERNAME = $(USERDIR)
 # ######################################
 
-# TODO: John, do we need to list all the command here?
+# TODO: Update .PHONY
 #.PHONY: all clean build rebuild test tag_latest release debug run run_daemon
 
 all: build

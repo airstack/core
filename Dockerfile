@@ -68,7 +68,7 @@ RUN /command/core-package-install haproxy
 
 # Packages::Lua
 RUN set -e; \
-  /command/core-package-install gcc make unzip luarocks luajit ; \
+  /command/core-package-install luajit gcc make unzip luarocks; \
   luarocks install --server=http://rocks.moonscript.org luaposix; \
   ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua; \
   apt-get purge -y binutils cpp cpp-4.9 gcc-4.9 libasan1 libatomic1 libcilkrts5 \

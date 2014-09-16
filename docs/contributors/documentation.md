@@ -1,6 +1,6 @@
 ################################################################################
 
-Aircore uses a modified versions of [JavaDoc](http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments)
+Airstack/core uses a modified versions of [JavaDoc](http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments)
 syntax for documenting code.
 
 

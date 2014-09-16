@@ -13,12 +13,6 @@
 ################################################################################
 
 FROM debian:jessie
-
-
-################################################################################
-# CONFIG
-################################################################################
-
 USER root
 ENV HOME /root
 WORKDIR /root
@@ -33,9 +27,12 @@ RUN set -e; \
 
 ################################################################################
 # PACKAGES
+#
+# Add commands required for building images.
+# To minimize rebuilds, binaries that are modified less often
+# should be in earlier RUN commands.
 ################################################################################
 
-# Add commands required for building images.
 COPY core/build /package/airstack-0.1.0/build
 RUN set -e; \
   ln -s /package/airstack-0.1.0 /package/airstack; \
@@ -43,19 +40,16 @@ RUN set -e; \
   mkdir /command; \
   ln -s /package/airstack/build/core-* /command/
 
-# To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
-
 # Packages::Base
-RUN /command/core-package-install apt-utils net-tools less curl wget zip unzip sudo ca-certificates procps jq
+RUN /command/core-package-install jq ca-certificates libssl1.0.0 openssl
 
-# Packages::Development-Utils
+# Packages::Development - will be removed in production
 RUN set -e; \
-  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc gcc make; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc net-tools less wget sudo procps; \
   ln -s /usr/bin/vim.tiny /usr/bin/vim
 
 # Packages::runit
-RUN set -e; \
-  touch /etc/inittab; /command/core-package-install runit
+RUN touch /etc/inittab && /command/core-package-install runit
 
 # Packages::socklog
 RUN /command/core-package-install socklog ipsvd netcat-openbsd
@@ -63,20 +57,26 @@ RUN /command/core-package-install socklog ipsvd netcat-openbsd
 # Packages::dropbear
 RUN /command/core-package-install dropbear
 
+# Packages::serf
+RUN set -e; \
+  /command/core-package-install unzip; \
+  /command/core-slashpackage-install serf-0.6.3; \
+  apt-get purge -y unzip
+
 # Packages::haproxy
 RUN /command/core-package-install haproxy
 
-# Packages::serf
-RUN /command/core-slashpackage-install serf-0.6.3
-
 # Packages::Lua
 RUN set -e; \
-  /command/core-package-install luajit luarocks; \
+  /command/core-package-install gcc make unzip luarocks luajit ; \
   luarocks install --server=http://rocks.moonscript.org luaposix; \
-  ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua
+  ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua; \
+  apt-get purge -y binutils cpp cpp-4.9 gcc-4.9 libasan1 libatomic1 libcilkrts5 \
+    libcloog-isl4 libgcc-4.9-dev libgomp1 libisl10 libitm1 liblsan0 libmpc3 \
+    libmpfr4 libquadmath0 libtsan0 libubsan0 make unzip luarocks
 
 # Packages::test
-RUN luarocks install --server=http://rocks.moonscript.org busted
+# RUN luarocks install --server=http://rocks.moonscript.org busted
 
 
 ################################################################################
@@ -86,7 +86,6 @@ RUN luarocks install --server=http://rocks.moonscript.org busted
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
 ################################################################################
-
 
 COPY core /package/airstack/core
 RUN ln -s /package/airstack/core/command/core-* /command/
@@ -145,4 +144,3 @@ RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
 CMD exec sudo chpst -u root /usr/local/bin/container-start
-

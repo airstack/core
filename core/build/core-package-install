@@ -15,9 +15,10 @@
 ###
 core_pkg_install() {
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-    set -ex
-    apt-get update; apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-install-recommends --no-install-suggests -y "$@"
-    set +xe
+    set -e
+    apt-get install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --no-upgrade --no-install-recommends --no-install-suggests -y "$@"
+    apt-get clean
+    set +e
 }
 
 

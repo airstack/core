@@ -1,5 +1,6 @@
-#
-# Conventions Used in this Dockerfile
+################################################################################
+# CORE Dockerfile
+# MAINTAINER airstack team <support@airstack.io>
 #
 # RUN:
 # - single command on one line
@@ -9,13 +10,26 @@
 # - use core helper functions to install packages
 # - /command/core-package-install
 #
+################################################################################
 
 FROM debian:jessie
-MAINTAINER airstack team <support@airstack.io>
+
+
+################################################################################
+# CONFIG
+################################################################################
 
 USER root
 ENV HOME /root
 WORKDIR /root
+ONBUILD USER airstack
+ONBUILD ENV HOME /home/airstack
+ONBUILD WORKDIR /home/airstack
+RUN set -e; \
+  groupadd --system airstack --gid 432; \
+  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
+  chown -R airstack:airstack /home/airstack
+
 
 ONBUILD USER airstack
 ONBUILD ENV HOME /home/airstack
@@ -73,32 +87,13 @@ RUN moonrocks install --server=https://rocks.moonscript.org busted
 
 
 ################################################################################
-# CONFIG
-################################################################################
-
-# Password set in sshd/run script at ssh start. allows for override via env var.
-RUN set -e; \
-  groupadd --system airstack --gid 432; \
-  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
-  chown -R airstack:airstack /home/airstack
-
-# TODO: passwordless sudo enabled for airstack user. should only do for development environment.
-#       RUN [ $AIRSTACK_TAGS_ENV = "development" ] && echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack && usermod --shell /bin/bash airstack
-RUN set -e; \
-  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
-  usermod --shell /bin/bash airstack
-
-# Default run command
-CMD exec sudo -E sh /usr/local/bin/container-start
-
-
-################################################################################
 # SERVICES
-################################################################################
-
+#
 # Add Airstack core commands
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
+################################################################################
+
 
 COPY core /package/airstack/core
 RUN ln -s /package/airstack/core/command/core-* /command/
@@ -144,3 +139,17 @@ RUN ln -s /command/core-* /usr/local/bin/
 ################################################################################
 
 COPY test /package/airstack/test
+
+
+################################################################################
+# RUNTIME
+#
+# Password-less sudo enabled for airstack user. Can remove for production.
+# Default CMD set.
+################################################################################
+
+RUN set -e; \
+  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
+  usermod --shell /bin/bash airstack
+CMD exec sudo chpst -u root /usr/local/bin/container-start
+

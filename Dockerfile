@@ -46,7 +46,7 @@ RUN set -e; \
 # To minimize rebuilds, binaries that are modified less often should be in earlier RUN commands.
 
 # Packages::Base
-RUN /command/core-package-install apt-utils net-tools less curl wget unzip sudo ca-certificates procps jq
+RUN /command/core-package-install apt-utils net-tools less curl wget zip unzip sudo ca-certificates procps jq
 
 # Packages::Development-Utils
 RUN set -e; \

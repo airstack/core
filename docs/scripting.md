@@ -38,6 +38,7 @@ Since bash sucks for productivity, Airstack provides a higher level scripting fr
 Airstack uses /bin/sh instead of /bin/bash to ensure POSIX compatibility and smaller memory usage.
 
 - [Bash FAQ](http://tiswww.case.edu/php/chet/bash/FAQ)
+- [BashGuide](http://mywiki.wooledge.org/Arguments)
 - [Google Shell Style Guide](https://google-styleguide.googlecode.com/svn/trunk/shell.xml)
 - [posix shell scripting](http://pubs.opengroup.org/onlinepubs/009604599/utilities/xcu_chap02.html#tag_02_09_04)
 - [posix error codes](http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF)

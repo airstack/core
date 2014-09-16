@@ -31,11 +31,6 @@ RUN set -e; \
   chown -R airstack:airstack /home/airstack
 
 
-ONBUILD USER airstack
-ONBUILD ENV HOME /home/airstack
-ONBUILD WORKDIR /home/airstack
-
-
 ################################################################################
 # PACKAGES
 ################################################################################

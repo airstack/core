@@ -79,12 +79,11 @@ RUN /command/core-slashpackage-install serf-0.6.3
 # Packages::Lua
 RUN set -e; \
   /command/core-package-install luajit luarocks; \
-  luarocks install --server=http://rocks.moonscript.org moonrocks; \
-  moonrocks install --server=http://rocks.moonscript.org luaposix; \
+  luarocks install --server=http://rocks.moonscript.org luaposix; \
   ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua
 
 # Packages::test
-RUN moonrocks install --server=http://rocks.moonscript.org busted
+RUN luarocks install --server=http://rocks.moonscript.org busted
 
 
 ################################################################################

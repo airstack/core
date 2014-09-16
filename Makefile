@@ -5,8 +5,7 @@
 
 # Deriving names from directory structure.
 # TODO allow overrides based on vars found in .airstack folder
-NAME = airstack/aircore
-SHORTNAME = aircore
+NAME = airstack/core
 ROOTDIR = $(realpath .)
 
 # Detecting OS
@@ -127,7 +126,6 @@ console: console-vars debug
 debug: init
 	@if [ `boot2docker ssh 'ifconfig docker0 | grep -io multicast | wc -w'` -lt 1 ]; \
 		then ifconfig docker0 -multicast && ifconfig docker0 multicast; fi
-	@docker rm $(SHORTNAME)-$(VERSION) > /dev/null 2>&1; true
 	docker run --rm -i -t $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS) $(CMD)
 
 run_single-vars:

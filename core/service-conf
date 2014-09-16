@@ -63,7 +63,7 @@ service_run_init() {
   [ -e $BASEDIR/$service_name/ ] || mkdir -p $BASEDIR/$service_name/
 
   # symlink env directory for service
-  ln -s /env/"$service_name" $BASEDIR/$service_name/env
+  ln -sf /env/"$service_name" $BASEDIR/$service_name/env
 
   # create runit service file
   local cmd_file; cmd_file="$BASEDIR/$service_name/run"
@@ -143,7 +143,7 @@ service_enable_post() {
 
   local i;
   for i in ${tmp_runlevels:-multi}; do
-    [ ! -e /etc/runit/runsvdir/$i/$service_name ] && ln -s /etc/sv/$service_name /etc/runit/runsvdir/$i/
+    [ ! -e /etc/runit/runsvdir/$i/$service_name ] && ln -sf /etc/sv/$service_name /etc/runit/runsvdir/$i/
   done
 
   # adding to init.d for service command compatibility

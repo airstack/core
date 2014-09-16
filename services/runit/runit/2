@@ -21,11 +21,6 @@ env - PATH=$PATH \
 /usr/bin/runsvdir -P /etc/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................' &
 
 # Enable all services in parallel if not in single runlevel. See [TODO service docs] for details.
-# TODO:
-# - loop through AIRSTACK_RUNTIME_VARS.services
-# - for each service, check if it has a "run" command set in the json
-#   - compile a new enable script with template header, footer, and the run command
-# - if no "run" command, default to the respective enable script
 
 
 ##########################################################

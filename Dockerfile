@@ -49,7 +49,7 @@ RUN set -e; \
   touch /etc/inittab; /command/core-package-install runit
 
 # Packages::socklog
-RUN /command/core-package-install socklog ipsvd netcat
+RUN /command/core-package-install socklog ipsvd netcat-openbsd
 
 # Packages::dropbear
 RUN /command/core-package-install dropbear

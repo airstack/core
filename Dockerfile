@@ -129,9 +129,6 @@ EXPOSE 7946
 # haproxy
 COPY services/haproxy /package/airstack/haproxy
 
-# socklog-remote
-COPY services/socklog-remote /package/airstack/socklog-remote
-
 
 ################################################################################
 # DEBUG

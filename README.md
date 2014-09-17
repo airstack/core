@@ -1,6 +1,7 @@
-# Airstack/core
+Airstack/core is a base image for [Docker](https://www.docker.com/) containers.
 
-Airstack/core is the base image for [Airstack](http://www.airstack.io) containers.
+It's being developed as part of the [Airstack](http://www.airstack.io)
+framework but is perfectly suitable as a general purpose Docker base container.
 
 Airstack is an opinionated devops framework for building modern, scalable app
 clusters out of lightweight microservices. It aims to make developing and
@@ -80,26 +81,24 @@ critical infrastructure decisions.
 - 80/20 rule
   - super simple for 80% use cases
   - easily extensible for 20% use cases
-- Support [12 factor apps](http://12factor.net/)
+- Support [12 factor apps](http://12factor.net/) and stateful applications
 
 
-# Controversies
+# Design Decisions
 
-The *nix (Unix/Linux) world is not without its controversies. Many open source
-projects live and die by which philosophical camp they belong to.
-
-There are a few raging debates in the devops world that were taken into careful
+There are a few open debates in the devops world that were taken into careful
 consideration when building Airstack/core:
 
-- Systemd vs The World
-  - Airstack/core uses runit
-  - See [init_system.md](init_system.md)
+- Init System
+  - Airstack/core uses runit in favor of systemd
+  - runit is a lightweight init system ideal for containers
+  - See (docs/init_system.md)
 - Containers vs Virtual Machines
   - Airstack/core currently builds Docker containers
   - Airstack/core is an abstraction layer that will support VMs in the future
 - Security of Docker
   - Airstack/core enforces security best practices for containers
-  - See [security.md](security.md)
+  - See (docs/security.md)
 - Unix Tools vs Go
   - Many existing devop tools are being rewritten in [golang](http://golang.org/)
   - Airstack/core uses existing unix tools when possible

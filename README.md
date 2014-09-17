@@ -96,13 +96,13 @@ consideration when building Airstack/core:
 - Init System
   - Airstack/core uses runit in favor of systemd
   - runit is a lightweight init system ideal for containers
-  - See (docs/init_system.md)
+  - See [docs/init_system.md](docs/init_system.md)
 - Containers vs Virtual Machines
   - Airstack/core currently builds Docker containers
   - Airstack/core is an abstraction layer that will support VMs in the future
 - Security of Docker
   - Airstack/core enforces security best practices for containers
-  - See (docs/security.md)
+  - See [docs/security.md](docs/security.md)
 - Unix Tools vs Go
   - Many existing devop tools are being rewritten in [golang](http://golang.org/)
   - Airstack/core uses existing unix tools when possible

@@ -10,7 +10,9 @@ clusters out of lightweight microservices. It aims to make developing and
 deploying distributed apps as fun and painless as possible for both developers
 and devops. Airstack/core can be used independently of other Airstack tools.
 
-Airecore is meant to always be extended to provide additional services:
+# Core Services
+
+Airstack/core is meant to always be extended to provide additional services:
 NodeJS, Ruby, PostgreSQL, Redis, etc.
 
 Airstack/core provides the following core services:

@@ -1,3 +1,0 @@
-// TODO: delte this file?
-//    This file is not currently in use but is an example of how to configure serf with json.
-{ "event_handlers": [ "/package/airstack/serf/serf_router" ] }

@@ -1,4 +1,0 @@
-#!/bin/bash
-echo "Enabling rsyslog for runit"
-rm -vf /etc/rsyslog.conf && ln -s /etc/airstack/rsyslog/rsyslog.conf /etc/
-ln -s /etc/sv/rsyslog /etc/service/

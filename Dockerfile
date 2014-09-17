@@ -82,7 +82,7 @@ RUN set -e; \
 ################################################################################
 # SERVICES
 #
-# Add Airstack core commands
+# Add commands for configuring and managing services
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
 ################################################################################

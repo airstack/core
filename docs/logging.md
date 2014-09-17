@@ -8,6 +8,8 @@ By default, Airstack containers redirect stdout and stderr to /dev/log and send 
 
 The CLI or other syslog consumer can listen to the aggregated log feed.
 
+- [Syslog Protocol](http://tools.ietf.org/html/rfc5424)
+
 
 # VBox IP
 

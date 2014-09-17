@@ -1,6 +1,7 @@
 # Airstack/Core: Docker Base Container
 
-Airstack/core is a base image for [Docker](https://www.docker.com/) containers.
+Airstack/core is a powerful, lightweight base image for
+[Docker](https://www.docker.com/) containers.
 
 It's being developed as part of the [Airstack](http://www.airstack.io)
 framework but is perfectly suitable as a general purpose Docker base container.

@@ -2,7 +2,7 @@
 
 # FAQs
 
-- [What is Airstack/core?](about.md)
+- [What is Airstack/core?](/README.md)
 - [How is Airstack/core different from other projects?](comparison.md)
 - [How to Build Airstack/core?](guides/building_images.md)
 - [How to Run Airstack/core?](guides/running_images.md)
@@ -11,7 +11,7 @@
 
 # Core Documentation
 
-- [Philosophy](about.md)
+- [Philosophy](/README.md#philosophy)
 - [Organization and Standards](standards.md)
 - [Init System](init_system.md)
 - [Services](services/README.md)

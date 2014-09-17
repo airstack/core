@@ -53,6 +53,7 @@ Airstack uses /bin/sh instead of /bin/bash to ensure POSIX compatibility and sma
 - [man vs info](http://unix.stackexchange.com/questions/77514/what-is-gnu-info-for)
 
 Use shellcheck on build to ensure we aren't using bashisms
+- [shellcheck](http://www.shellcheck.net/)
 - switch to mksh-static for dash
 - http://lowendbox.com/blog/replacing-big-fat-bash-with-dash-for-scripting/
 - http://rgeissert.blogspot.com/2012/03/bash-way-is-faster-but-only-with-bash.html

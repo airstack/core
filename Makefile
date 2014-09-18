@@ -69,10 +69,14 @@ build: init
 	@echo build
 	@docker build --rm --tag $(DOCKER_IMAGE_FULLNAME) .
 
+# Build debug image
+# Useful for debugging without overwriting airstack/core:latest image.
 build-debug:
 	@echo build
 	make DOCKER_IMAGE_VERSION=debug build
 
+# Build production image without any development packages
+# https://github.com/airstack/core/issues/10
 build-prod:
 	make DOCKER_IMAGE_VERSION=prod build
 

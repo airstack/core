@@ -1,9 +1,20 @@
 #!/bin/sh
+###*
+# Package install helper script.
+#
+# Always use this script to install packages.
+#
+# Use: core-package-install PACKAGE_NAME_1 PACKAGE_NAME2
+# Examples:
+#   core-package-install haproxy
+#   core-package-install openssh-server wget
+#
+# @return 0 on success
+###
+
 
 ###*
-# Package install helper.
-#
-# Always use this function to install packages.
+# Package install helper function.
 #
 # Use: core_pkg_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: core_pkg_install haproxy

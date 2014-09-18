@@ -1,7 +1,12 @@
 #!/bin/sh
 ###*
+# JSON object deep merge helper script.
+#
 # Usage: core-json-deepmerge file1.json file2.json <file3.json> <...>
+#
+# @return 0 on success
 ###
+
 
 ###*
 # Recursively merge contents of two or more json files.

@@ -1,9 +1,11 @@
 #!/bin/sh
 ###*
-# Usage: error_check <ERROR_MESSAGE> <ERROR_CODE>
-# Examples: error_check "The wheels just came off!" 110
-#           ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; error_check "omgomgomg"
-#           error_check
+# Shell error check helper script.
+#
+# Usage: core-error-check <ERROR_MESSAGE> <ERROR_CODE>
+# Examples:
+#   core-error-check "The wheels just came off!" 110
+#   ERROR_MESSAGE_DEFAULT="[ERROR] mygreatscript error"; core-error-check "omgomgomg"
 #
 # If ERROR_MESSAGE_DEFAULT variable is defined, will prefix messages with it.
 # Uses passed in string for error message if provided.
@@ -11,7 +13,9 @@
 # Error code defaults to 113
 #
 # Reference: Bash exit code values [http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF]
+# @return 0 on success
 ###
+
 
 ###*
 # Checks error code of last command and exits if error.

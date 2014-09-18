@@ -1,9 +1,19 @@
 #!/bin/sh
-
 ###*
-# Slashpackage install helper.
+# Slashpackage install helper script.
 #
 # Use this function to install packages from an Airstack compatible slashpackage collection.
+#
+# Use: core-slashpackage-install PACKAGE_NAME_1 PACKAGE_NAME_2
+# Examples: core-slashpackage-install haproxy
+#           core-slashpackage-install openssh-server wget
+#
+# @return 0 on success
+###
+
+
+###*
+# Slashpackage install helper function.
 #
 # Use: core_slashpackage_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: core_slashpackage_install haproxy

@@ -59,12 +59,9 @@ RUN /command/core-package-install dropbear
 
 # Packages::Lua
 RUN set -e; \
-  /command/core-package-install luajit gcc make unzip luarocks; \
-  luarocks install --server=http://rocks.moonscript.org luaposix; \
-  ln -s /package/airstack/core/lua/airstack.lua /usr/local/lib/lua/5.1/airstack.lua; \
-  apt-get purge -y binutils cpp cpp-4.9 gcc-4.9 libasan1 libatomic1 libcilkrts5 \
-    libcloog-isl4 libgcc-4.9-dev libgomp1 libisl10 libitm1 liblsan0 libmpc3 \
-    libmpfr4 libquadmath0 libtsan0 libubsan0 make unzip luarocks
+  /command/core-package-install luajit lua-posix; \
+  mkdir -p /usr/local/share/lua/5.1; \
+  ln -s /package/airstack/core/lua/airstack.lua /usr/local/share/lua/5.1/airstack.lua
 
 # Packages::test
 # RUN luarocks install --server=http://rocks.moonscript.org busted

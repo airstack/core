@@ -48,7 +48,7 @@ endif
 
 default: build
 
-all: init
+all:
 	@echo all
 	make build
 
@@ -69,11 +69,11 @@ build: init
 	@echo build
 	@docker build --rm --tag $(DOCKER_IMAGE_FULLNAME) .
 
-build-debug: init
+build-debug:
 	@echo build
 	make DOCKER_IMAGE_VERSION=debug build
 
-build-prod: init
+build-prod:
 	make DOCKER_IMAGE_VERSION=prod build
 
 clean: init
@@ -91,7 +91,7 @@ clean-force: init
 console: init
 	docker run --rm -it $(OS_SPECIFIC_RUNFLAGS) $(USERFLAG_CONSOLE) $(COMMON_RUNFLAGS) $(CMD_CONSOLE)
 
-console-single:
+console-single: init
 	docker run --rm -it $(OS_SPECIFIC_RUNFLAGS) $(USERFLAG_CONSOLE) $(COMMON_RUNFLAGS) $(CMD_SINGLE)
 
 debug: init
@@ -100,7 +100,7 @@ debug: init
 run:
 	make console
 
-run-daemon:
+run-daemon: init
 	docker run $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS)
 
 
@@ -108,7 +108,7 @@ run-daemon:
 # BOOT2DOCKER CONVENIENCE COMMANDS
 ################################################################################
 
-repair:
+repair: init
 ifeq ($(uname_S),Darwin)
 	@printf "\n\
 	=====================\n\

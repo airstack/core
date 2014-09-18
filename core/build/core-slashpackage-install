@@ -3,7 +3,7 @@
 ###*
 # Slashpackage install helper.
 #
-# Use this function to install packages from an aircore-compatible slashpackage collection.
+# Use this function to install packages from an Airstack compatible slashpackage collection.
 #
 # Use: core_slashpackage_install PACKAGE_NAME_1 PACKAGE_NAME_2
 # Examples: core_slashpackage_install haproxy

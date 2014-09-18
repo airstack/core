@@ -57,15 +57,6 @@ RUN /command/core-package-install socklog ipsvd netcat-openbsd
 # Packages::dropbear
 RUN /command/core-package-install dropbear
 
-# Packages::serf
-RUN set -e; \
-  /command/core-package-install unzip; \
-  /command/core-slashpackage-install serf-0.6.3; \
-  apt-get purge -y unzip
-
-# Packages::haproxy
-RUN /command/core-package-install haproxy
-
 # Packages::Lua
 RUN set -e; \
   /command/core-package-install luajit gcc make unzip luarocks; \
@@ -82,7 +73,7 @@ RUN set -e; \
 ################################################################################
 # SERVICES
 #
-# Add Airstack core commands
+# Add commands for configuring and managing services
 # This should appear as late in the Dockerfile as possible to make builds as
 # fast as possible.
 ################################################################################
@@ -109,13 +100,6 @@ RUN /package/airstack/runit/enable
 # dropbear
 COPY services/dropbear /package/airstack/dropbear
 EXPOSE 22
-
-# serf
-COPY services/serf /package/airstack/serf
-EXPOSE 7946
-
-# haproxy
-COPY services/haproxy /package/airstack/haproxy
 
 
 ################################################################################

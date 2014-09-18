@@ -41,7 +41,7 @@ containers regardless of the underlying operating system.
 
 Airstack/core is designed with
 [Unix](http://en.wikipedia.org/wiki/Unix_philosophy) and
-[microserve architecture](http://en.wikipedia.org/wiki/Service-oriented_architecture)
+[microservice architecture](http://en.wikipedia.org/wiki/Service-oriented_architecture)
 principles in mind.
 
 While an Airstack/core based container can run anything supported by the underlying

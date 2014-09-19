@@ -61,6 +61,7 @@ RUN /command/core-package-install dropbear
 RUN set -e; \
   /command/core-package-install luajit lua-posix; \
   mkdir -p /usr/local/share/lua/5.1; \
+  ln -s /usr/bin/luajit /usr/bin/lua; \
   ln -s /package/airstack/core/lua/airstack.lua /usr/local/share/lua/5.1/airstack.lua
 
 # Packages::test

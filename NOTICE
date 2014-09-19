@@ -2,3 +2,16 @@ Airstack
 Copyright 2014 Airstack
 
 This product includes software developed at Airstack.
+
+This product depends on 'compat_env', a Lua 5.1/5.2 compatibility library,
+which can be obtained at:
+
+  * https://raw.github.com/gist/1422205/sourceunpack.lua (MIT License)
+
+This product optionally depends on 'Telescope', a Lua testing framework,
+which can be obtained at:
+
+  * LICENSE:
+    * https://github.com/norman/telescope#license (MIT License)
+  * HOMEPAGE:
+    * https://github.com/norman/telescope

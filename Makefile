@@ -63,7 +63,7 @@ endif
 
 test:
 	@echo test
-	make CMD="busted -v --pattern=_spec /package/airstack/test" debug
+	make CMD="core-test-runner -f /package/airstack/test/*_spec.lua" debug
 
 build: init
 	@echo build

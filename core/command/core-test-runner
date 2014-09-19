@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 local as = require 'airstack'
 local telescope = require 'telescope'
+local posix = require 'posix'
 
 package.path = "./?.lua;" .. package.path
 
@@ -225,7 +226,12 @@ local function process_args()
   local opts = getopt(arg, "")
   local i = 1
   for _, _ in pairs(opts) do i = i+1 end
-  while i <= #arg do table.insert(files, arg[i]) ; i = i + 1 end
+  while i <= #arg do
+    for _, f in pairs(posix.glob(arg[i])) do
+      table.insert(files, f)
+    end
+    i = i + 1
+  end
   return opts, files
 end
 local opts, files = process_args()

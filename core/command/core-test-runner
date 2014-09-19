@@ -1,8 +1,6 @@
 #!/usr/bin/env lua
+local as = require 'airstack'
 local telescope = require 'telescope'
-
-pcall(require, "luarocks.require")
-pcall(require, "shake")
 
 package.path = "./?.lua;" .. package.path
 
@@ -46,7 +44,7 @@ local function luacov_report()
 
   local names = {}
   for filename, _ in pairs(data) do
-     table.insert(names, filename)
+    table.insert(names, filename)
   end
 
   local escapes = {
@@ -164,7 +162,6 @@ Options:
   -c      --luacov          Output a coverage file using Luacov (http://luacov.luaforge.net/)
           --load=<file>     Load a Lua file before executing command
           --name=<pattern>  Only run tests whose name matches a Lua string pattern
-          --shake           Use shake as the front-end for tests
 
   Callback options:
     --after=<function>        Run function given after each test
@@ -264,11 +261,7 @@ for _, callback in ipairs(callback_args) do
 end
 
 local contexts = {}
-if opts["shake"] then
-  for _, file in ipairs(files) do shake.load_contexts(file, contexts) end
-else
-  for _, file in ipairs(files) do telescope.load_contexts(file, contexts) end
-end
+for _, file in ipairs(files) do telescope.load_contexts(file, contexts) end
 
 local buffer = {}
 local results = telescope.run(contexts, callbacks, test_pattern)

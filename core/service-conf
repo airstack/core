@@ -94,6 +94,7 @@ service_enable_pre() {
 
 
 service_run_init() {
+  set -e
   local service_name; service_name="$1"
   local cmd_name; cmd_name=$(find /env/$service_name/ -name '*_RUN' | head -n1)
 
@@ -102,10 +103,12 @@ service_run_init() {
 
   # create runit service file
   local cmd_file; cmd_file="$BASEDIR/$service_name/run"
-  echo "#!/bin/sh" > $cmd_file
-  echo "exec 2>&1" >> $cmd_file
-  echo "socklog-check || exit 1" >> $cmd_file
-  cat "$cmd_name" >> $cmd_file
+  echo '#!/bin/sh' > $cmd_file
+  echo 'exec 2>&1' >> $cmd_file
+
+  # only add socklog-check if service isn't socklog-unix!
+  [ $service_name="socklog-unix" ] || echo "socklog-check || exit 1" >> $cmd_file
+  cat $cmd_name >> $cmd_file
 
   chmod 750 $cmd_file
   # core-error-check "service_run_init error"

@@ -3,9 +3,9 @@
 #
 # Set these at runtime to override the below defaults.
 # e.g.:
-# `make CMD=/bin/bash debug`
-# `make USERNAME=root CMD=/bin/bash debug`
-# `make VERSION=debug build`
+# `make DOCKER_OPTS_CMD=/bin/bash console`
+# `make USERNAME=root DOCKER_OPTS_CMD=/bin/bash run`
+# `make AIRSTACK_IMAGE_TAG=debug build`
 #######################################
 
 # Uncomment when debugging Makefile
@@ -14,33 +14,34 @@
 TOP_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CURR_DIR := $(notdir $(patsubst %/,%,$(dir $(TOP_DIR))))
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
-
-DOCKER_IMAGE_REPO := airstack
-DOCKER_IMAGE_NAME := $(CURR_DIR)
-DOCKER_IMAGE_VERSION := latest
-DOCKER_IMAGE_FULLNAME := $(DOCKER_IMAGE_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_VERSION)
 USERNAME := airstack
 USERDIR := $(USERNAME)
 
-CMD := /bin/bash
-CMD_CONSOLE := sh -c "{ /etc/runit/2 &}; chpst -u $(USERNAME) /bin/bash"
-CMD_SINGLE := sh -c "{ /etc/runit/2 single &}; chpst -u $(USERNAME) /bin/bash"
+AIRSTACK_IMAGE_REPO := airstack
+AIRSTACK_IMAGE_NAME := $(CURR_DIR)
+AIRSTACK_IMAGE_TAG := latest
+AIRSTACK_IMAGE_FULLNAME := $(AIRSTACK_IMAGE_REPO)/$(AIRSTACK_IMAGE_NAME):$(AIRSTACK_IMAGE_TAG)
 
-USERFLAG := --user $(USERNAME)
-USERFLAG_CONSOLE := --user root
-COMMON_RUNFLAGS := --publish-all --workdir /home/$(USERDIR) -e HOME=$(USERDIR) $(DOCKER_IMAGE_FULLNAME)
-LINUX_RUNFLAGS := --volume $(USERDIR)/output:/home/$(USERDIR)/output --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
-OSX_RUNFLAGS := --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume /home/docker/base0:/home/$(USERDIR)/base0 --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
+DOCKER_OPTS_CMD := sh -c "{ /etc/runit/2 &}; chpst -u $(USERNAME) bash"
+DOCKER_OPTS_USER := --user $(USERNAME)
+DOCKER_OPTS_USER_CONSOLE := --user root
+DOCKER_OPTS_RUN := --detach
+DOCKER_OPTS_RUN_CONSOLE := --rm -it
+DOCKER_OPTS_BUILD := --rm
+DOCKER_OPTS_COMMON := --publish-all --workdir /home/$(USERDIR) -e HOME=$(USERDIR) $(AIRSTACK_IMAGE_FULLNAME)
+DOCKER_OPTS_LINUX := --volume $(CURR_DIR)/output:/home/$(USERDIR)/output --volume $(CURR_DIR)/input:/home/$(USERDIR)/input:ro
+DOCKER_OPTS_OSX := --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
 
 ifeq ($(uname_S),Darwin)
-	OS_SPECIFIC_RUNFLAGS := $(OSX_RUNFLAGS)
+	OS_SPECIFIC_RUNOPTS := $(DOCKER_OPTS_OSX)
 else
-	OS_SPECIFIC_RUNFLAGS := $(LINUX_RUNFLAGS)
+	OS_SPECIFIC_RUNOPTS := $(DOCKER_OPTS_LINUX)
 endif
 
 
 # .PHONY should include all commands
-.PHONY: default all init test build clean clean-force console debug debug-runit-init repair
+.PHONY: default all init build build-all build-debug build-dev build-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
+
 
 ################################################################################
 # GENERAL COMMANDS
@@ -58,58 +59,111 @@ ifeq ($(uname_S),Darwin)
 ifneq ($(shell boot2docker status),running)
 	@boot2docker up
 endif
-export DOCKER_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
+export AIRSTACK_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
 endif
 
-test:
-	@echo test
-	make CMD="core-test-runner -f /package/airstack/test/*_spec.lua" debug
 
-build: init
-	@echo build
-	@docker build --rm --tag $(DOCKER_IMAGE_FULLNAME) .
+################################################################################
+# BUILD COMMANDS
+#
+# Commands for building containers.
+################################################################################
 
-# Build debug image
-# Useful for debugging without overwriting airstack/core:latest image.
+build-all: build build-dev build-prod
+
+build:
+	docker build $(DOCKER_OPTS_BUILD) --tag $(AIRSTACK_IMAGE_FULLNAME) .
+
 build-debug:
-	@echo build
-	make DOCKER_IMAGE_VERSION=debug build
+	make DOCKER_OPTS_BUILD='--rm --no-cache' build
 
-# Build production image without any development packages
-# https://github.com/airstack/core/issues/10
+build-dev:
+	make AIRSTACK_IMAGE_TAG=dev build
+
+# TODO: Build prod image without any devopment packages
+# 			https://github.com/airstack/core/issues/10
 build-prod:
-	make DOCKER_IMAGE_VERSION=prod build
+	make AIRSTACK_IMAGE_TAG=prod build
+
+
+################################################################################
+# CLEAN COMMANDS
+#
+# Commands for cleaning up leftover container build artifacts.
+################################################################################
+
+clean-all: clean clean-dev clean-prod
 
 clean: init
-	@echo "Removing docker image tree for $(DOCKER_IMAGE_FULLNAME) ..."
-	docker rmi $(DOCKER_IMAGE_FULLNAME)
+	@echo "Removing docker image tree for $(AIRSTACK_IMAGE_FULLNAME) ..."
+	docker rmi -f $(AIRSTACK_IMAGE_FULLNAME)
 
-clean-force: init
-	@echo "Removing docker image tree for $(DOCKER_IMAGE_FULLNAME) ..."
-	@docker rmi -f $(DOCKER_IMAGE_FULLNAME)
+clean-dev: init
+	make AIRSTACK_IMAGE_TAG=dev clean
+
+clean-prod:
+	make AIRSTACK_IMAGE_TAG=prod clean
+
+
+################################################################################
+# CONSOLE COMMANDS
+#
+# Commands for running containers in a console window in foreground.
+#
+# The commands named console-single* will launch containers with
+# only the remote /dev/log forwarder running on start
+# Commands without *single* will run containers in multi mode, with
+# all 'up' services running.
+#
+# CTRL-C Exits and does auto-cleanup.
+################################################################################
+
+console:
+	docker run $(DOCKER_OPTS_RUN_CONSOLE) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER_CONSOLE) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
+
+console-debug:
+	make DOCKER_OPTS_CMD='/bin/bash' console
+
+console-dev:
+	make AIRSTACK_IMAGE_TAG=dev console
+
+console-prod:
+	make AIRSTACK_IMAGE_TAG=prod console
+
+console-single:
+	make DOCKER_OPTS_CMD='sh -c "{ /etc/runit/2 single &}; chpst -u $(USERNAME) /bin/bash"' console
+
+console-single-dev:
+	make DOCKER_OPTS_CMD='sh -c "{ /etc/runit/2 single &}; chpst -u $(USERNAME) /bin/bash"' console-dev
+
+console-single-prod:
+	make DOCKER_OPTS_CMD='sh -c "{ /etc/runit/2 single &}; chpst -u $(USERNAME) /bin/bash"' console-prod
+
 
 ################################################################################
 # RUN COMMANDS
+#
+# Commands for running containers in background.
+#
+# Outputs id of daemonized container
+# To cleanup, run `docker rm <imageid>` after stopping container.
 ################################################################################
 
-console: init
-	docker run --rm -it $(OS_SPECIFIC_RUNFLAGS) $(USERFLAG_CONSOLE) $(COMMON_RUNFLAGS) $(CMD_CONSOLE)
+run: init
+	docker run $(DOCKER_OPTS_RUN) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
 
-console-single: init
-	docker run --rm -it $(OS_SPECIFIC_RUNFLAGS) $(USERFLAG_CONSOLE) $(COMMON_RUNFLAGS) $(CMD_SINGLE)
+run-debug:
+	make DOCKER_OPTS_RUN="--rm -it" run
 
-debug: init
-	docker run --rm -it $(OS_SPECIFIC_RUNFLAGS) $(USERFLAG) $(COMMON_RUNFLAGS) $(CMD)
+run-dev:
+	make AIRSTACK_IMAGE_TAG=dev run
 
-run:
-	make console
-
-run-daemon: init
-	docker run $(OS_SPECIFIC_RUNFLAGS) $(COMMON_RUNFLAGS)
+run-prod:
+	make AIRSTACK_IMAGE_TAG=prod run
 
 
 ################################################################################
-# BOOT2DOCKER CONVENIENCE COMMANDS
+# REPAIR COMMANDS
 ################################################################################
 
 repair: init
@@ -131,3 +185,22 @@ ifeq ($(uname_S),Darwin)
 	boot2docker init > /dev/null
 	@printf "DONE\n"
 endif
+
+
+################################################################################
+# TEST COMMANDS
+################################################################################
+
+test-all: test test-dev test-prod
+
+test:
+	@echo test
+	make DOCKER_OPTS_CMD="core-test-runner -f /package/airstack/test/*_spec.lua" console
+
+test-dev:
+	@echo test
+	make AIRSTACK_IMAGE_TAG=dev test
+
+test-prod:
+	@echo test
+	make AIRSTACK_IMAGE_TAG=prod test

@@ -18,7 +18,7 @@ USERNAME := airstack
 USERDIR := $(USERNAME)
 
 AIRSTACK_TEMPLATES_FILES := Dockerfile.core Dockerfile.packages Dockerfile.packages.dev Dockerfile.services Dockerfile.debug Dockerfile.tests
-AIRSTACK_TEMPLATES_DIR := ./templates
+AIRSTACK_TEMPLATES_DIR := templates
 AIRSTACK_IMAGE_REPO := airstack
 AIRSTACK_IMAGE_NAME := $(CURR_DIR)
 AIRSTACK_IMAGE_TAG := latest
@@ -87,7 +87,7 @@ build-dev:
 	make AIRSTACK_IMAGE_TAG=dev build
 
 build-prod:
-	make AIRSTACK_IMAGE_TAG=prod build
+	make AIRSTACK_IMAGE_TAG=prod AIRSTACK_TEMPLATES_FILES="Dockerfile.core Dockerfile.packages Dockerfile.services Dockerfile.debug Dockerfile.tests" build
 
 
 ################################################################################

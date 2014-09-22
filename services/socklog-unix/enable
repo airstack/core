@@ -76,7 +76,7 @@ socklog_facilities_create() {
   local tmp_facilities; tmp_facilities="$@"
 
   local tmp_file; tmp_file=/etc/sv/socklog-unix/log/run
-  echo "#!/bin/sh" > $tmp_file
+  echo '#!/bin/sh' > $tmp_file
   echo "exec chpst -ulog svlogd -tt -b 10000 -l 1000 $tmp_facilities" >> $tmp_file
 
   chmod ug+x $tmp_file

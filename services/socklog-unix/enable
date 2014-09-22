@@ -106,10 +106,11 @@ main() {
   done
 
   local tmp_dirs;
-  for i in $(ls /var/log/socklog/toremote/ | sort -n); do
+  for i in $(ls /etc/sv/socklog-unix/log/main/toremote/ | sort -n); do
     tmp_dirs="$tmp_dirs main/toremote/$i"
   done
   socklog_facilities_create "$default_facilities $tmp_dirs"
+  set +e
 }
 
 

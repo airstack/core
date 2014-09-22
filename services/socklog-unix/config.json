@@ -4,7 +4,7 @@
       "state": "up",
       "enable": "chpst -e /env/socklog-unix -u root sh /package/airstack/socklog-unix/enable",
       "disable": "unlink /var/log/syslog; rm -rf /etc/sv/socklog-unix",
-      "run": "",
+      "run": "exec chpst -Unobody socklog unix /dev/log",
       "check": "logger checking-socklog && exec socklog-check unix /dev/log",
       "finish": "",
       "log": "",

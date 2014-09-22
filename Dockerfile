@@ -61,9 +61,6 @@ RUN set -e; \
   ln -s /usr/bin/luajit /usr/bin/lua; \
   ln -s /package/airstack/core/lua/airstack.lua /usr/local/share/lua/5.1/airstack.lua
 
-# Packages::test
-# RUN luarocks install --server=http://rocks.moonscript.org busted
-
 
 ################################################################################
 # SERVICES

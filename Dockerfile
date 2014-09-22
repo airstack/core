@@ -113,4 +113,4 @@ COPY test /package/airstack/test
 RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
-CMD exec sudo chpst -u root /usr/local/bin/container-start
+CMD exec sh -c "{ /etc/runit/2 &}; chpst -u airstack rbash

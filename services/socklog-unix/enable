@@ -33,6 +33,40 @@ socklog_config_create() {
   set +e
 }
 
+
+socklog_defaults_create() {
+  set -e
+  [ -d /etc/sv/socklog-unix/log/ ] || mkdir -p /etc/sv/socklog-unix/log/
+  cd /etc/sv/socklog-unix/log
+
+  mkdir -p main/auth
+  printf "s999999\nn5\n-*\n+auth.*\n+authpriv.*" > main/auth/config
+  mkdir -p main/cron
+  printf "s999999\nn5\n-*\n+cron.*" > main/cron/config
+  mkdir -p main/daemon
+  printf "s999999\nn5\n-*\n+daemon.*" > main/daemon/config
+  mkdir -p main/debug
+  printf "s999999\nn5\n-*\n+*.debug*" > main/debug/config
+  mkdir -p main/ftp
+  printf "s999999\nn5\n-*\n+ftp.*" > main/ftp/config
+  mkdir -p main/kern
+  printf "s999999\nn5\n-*\n+kern.*" > main/kern/config
+  mkdir -p main/local
+  printf "s999999\nn5\n-*\n+local.*" > main/local/config
+  mkdir -p main/mail
+  printf "s999999\nn5\n-*\n+mail.*" > main/mail/config
+  mkdir -p main/main
+  printf "s999999\nn10" > main/main/config
+  mkdir -p main/news
+  printf "s999999\nn5\n-*\n+news.*" > main/news/config
+  mkdir -p main/syslog
+  printf "s999999\nn5\n-*\n+syslog.*" > main/syslog/config
+  mkdir -p main/user
+  printf "s999999\nn5\n-*\n+user.*" > main/user/config
+  find ./main/* -name config -exec chmod 0644 {} +
+
+  find ./main/* -type d -exec chown log:nogroup {} +
+  find ./main/* -type d -exec chmod 750 {} +
   set +e
 }
 

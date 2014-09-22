@@ -71,6 +71,7 @@ See [Dockerfile](/Dockerfile) for example.
 
 # Other References
 
+- http://stackoverflow.com/questions/9721944/automatic-toc-in-github-flavoured-markdown
 - http://stackoverflow.com/questions/1190427/shell-documentation-bash-ksh
 - http://javaworkshop.sourceforge.net/chapter4.html#Javadoc+Comments
 - https://google-styleguide.googlecode.com/svn/trunk/shell.xml

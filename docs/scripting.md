@@ -67,6 +67,8 @@ Use shellcheck on build to ensure we aren't using bashisms
 - [LuaJIT](http://luajit.org)
 - https://github.com/justincormack/ljsyscall/blob/master/examples/vlan.lua
 - https://github.com/justincormack/ljsyscall/blob/master/examples/lxc.lua
+- [Luabuld](https://github.com/stevedonovan/luabuild) - customizable Lua 5.2 build system
+- [Lua Toolbox](https://lua-toolbox.com/) - useful Lua modules
 
 ### Installed Lua Modules
 

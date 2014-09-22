@@ -16,9 +16,6 @@ FROM debian:jessie
 USER root
 ENV HOME /root
 WORKDIR /root
-ONBUILD USER airstack
-ONBUILD ENV HOME /home/airstack
-ONBUILD WORKDIR /home/airstack
 RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \

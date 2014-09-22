@@ -3,8 +3,8 @@
 # MAINTAINER airstack team <support@airstack.io>
 #
 # RUN:
-# - single command on one line
-# - multiple commands with `set -e`
+# - single commands on one line
+# - multiple commands with `set -e`. Separate commands with `;`.
 #
 # Packages:
 # - use core helper functions to install packages

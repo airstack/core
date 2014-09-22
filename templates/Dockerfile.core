@@ -1,0 +1,22 @@
+################################################################################
+# CORE Dockerfile
+# MAINTAINER airstack team <support@airstack.io>
+#
+# RUN:
+# - single commands on one line
+# - multiple commands with `set -e`. Separate commands with `;`.
+#
+# Packages:
+# - use core helper functions to install packages
+# - /command/core-package-install
+#
+################################################################################
+
+FROM debian:jessie
+USER root
+ENV HOME /root
+WORKDIR /root
+RUN set -e; \
+  groupadd --system airstack --gid 432; \
+  useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
+  chown -R airstack:airstack /home/airstack

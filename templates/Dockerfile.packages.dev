@@ -1,0 +1,11 @@
+################################################################################
+# PACKAGES::Dev
+#
+# Add dev-specific packages here.
+# These will be added to dev builds
+# Commands required for installing dev packages.
+################################################################################
+
+RUN set -e; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc net-tools less wget sudo procps; \
+  ln -s /usr/bin/vim.tiny /usr/bin/vim

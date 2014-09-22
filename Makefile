@@ -40,7 +40,7 @@ endif
 
 
 # .PHONY should include all commands
-.PHONY: default all init build build-all build-debug build-dev build-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
+.PHONY: default all init build build-all build-debug build-dev build-prod build-template-all build-template-dev build-template-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
 
 
 ################################################################################
@@ -85,6 +85,41 @@ build-dev:
 build-prod:
 	make AIRSTACK_IMAGE_TAG=prod build
 
+build-template-all: build-template build-template-dev build-template-prod
+
+build-template:
+	set -e; \
+	tmp_dir=./templates; tmp_env=latest; \
+	> Dockerfile.$$tmp_env; \
+	for i in core packages "packages.dev" services debug tests; do \
+	cat $$tmp_dir/Dockerfile.$$i >> ./Dockerfile.$$tmp_env; \
+	done; \
+	ln -sf Dockerfile.$$tmp_env Dockerfile; \
+	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$$tmp_env .
+	ln -sf Dockerfile.all Dockerfile
+
+build-template-dev:
+	set -e; \
+	tmp_dir=./templates; tmp_env=dev; \
+	> Dockerfile.$$tmp_env; \
+	for i in core packages "packages.dev" services debug tests; do \
+	cat $$tmp_dir/Dockerfile.$$i >> ./Dockerfile.$$tmp_env; \
+	done; \
+	ln -sf Dockerfile.$$tmp_env Dockerfile; \
+	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$$tmp_env .
+	ln -sf Dockerfile.all Dockerfile
+
+
+build-template-prod:
+	set -e; \
+	tmp_dir=./templates; tmp_env=prod; \
+	> Dockerfile.$$tmp_env; \
+	for i in core packages services debug tests; do \
+	cat $$tmp_dir/Dockerfile.$$i >> ./Dockerfile.$$tmp_env; \
+	done; \
+	ln -sf Dockerfile.$$tmp_env Dockerfile; \
+	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$$tmp_env .
+	ln -sf Dockerfile.all Dockerfile
 
 ################################################################################
 # CLEAN COMMANDS

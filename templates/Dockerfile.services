@@ -1,0 +1,23 @@
+
+################################################################################
+# SERVICES
+#
+# Add commands for configuring and managing services
+#
+# This should stay near the end of the Dockerfile to minimize
+# unnecessary rebuilds.
+################################################################################
+
+COPY core /package/airstack/core
+RUN ln -s /package/airstack/core/command/core-* /command/
+
+# socklog
+COPY services/socklog-unix /package/airstack/socklog-unix
+
+# runit
+COPY services/runit /package/airstack/runit
+RUN /package/airstack/runit/enable
+
+# dropbear
+COPY services/dropbear /package/airstack/dropbear
+EXPOSE 22

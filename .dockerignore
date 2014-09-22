@@ -2,3 +2,6 @@
 .git
 .gitignore
 .DS_Store
+Dockerfile.dev
+Dockerfile.latest
+Dockerfile.prod

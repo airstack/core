@@ -2,3 +2,6 @@ input
 output
 _notes
 .DS_Store
+Dockerfile.dev
+Dockerfile.latest
+Dockerfile.prod

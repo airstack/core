@@ -1,0 +1,14 @@
+
+################################################################################
+# RUNTIME
+#
+# Password-less sudo enabled for airstack user.
+# Can remove as part of production container hardening.
+#
+# Default CMD set here.
+################################################################################
+
+RUN set -e; \
+  echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
+  usermod --shell /bin/bash airstack
+CMD exec sh -c "{ /etc/runit/2 &}; chpst -u airstack rbash

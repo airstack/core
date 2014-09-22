@@ -71,7 +71,7 @@ endif
 
 build-all: build build-dev build-prod
 
-build:
+build: init
 	docker build $(DOCKER_OPTS_BUILD) --tag $(AIRSTACK_IMAGE_FULLNAME) .
 
 build-debug:
@@ -98,7 +98,7 @@ clean: init
 	@echo "Removing docker image tree for $(AIRSTACK_IMAGE_FULLNAME) ..."
 	docker rmi -f $(AIRSTACK_IMAGE_FULLNAME)
 
-clean-dev: init
+clean-dev:
 	make AIRSTACK_IMAGE_TAG=dev clean
 
 clean-prod:
@@ -118,7 +118,7 @@ clean-prod:
 # CTRL-C Exits and does auto-cleanup.
 ################################################################################
 
-console:
+console: init
 	docker run $(DOCKER_OPTS_RUN_CONSOLE) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER_CONSOLE) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
 
 console-debug:

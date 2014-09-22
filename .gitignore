@@ -2,6 +2,9 @@ input
 output
 _notes
 .DS_Store
+Dockerfile
+Dockerfile.debug
 Dockerfile.dev
 Dockerfile.latest
 Dockerfile.prod
+

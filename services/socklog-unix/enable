@@ -6,7 +6,7 @@ socklog_config_create() {
   local tmp_ip=$(cat "$i"_IP)
   local tmp_port=$(cat "$i"_PORT)
 
-  local tmp_dir; tmp_dir=/var/log/socklog/toremote/$tmp_ip:$tmp_port
+  local tmp_dir; tmp_dir=/etc/sv/socklog-unix/log/main/toremote/$tmp_ip:$tmp_port
   [ -d $tmp_dir ] || mkdir -p $tmp_dir
 
   # create config file
@@ -25,10 +25,14 @@ socklog_config_create() {
   echo "t2" >> $tmp_configfile
   echo p"$(hostname) " >> $tmp_configfile
   echo "!tryto -pv -k 2 -n 5 nc -q0 $tmp_ip $tmp_port" >> $tmp_configfile
+  chmod 0644 $tmp_configfile
 
   # set permissions
-  chown -R log:nogroup /var/log/socklog/toremote
-  chown root:root /var/log/socklog/toremote/$tmp_ip:$tmp_port/config
+  find /etc/sv/socklog-unix/log/main/toremote/ -type d -exec chown log:nogroup {} +
+  find /etc/sv/socklog-unix/log/main/toremote/ -type d -exec chmod 750 {} +
+  set +e
+}
+
   set +e
 }
 

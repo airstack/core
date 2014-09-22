@@ -131,7 +131,7 @@ service_check_init() {
   # create runit service check file
   local cmd_file; cmd_file="$BASEDIR/$service_name/check"
   echo '#!/bin/sh' > $cmd_file
-  echo 'exec 2>&1' >> $cmd_file
+  echo 'exec 2>/dev/null' >> $cmd_file
   cat $cmd_name >> $cmd_file
 
   chmod 755 "$cmd_file"

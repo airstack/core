@@ -86,17 +86,11 @@ socklog_facilities_create() {
 
 main() {
   set -e
-  [ -e /etc/sv/socklog-unix/log ] || socklog-conf unix nobody log
+  socklog_defaults_create
 
-  tmp_file=/etc/sv/socklog-unix/log/main/main/config
+  [ -f /var/log/socklog ] || ln -sf /service/socklog-unix/log/main /var/log/socklog
+  [ -f /var/log/syslog ] || ln -sf /var/log/socklog/main/current /var/log/syslog
 
-  echo \"s999999\" > $tmp_file
-  echo \"n11\" >> $tmp_file
-
-  [ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog
-  set +e
-
-  set -e
   local i; local default_facilities;
   default_facilities="main/main main/auth main/cron main/daemon main/debug \
   main/ftp main/kern main/local main/mail main/news main/syslog main/user"

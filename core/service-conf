@@ -148,15 +148,15 @@ service_log_init() {
   [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
 
   # create runit service log dir
-  [ ! -e $BASEDIR/$service_name/log/ ] && mkdir -p $BASEDIR/$service_name/log/
+  [ ! -e "$BASEDIR/$service_name/log/" ] && mkdir -p "$BASEDIR/$service_name/log/"
 
   # create runit service log file
   local cmd_file; cmd_file="$BASEDIR/$service_name/log/run"
-  echo "#!/bin/sh" > "$cmd_file"
-  echo "exec 2>&1" >> "$cmd_file"
-  cat "$cmd_name" >> "$cmd_file"
+  echo '#!/bin/sh' > $cmd_file
+  echo 'exec 2>&1' >> $cmd_file
+  cat $cmd_name >> $cmd_file
 
-  chmod 750 $cmd_file
+  chmod 750 "$cmd_file"
   # core-error-check "log script failure"
 
   return 0
@@ -175,10 +175,10 @@ service_finish_init() {
   [ $(cat $cmd_name | wc -m) -gt 1 ] || return 0
 
   # create runit service finish file
-  local cmdfile; cmd_file=$BASEDIR/$service_name/finish
-  echo "#!/bin/sh" > "$cmdfile"
-  echo "exec 2>&1" >> "$cmdfile"
-  cat "$cmd_name" >> "$cmdfile"
+  local cmd_file; cmd_file="$BASEDIR/$service_name/finish"
+  echo '#!/bin/sh' > $cmd_file
+  echo 'exec 2>&1' >> $cmd_file
+  cat $cmd_name >> $cmd_file
 
   chmod 750 $cmd_file
   # core-error-check "log script failure"
@@ -203,7 +203,7 @@ service_enable_post() {
   done
 
   # adding to init.d for service command compatibility
-  ln -sf /usr/bin/sv /etc/init.d/$service_name
+  ln -sf /usr/bin/sv /etc/init.d/"$service_name"
   return 0
 }
 

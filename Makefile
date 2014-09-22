@@ -121,6 +121,7 @@ clean-prod:
 console: init
 	docker run $(DOCKER_OPTS_RUN_CONSOLE) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER_CONSOLE) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
 
+debug: console-debug
 console-debug:
 	make DOCKER_OPTS_CMD='/bin/bash' console
 

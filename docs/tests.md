@@ -5,8 +5,8 @@
 The majority of the test suite runs inside of a container and tests basic
 functionality and configuration options.
 
-Tests are written in Lua using BDD style with the
-[busted framework](http://olivinelabs.com/busted/.
+Tests are written in Lua using TDD/BDD style with the
+[Telescope framework](https://github.com/norman/telescope).
 
 # Best Practices
 
@@ -26,6 +26,4 @@ Tests are written in Lua using BDD style with the
 
 # References
 
-- [busted](http://olivinelabs.com/busted/) – Lua BDD testing framework
-  - [asserts](-- Asserts: http://olivinelabs.com/busted/#asserts)
 - [scripting.md](scripting.md#lua) – Lua language references

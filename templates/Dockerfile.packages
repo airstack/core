@@ -7,7 +7,7 @@
 # should be in earlier RUN commands.
 ################################################################################
 
-ADD core/build/ /package/airstack-0.1.0/build
+COPY core/build/ /package/airstack-0.1.0/build
 RUN set -e; \
   ln -s /package/airstack-0.1.0 /package/airstack; \
   chmod -R 1755 /package; \

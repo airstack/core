@@ -41,8 +41,8 @@ else
 endif
 
 
-# .PHONY should include all commands
-.PHONY: default all init build build-all build-debug build-dev build-prod build-template-all build-template-dev build-template-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
+# .PHONY should include all commands. Arrange in order that they appear in the Makefile
+.PHONY: default all init build build-all debug build-debug build-dev build-prod build-template-all build-template-dev build-template-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
 
 
 ################################################################################

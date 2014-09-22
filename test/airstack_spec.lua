@@ -3,8 +3,6 @@
 --
 -- @see /core/lua/airstack.lua
 --
--- References:
--- Asserts: http://olivinelabs.com/busted/#asserts
 --
 
 

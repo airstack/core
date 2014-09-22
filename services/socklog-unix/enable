@@ -6,7 +6,7 @@ socklog_config_create() {
   local tmp_ip=$(cat "$i"_IP)
   local tmp_port=$(cat "$i"_PORT)
 
-  local tmp_dir; tmp_dir=/var/log/socklog/toremote/$tmp_ip:$tmp_port
+  local tmp_dir; tmp_dir=/etc/sv/socklog-unix/log/main/toremote/$tmp_ip:$tmp_port
   [ -d $tmp_dir ] || mkdir -p $tmp_dir
 
   # create config file
@@ -25,10 +25,48 @@ socklog_config_create() {
   echo "t2" >> $tmp_configfile
   echo p"$(hostname) " >> $tmp_configfile
   echo "!tryto -pv -k 2 -n 5 nc -q0 $tmp_ip $tmp_port" >> $tmp_configfile
+  chmod 0644 $tmp_configfile
 
   # set permissions
-  chown -R log:nogroup /var/log/socklog/toremote
-  chown root:root /var/log/socklog/toremote/$tmp_ip:$tmp_port/config
+  find /etc/sv/socklog-unix/log/main/toremote/ -type d -exec chown log:nogroup {} +
+  find /etc/sv/socklog-unix/log/main/toremote/ -type d -exec chmod 750 {} +
+  set +e
+}
+
+
+socklog_defaults_create() {
+  set -e
+  [ -d /etc/sv/socklog-unix/log/ ] || mkdir -p /etc/sv/socklog-unix/log/
+  cd /etc/sv/socklog-unix/log
+
+  mkdir -p main/auth
+  printf "s999999\nn5\n-*\n+auth.*\n+authpriv.*" > main/auth/config
+  mkdir -p main/cron
+  printf "s999999\nn5\n-*\n+cron.*" > main/cron/config
+  mkdir -p main/daemon
+  printf "s999999\nn5\n-*\n+daemon.*" > main/daemon/config
+  mkdir -p main/debug
+  printf "s999999\nn5\n-*\n+*.debug*" > main/debug/config
+  mkdir -p main/ftp
+  printf "s999999\nn5\n-*\n+ftp.*" > main/ftp/config
+  mkdir -p main/kern
+  printf "s999999\nn5\n-*\n+kern.*" > main/kern/config
+  mkdir -p main/local
+  printf "s999999\nn5\n-*\n+local.*" > main/local/config
+  mkdir -p main/mail
+  printf "s999999\nn5\n-*\n+mail.*" > main/mail/config
+  mkdir -p main/main
+  printf "s999999\nn10" > main/main/config
+  mkdir -p main/news
+  printf "s999999\nn5\n-*\n+news.*" > main/news/config
+  mkdir -p main/syslog
+  printf "s999999\nn5\n-*\n+syslog.*" > main/syslog/config
+  mkdir -p main/user
+  printf "s999999\nn5\n-*\n+user.*" > main/user/config
+  find ./main/* -name config -exec chmod 0644 {} +
+
+  find ./main/* -type d -exec chown log:nogroup {} +
+  find ./main/* -type d -exec chmod 750 {} +
   set +e
 }
 
@@ -38,7 +76,7 @@ socklog_facilities_create() {
   local tmp_facilities; tmp_facilities="$@"
 
   local tmp_file; tmp_file=/etc/sv/socklog-unix/log/run
-  echo "#!/bin/sh" > $tmp_file
+  echo '#!/bin/sh' > $tmp_file
   echo "exec chpst -ulog svlogd -tt -b 10000 -l 1000 $tmp_facilities" >> $tmp_file
 
   chmod ug+x $tmp_file
@@ -48,17 +86,11 @@ socklog_facilities_create() {
 
 main() {
   set -e
-  [ -e /etc/sv/socklog-unix/log ] || socklog-conf unix nobody log
+  socklog_defaults_create
 
-  tmp_file=/etc/sv/socklog-unix/log/main/main/config
+  [ -f /var/log/socklog ] || ln -sf /service/socklog-unix/log/main /var/log/socklog
+  [ -f /var/log/syslog ] || ln -sf /var/log/socklog/main/current /var/log/syslog
 
-  echo \"s999999\" > $tmp_file
-  echo \"n11\" >> $tmp_file
-
-  [ -f /var/log/syslog ] || ln -s /var/log/socklog/main/current /var/log/syslog
-  set +e
-
-  set -e
   local i; local default_facilities;
   default_facilities="main/main main/auth main/cron main/daemon main/debug \
   main/ftp main/kern main/local main/mail main/news main/syslog main/user"
@@ -68,10 +100,11 @@ main() {
   done
 
   local tmp_dirs;
-  for i in $(ls /var/log/socklog/toremote/ | sort -n); do
+  for i in $(ls /etc/sv/socklog-unix/log/main/toremote/ | sort -n); do
     tmp_dirs="$tmp_dirs main/toremote/$i"
   done
   socklog_facilities_create "$default_facilities $tmp_dirs"
+  set +e
 }
 
 

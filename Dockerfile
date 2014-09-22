@@ -3,8 +3,8 @@
 # MAINTAINER airstack team <support@airstack.io>
 #
 # RUN:
-# - single command on one line
-# - multiple commands with `set -e`
+# - single commands on one line
+# - multiple commands with `set -e`. Separate commands with `;`.
 #
 # Packages:
 # - use core helper functions to install packages
@@ -16,9 +16,6 @@ FROM debian:jessie
 USER root
 ENV HOME /root
 WORKDIR /root
-ONBUILD USER airstack
-ONBUILD ENV HOME /home/airstack
-ONBUILD WORKDIR /home/airstack
 RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
@@ -64,36 +61,25 @@ RUN set -e; \
   ln -s /usr/bin/luajit /usr/bin/lua; \
   ln -s /package/airstack/core/lua/airstack.lua /usr/local/share/lua/5.1/airstack.lua
 
-# Packages::test
-# RUN luarocks install --server=http://rocks.moonscript.org busted
-
 
 ################################################################################
 # SERVICES
 #
 # Add commands for configuring and managing services
-# This should appear as late in the Dockerfile as possible to make builds as
-# fast as possible.
+#
+# This should stay near the end of the Dockerfile to minimize
+# unnecessary rebuilds.
 ################################################################################
 
 COPY core /package/airstack/core
 RUN ln -s /package/airstack/core/command/core-* /command/
 
-#
-# RUNLEVEL 1
-# Start socklog and runit
-#
-
 # socklog
 COPY services/socklog-unix /package/airstack/socklog-unix
 
-# Container init system
+# runit
 COPY services/runit /package/airstack/runit
 RUN /package/airstack/runit/enable
-
-#
-# RUNLEVEL 2
-#
 
 # dropbear
 COPY services/dropbear /package/airstack/dropbear
@@ -104,7 +90,7 @@ EXPOSE 22
 # DEBUG
 ################################################################################
 
-# TODO: remove this later. /command symlinks should be setup by each command.
+# TODO: have /command symlinks setup during each service installation.
 RUN ln -s /command/core-* /usr/local/bin/
 
 
@@ -118,11 +104,13 @@ COPY test /package/airstack/test
 ################################################################################
 # RUNTIME
 #
-# Password-less sudo enabled for airstack user. Can remove for production.
-# Default CMD set.
+# Password-less sudo enabled for airstack user.
+# Can remove as part of production container hardening.
+#
+# Default CMD set here.
 ################################################################################
 
 RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
-CMD exec sudo chpst -u root /usr/local/bin/container-start
+CMD exec sh -c "{ /etc/runit/2 &}; chpst -u airstack rbash

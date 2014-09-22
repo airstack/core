@@ -29,8 +29,8 @@ DOCKER_OPTS_RUN := --detach
 DOCKER_OPTS_RUN_CONSOLE := --rm -it
 DOCKER_OPTS_BUILD := --rm
 DOCKER_OPTS_COMMON := --publish-all --workdir /home/$(USERDIR) -e HOME=$(USERDIR) $(AIRSTACK_IMAGE_FULLNAME)
-DOCKER_OPTS_LINUX := --volume $(CURR_DIR)/output:/home/$(USERDIR)/output --volume $(CURR_DIR)/input:/home/$(USERDIR)/input:ro
-DOCKER_OPTS_OSX := --volume $(ROOTDIR)/output:/home/$(USERDIR)/output --volume $(ROOTDIR)/input:/home/$(USERDIR)/input:ro
+DOCKER_OPTS_LINUX := --volume $(CURR_DIR)/:/files/host/
+DOCKER_OPTS_OSX := --volume $(ROOTDIR)/:/files/host/
 
 ifeq ($(uname_S),Darwin)
 	OS_SPECIFIC_RUNOPTS := $(DOCKER_OPTS_OSX)

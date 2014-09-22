@@ -72,28 +72,20 @@ RUN set -e; \
 # SERVICES
 #
 # Add commands for configuring and managing services
-# This should appear as late in the Dockerfile as possible to make builds as
-# fast as possible.
+#
+# This should stay near the end of the Dockerfile to minimize
+# unnecessary rebuilds.
 ################################################################################
 
 COPY core /package/airstack/core
 RUN ln -s /package/airstack/core/command/core-* /command/
 
-#
-# RUNLEVEL 1
-# Start socklog and runit
-#
-
 # socklog
 COPY services/socklog-unix /package/airstack/socklog-unix
 
-# Container init system
+# runit
 COPY services/runit /package/airstack/runit
 RUN /package/airstack/runit/enable
-
-#
-# RUNLEVEL 2
-#
 
 # dropbear
 COPY services/dropbear /package/airstack/dropbear
@@ -104,7 +96,7 @@ EXPOSE 22
 # DEBUG
 ################################################################################
 
-# TODO: remove this later. /command symlinks should be setup by each command.
+# TODO: have /command symlinks setup during each service installation.
 RUN ln -s /command/core-* /usr/local/bin/
 
 
@@ -118,8 +110,10 @@ COPY test /package/airstack/test
 ################################################################################
 # RUNTIME
 #
-# Password-less sudo enabled for airstack user. Can remove for production.
-# Default CMD set.
+# Password-less sudo enabled for airstack user.
+# Can remove as part of production container hardening.
+#
+# Default CMD set here.
 ################################################################################
 
 RUN set -e; \

@@ -73,9 +73,6 @@ endif
 
 build-all: build build-dev build-prod
 
-# build: init
-# 	docker build $(DOCKER_OPTS_BUILD) --tag $(AIRSTACK_IMAGE_FULLNAME) .
-
 build:
 	> Dockerfile.$(AIRSTACK_IMAGE_TAG)
 	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> ./Dockerfile.$(AIRSTACK_IMAGE_TAG);)
@@ -129,6 +126,7 @@ console: init
 	docker run $(DOCKER_OPTS_RUN_CONSOLE) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER_CONSOLE) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
 
 debug: console-debug
+
 console-debug:
 	make DOCKER_OPTS_CMD='/bin/bash' console
 

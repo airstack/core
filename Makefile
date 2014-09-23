@@ -210,6 +210,11 @@ ps:
 blank:
 	docker run --rm -it debian:jessie /bin/bash
 
+ssh:
+ifeq ($(uname_S),Darwin)
+	boot2docker ssh
+endif
+
 ################################################################################
 # TEST COMMANDS
 ################################################################################

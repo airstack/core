@@ -1,3 +1,5 @@
+# Keeping this for reference. Use airstackignore.
+
 # Patterns below are fed to go's filepath.match method.
 # Nested directories must be specifically matched unlike .gitignore.
 # https://golang.org/src/pkg/path/filepath/match_test.go

@@ -5,11 +5,10 @@
 .git
 .gitignore
 .dockerignore
+.airstackignore
 .DS_Store
-Dockerfile.dev
-Dockerfile.debug
-Dockerfile.latest
-Dockerfile.prod
+build/
+_wip
 
 # Do not include dot files and dirs in nested dirs
 */.*

@@ -64,7 +64,6 @@ endif
 export AIRSTACK_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
 endif
 
-
 ################################################################################
 # BUILD COMMANDS
 #
@@ -169,7 +168,9 @@ run-prod:
 
 
 ################################################################################
-# REPAIR COMMANDS
+# DOCKER COMMANDS
+#
+# Convenience helper commands for managing docker
 ################################################################################
 
 repair: init
@@ -192,6 +193,14 @@ ifeq ($(uname_S),Darwin)
 	@printf "DONE\n"
 endif
 
+stats:
+	docker images | grep $(USERDIR)
+
+ps:
+	docker ps
+
+blank:
+	docker run --rm -it debian:jessie /bin/bash
 
 ################################################################################
 # TEST COMMANDS

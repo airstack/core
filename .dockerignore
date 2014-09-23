@@ -1,7 +1,20 @@
+# Patterns below are fed to go's filepath.match method.
+# Nested directories must be specifically matched unlike .gitignore.
+# https://golang.org/src/pkg/path/filepath/match_test.go
+
 .git
 .gitignore
+.dockerignore
 .DS_Store
 Dockerfile.dev
 Dockerfile.debug
 Dockerfile.latest
 Dockerfile.prod
+
+# Do not include dot files and dirs in nested dirs
+*/.*
+*/*/.*
+*/*/*/.*
+*/*/*/*/.*
+*/*/*/*/*/.*
+*/*/*/*/*/*/.*

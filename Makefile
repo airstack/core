@@ -48,7 +48,7 @@ endif
 	console console-debug console-dev console-prod \
 	console-single console-single-dev console-single-prod \
 	run run-debug run-dev run-prod \
-	repair stats ps blank\
+	repair stats ps blank ssh \
 	test test-all test-dev test-prod
 
 

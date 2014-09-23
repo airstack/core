@@ -103,6 +103,12 @@ build-dev:
 build-prod:
 	make AIRSTACK_IMAGE_TAG=prod AIRSTACK_TEMPLATES_FILES="Dockerfile.core Dockerfile.packages Dockerfile.services Dockerfile.debug Dockerfile.tests" build
 
+build-help:
+	@echo USAGE:
+	@echo make build-dev
+	@echo make build-dev console-dev
+	@echo make -j5 build-all
+
 
 ################################################################################
 # CLEAN COMMANDS

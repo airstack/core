@@ -80,12 +80,19 @@ endif
 
 build-all: build build-dev build-prod
 
-build:
+build-original:
 	> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG)
 	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG);)
 	cp -a $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile; \
 	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$(AIRSTACK_IMAGE_TAG) .; \
 	rm Dockerfile
+
+build:
+	> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG)
+	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG);)
+	ln -f $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile
+	tar -zcvf $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz -C $(TOP_DIR) -X .airstackignore .
+	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$(AIRSTACK_IMAGE_TAG) - < $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz
 
 build-debug:
 	make DOCKER_OPTS_BUILD='--rm --no-cache' build

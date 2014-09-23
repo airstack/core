@@ -18,7 +18,7 @@ USERNAME := airstack
 USERDIR := $(USERNAME)
 
 AIRSTACK_TEMPLATES_FILES := Dockerfile.core Dockerfile.packages Dockerfile.packages.dev Dockerfile.services Dockerfile.debug Dockerfile.tests
-AIRSTACK_TEMPLATES_DIR := ./templates
+AIRSTACK_TEMPLATES_DIR := templates
 AIRSTACK_IMAGE_REPO := airstack
 AIRSTACK_IMAGE_NAME := $(CURR_DIR)
 AIRSTACK_IMAGE_TAG := latest
@@ -41,8 +41,8 @@ else
 endif
 
 
-# .PHONY should include all commands
-.PHONY: default all init build build-all build-debug build-dev build-prod build-template-all build-template-dev build-template-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
+# .PHONY should include all commands. Arrange in order that they appear in the Makefile
+.PHONY: default all init build build-all debug build-debug build-dev build-prod build-template-all build-template-dev build-template-prod clean clean-all clean-dev clean-prod console console-debug console-dev console-prod console-single console-single-dev console-single-prod run run-debug run-dev run-prod repair test test-all test-dev test-prod
 
 
 ################################################################################
@@ -64,7 +64,6 @@ endif
 export AIRSTACK_HOST=tcp://$(shell boot2docker ip 2>/dev/null):2375
 endif
 
-
 ################################################################################
 # BUILD COMMANDS
 #
@@ -72,9 +71,6 @@ endif
 ################################################################################
 
 build-all: build build-dev build-prod
-
-# build: init
-# 	docker build $(DOCKER_OPTS_BUILD) --tag $(AIRSTACK_IMAGE_FULLNAME) .
 
 build:
 	> Dockerfile.$(AIRSTACK_IMAGE_TAG)
@@ -90,7 +86,7 @@ build-dev:
 	make AIRSTACK_IMAGE_TAG=dev build
 
 build-prod:
-	make AIRSTACK_IMAGE_TAG=prod build
+	make AIRSTACK_IMAGE_TAG=prod AIRSTACK_TEMPLATES_FILES="Dockerfile.core Dockerfile.packages Dockerfile.services Dockerfile.debug Dockerfile.tests" build
 
 
 ################################################################################
@@ -129,6 +125,7 @@ console: init
 	docker run $(DOCKER_OPTS_RUN_CONSOLE) $(OS_SPECIFIC_RUNOPTS) $(DOCKER_OPTS_USER_CONSOLE) $(DOCKER_OPTS_COMMON) $(DOCKER_OPTS_CMD)
 
 debug: console-debug
+
 console-debug:
 	make DOCKER_OPTS_CMD='/bin/bash' console
 
@@ -171,7 +168,9 @@ run-prod:
 
 
 ################################################################################
-# REPAIR COMMANDS
+# DOCKER COMMANDS
+#
+# Convenience helper commands for managing docker
 ################################################################################
 
 repair: init
@@ -194,6 +193,14 @@ ifeq ($(uname_S),Darwin)
 	@printf "DONE\n"
 endif
 
+stats:
+	docker images | grep $(USERDIR)
+
+ps:
+	docker ps
+
+blank:
+	docker run --rm -it debian:jessie /bin/bash
 
 ################################################################################
 # TEST COMMANDS

@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Watch for file changes and run command.
+#
+# Usage:
+#   core-watch <path> <command>
+#
+# Example:
+#   core-watch '/some/path /some/other/path' 'echo "Change detected!"'
+#
+# Excludes .swp, .swx, *~ files.
+# Recursively watches directories.
+# Waits one second after event before running command.
+
+
+while true; do
+  inotifywait -r \
+  -e create -e delete -e modify -e move \
+  --excludei '\.(swp)|(.swx)|~$' \
+  ${1} > /dev/null 2>&1
+  sleep 1
+  eval ${2}
+done
+
+# Example:
+# inotifywait -mr --timefmt '%d/%m/%y %H:%M' --format '%T %w %f' \
+# -e create -e delete -e modify -e move \
+# --excludei '\.(swp)|(.swx)|~$' \
+# $1 | while read date time dir file; do
+#   FILECHANGE=${dir}${file}
+#   # convert absolute path to relative
+#   FILECHANGEREL=`echo "$FILECHANGE" | sed 's_'$CURPATH'/__'`
+#   rsync --progress --relative -vrae 'ssh -p 22'  $FILECHANGEREL usernam@example.com:/backup/root/dir && \
+#   echo "At ${time} on ${date}, file $FILECHANGE was backed up via rsync"
+# done
+

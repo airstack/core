@@ -8,5 +8,5 @@
 ################################################################################
 
 RUN set -e; \
-  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc net-tools less wget sudo procps; \
+  /command/core-package-install vim-tiny ethtool bwm-ng man-db info psmisc net-tools less wget sudo procps inotify-tools; \
   ln -s /usr/bin/vim.tiny /usr/bin/vim

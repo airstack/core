@@ -20,7 +20,7 @@ contentious in the devops community.
 
 In principal, Airstack is independent of specific init systems since a developer
 can easily create a container that uses whatever tools she wants. In practice,
-Airstack/core (the default Airstack base container) relies on runit.
+Airstack/Core (the default Airstack base container) relies on runit.
 
 We don't think that other init systems are bad, but given the larger vision of
 where we want to take Airstack, it's important to keep all of our core services

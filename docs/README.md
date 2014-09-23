@@ -2,11 +2,11 @@
 
 # FAQs
 
-- [What is Airstack/core?](/README.md)
-- [How is Airstack/core different from other projects?](comparison.md)
-- [How to Build Airstack/core?](guides/building_images.md)
-- [How to Run Airstack/core?](guides/running_images.md)
-- [How to Extend Airstack/core?](guides/extending_images.md)
+- [What is Airstack/Core?](/README.md)
+- [How is Airstack/Core different from other projects?](comparison.md)
+- [How to Build Airstack/Core?](guides/building_images.md)
+- [How to Run Airstack/Core?](guides/running_images.md)
+- [How to Extend Airstack/Core?](guides/extending_images.md)
 - [What OSs are supported?](operating_systems.md)
 
 # Core Documentation

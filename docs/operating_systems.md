@@ -2,7 +2,7 @@
 
 # Supported Operating Systems
 
-Airstack/core currently supports Debian Jessie.
+Airstack/Core currently supports Debian Jessie.
 
 The following OS's will be supported soon:
 

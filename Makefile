@@ -18,7 +18,8 @@ USERNAME := airstack
 USERDIR := $(USERNAME)
 
 AIRSTACK_TEMPLATES_FILES := Dockerfile.core Dockerfile.packages Dockerfile.packages.dev Dockerfile.services Dockerfile.debug Dockerfile.tests
-AIRSTACK_TEMPLATES_DIR := templates
+AIRSTACK_TEMPLATES_DIR := build/templates
+AIRSTACK_CACHE_DIR := build/cache
 AIRSTACK_IMAGE_REPO := airstack
 AIRSTACK_IMAGE_NAME := $(CURR_DIR)
 AIRSTACK_IMAGE_TAG := latest
@@ -63,6 +64,7 @@ all:
 
 init:
 	@echo init
+	@[ -d $(TOP_DIR)$(AIRSTACK_CACHE_DIR) ] || mkdir -vp $(TOP_DIR)$(AIRSTACK_CACHE_DIR)
 ifeq ($(uname_S),Darwin)
 ifneq ($(shell boot2docker status),running)
 	@boot2docker up
@@ -79,9 +81,9 @@ endif
 build-all: build build-dev build-prod
 
 build:
-	> Dockerfile.$(AIRSTACK_IMAGE_TAG)
-	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> ./Dockerfile.$(AIRSTACK_IMAGE_TAG);)
-	cp -a Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile; \
+	> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG)
+	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG);)
+	cp -a $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile; \
 	docker build $(DOCKER_OPTS_BUILD) --tag airstack/core:$(AIRSTACK_IMAGE_TAG) .; \
 	rm Dockerfile
 

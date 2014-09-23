@@ -1,7 +1,0 @@
-
-################################################################################
-# DEBUG
-################################################################################
-
-# TODO: have /command symlinks setup during each service installation.
-RUN ln -s /command/core-* /usr/local/bin/

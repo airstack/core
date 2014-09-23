@@ -9,7 +9,6 @@
 # Packages:
 # - use core helper functions to install packages
 # - /command/core-package-install
-#
 ################################################################################
 
 FROM debian:jessie

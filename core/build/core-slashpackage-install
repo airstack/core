@@ -32,7 +32,7 @@ core_slashpackage_install() {
       local tmp_name; tmp_name=$(echo $i | cut -d "-" -f 1)
       mkdir -p $tmp_dir; cd $tmp_dir
       set -e
-      wget -O ./install https://raw.githubusercontent.com/airstack/slashpackage/master/$tmp_name/$i/install
+      wget -O ./install https://raw.githubusercontent.com/airstack/package/master/$tmp_name/$i/install
       chmod +x ./install; ./install $i
       set +e
       cd /tmp; rm -rf $tmp_dir

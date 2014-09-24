@@ -64,6 +64,8 @@ all:
 
 init:
 	@echo init
+	# empty template files
+	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),$(shell [ -e $(AIRSTACK_TEMPLATES_DIR)/$(var) ] ||  touch $(AIRSTACK_TEMPLATES_DIR)/$(var) ]))
 	# default .airstackignore file
 	@[ -e $(TOP_DIR).airstackignore ] || printf ".git\n.gitignore\n.dockerignore\n.airstackignore\n.DS_Store\nbuild/cache/*.tar*\n_wip" > $(TOP_DIR).airstackignore
 	@[ -d $(TOP_DIR)$(AIRSTACK_CACHE_DIR) ] || mkdir -vp $(TOP_DIR)$(AIRSTACK_CACHE_DIR)

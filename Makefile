@@ -64,6 +64,8 @@ all:
 
 init:
 	@echo init
+	# default .airstackignore file
+	@[ -e $(TOP_DIR).airstackignore ] || printf ".git\n.gitignore\n.dockerignore\n.airstackignore\n.DS_Store\nbuild/cache/*.tar*\n_wip" > $(TOP_DIR).airstackignore
 	@[ -d $(TOP_DIR)$(AIRSTACK_CACHE_DIR) ] || mkdir -vp $(TOP_DIR)$(AIRSTACK_CACHE_DIR)
 ifeq ($(uname_S),Darwin)
 ifneq ($(shell boot2docker status),running)

@@ -3,5 +3,5 @@
 .dockerignore
 .airstackignore
 .DS_Store
-build/cache/*.tar*
+./build
 _wip

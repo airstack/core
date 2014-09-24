@@ -21,7 +21,7 @@ AIRSTACK_TEMPLATES_FILES := Dockerfile.core Dockerfile.packages Dockerfile.packa
 AIRSTACK_TEMPLATES_DIR := build/templates
 AIRSTACK_CACHE_DIR := build/cache
 AIRSTACK_IMAGE_REPO := airstack
-AIRSTACK_IMAGE_NAME := $(shell echo $(CURR_DIR) | cut -d '-' -f 1)
+AIRSTACK_IMAGE_NAME := $(shell cat $(TOP_DIR)/env/AIRSTACK_IMAGE_NAME)
 AIRSTACK_IMAGE_TAG := latest
 AIRSTACK_IMAGE_FULLNAME := $(AIRSTACK_IMAGE_REPO)/$(AIRSTACK_IMAGE_NAME):$(AIRSTACK_IMAGE_TAG)
 

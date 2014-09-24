@@ -17,6 +17,7 @@ uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 USERNAME := airstack
 USERDIR := $(USERNAME)
 
+AIRSTACK_AIRSTACKIGNORE := .airstackignore
 AIRSTACK_TEMPLATES_FILES := Dockerfile.core Dockerfile.packages Dockerfile.packages.dev Dockerfile.services Dockerfile.debug Dockerfile.tests
 AIRSTACK_TEMPLATES_DIR := build/templates
 AIRSTACK_CACHE_DIR := build/cache
@@ -84,12 +85,25 @@ endif
 
 build-all: build build-dev build-prod
 
-build: init
+build-tarball:
+	tar -cvf $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar -C $(TOP_DIR) -X $(AIRSTACK_AIRSTACKIGNORE) .
+
+build-tarball-docker: build-tarball
 	> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG)
 	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG);)
-	ln -f $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile && \
-	tar -zcvf $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz -C $(TOP_DIR) -X .airstackignore . && \
-	docker build $(DOCKER_OPTS_BUILD) --tag airstack/$(AIRSTACK_IMAGE_NAME):$(AIRSTACK_IMAGE_TAG) - < $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz
+	ln -f $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) $(AIRSTACK_CACHE_DIR)/Dockerfile
+	tar -C $(TOP_DIR)/$(AIRSTACK_CACHE_DIR) --append --file=$(AIRSTACK_IMAGE_TAG).tar Dockerfile
+
+build-docker: init build-tarball-docker
+	docker build $(DOCKER_OPTS_BUILD) --tag airstack/$(AIRSTACK_IMAGE_NAME):$(AIRSTACK_IMAGE_TAG) - < $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar
+
+build: build-docker
+# build: init
+# 	> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG)
+# 	$(foreach var,$(AIRSTACK_TEMPLATES_FILES),cat $(AIRSTACK_TEMPLATES_DIR)/$(var) >> $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG);)
+# 	ln -f $(AIRSTACK_CACHE_DIR)/Dockerfile.$(AIRSTACK_IMAGE_TAG) Dockerfile && \
+# 	tar -zcvf $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz -C $(TOP_DIR) -X $(AIRSTACK_AIRSTACKIGNORE) . && \
+# 	docker build $(DOCKER_OPTS_BUILD) --tag airstack/$(AIRSTACK_IMAGE_NAME):$(AIRSTACK_IMAGE_TAG) - < $(TOP_DIR)build/cache/$(AIRSTACK_IMAGE_NAME).$(AIRSTACK_IMAGE_TAG).tar.gz
 
 build-debug:
 	make DOCKER_OPTS_BUILD='--rm --no-cache' build

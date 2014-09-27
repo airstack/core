@@ -3,6 +3,9 @@
 .dockerignore
 .DS_Store
 _wip
+*.tar
+*.tar.*
+*.example
 
 CVS/
 RCS/

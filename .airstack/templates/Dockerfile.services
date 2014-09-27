@@ -1,11 +1,13 @@
-
 ################################################################################
 # SERVICES
 #
-# Add commands for configuring and managing services
+# Add commands for configuring and managing services.
 #
-# This should stay near the end of the Dockerfile to minimize
-# unnecessary rebuilds.
+# Conventions:
+#
+# - do not install any packages in this file
+# - keep this file minimal to ensure faster rebuilds
+#
 ################################################################################
 
 COPY core /package/airstack/core

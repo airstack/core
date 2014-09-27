@@ -1,10 +1,21 @@
-
 ################################################################################
 # PACKAGES
 #
-# Add commands required for installing packages.
-# To minimize rebuilds, binaries that are modified less often
-# should be in earlier RUN commands.
+# Add commands required for installing packages. To minimize rebuilds, binaries
+# that are modified less often should be in earlier RUN commands.
+#
+# Conventions:
+#
+# See Dockerfile.base conventions.
+#
+# Packages
+# - use core helper functions to install packages
+#   - /command/core-package-install
+# - put development packages in Dockerfile.packages.development
+#   - reserve this file for common packages only
+# - install packages to /package
+# - symlink commands in /package to /usr/bin or /usr/local/bin
+#
 ################################################################################
 
 COPY core/build/ /package/airstack-0.1.0/build

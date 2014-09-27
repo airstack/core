@@ -2,13 +2,15 @@
 # CORE Dockerfile
 # MAINTAINER airstack team <support@airstack.io>
 #
-# RUN:
-# - single commands on one line
-# - multiple commands with `set -e`. Separate commands with `;`.
+# Conventions:
 #
-# Packages:
-# - use core helper functions to install packages
-# - /command/core-package-install
+# RUN
+# - single command on one line
+# - multiple commands:
+#   - `set -e; \` on first line
+#   - separate commands on subsequent lines, each ending with `; \`
+#
+#
 ################################################################################
 
 FROM debian:jessie

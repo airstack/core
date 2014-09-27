@@ -1,3 +1,8 @@
+AIRSTACK_IMAGE_NAME := airstack/core
+AIRSTACK_BUILD_TEMPLATES_PRODUCTION := Dockerfile.base Dockerfile.packages Dockerfile.services
+AIRSTACK_BUILD_TEMPLATES_DEVELOPMENT := Dockerfile.base Dockerfile.packages Dockerfile.packages.development Dockerfile.services Dockerfile.services.development Dockerfile.services.tests
+AIRSTACK_BUILD_TEMPLATES_TEST := $(AIRSTACK_BUILD_TEMPLATES_DEVELOPMENT)
+
 BOOTSTRAPPED := $(shell [ -d ~/.airstack/bootstrap ] && echo 'yes' || echo 'no')
 ifeq ($(BOOTSTRAPPED),yes)
 include ~/.airstack/bootstrap/Makefile

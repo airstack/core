@@ -4,3 +4,6 @@ _notes
 _wip
 .DS_Store
 .airstack/cache/
+
+# AIRSTACK
+.airstack/cache

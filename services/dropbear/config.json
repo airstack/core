@@ -7,7 +7,7 @@
       "run": "/usr/sbin/dropbear -F -E -R",
       "check": "",
       "finish": "",
-      "log": "exec chpst -u root logger -t dropbear -p local0.notice",
+      "log": "exec chpst -u log logger -t dropbear -p auth.notice",
       "tags": ["ssh", "dropbear"],
       "input": [{"source": "any", "destination": "any", "port": "22", "protocol": "tcp", "tags": [ "" ]}],
       "output": [{"source": "any", "destination": "any", "port": "any", "protocol": "tcp","tags": [ "" ]}]

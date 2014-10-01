@@ -20,8 +20,8 @@ socklog_config_create() {
     echo $tmp_pattern >> $tmp_configfile
   done
   echo "s2000" >> $tmp_configfile
-  echo "N10" >> $tmp_configfile
-  echo "n5" >> $tmp_configfile
+  echo "n10" >> $tmp_configfile
+  echo "N5" >> $tmp_configfile
   echo "t2" >> $tmp_configfile
   echo p"$(hostname) " >> $tmp_configfile
   echo "!tryto -pv -k 2 -n 5 nc -q0 $tmp_ip $tmp_port" >> $tmp_configfile

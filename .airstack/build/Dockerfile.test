@@ -109,3 +109,8 @@ EXPOSE 22
 RUN set -e; \
   echo "airstack  ALL = NOPASSWD: ALL" > /etc/sudoers.d/airstack; \
   usermod --shell /bin/bash airstack
+################################################################################
+# SERVICES: TEST
+################################################################################
+
+COPY test /package/airstack/test

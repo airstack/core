@@ -6,5 +6,11 @@
 
 RUN set -e; \
   /command/core-package-install \
-    vim-tiny ethtool bwm-ng man-db info psmisc net-tools less wget sudo procps inotify-tools; \
+     ethtool net-tools \
+     procps psmisc bwm-ng \
+     sudo \
+     man-db info \
+     wget curl \
+     inotify-tools \
+     less vim-tiny; \
   ln -s /usr/bin/vim.tiny /usr/bin/vim

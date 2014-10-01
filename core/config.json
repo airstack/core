@@ -5,7 +5,7 @@
   "cluster": "airstack_cluster",
   "user": { "name": "airstack", "password": "airstack", "comment": "airstack user", "uid": "431", "gid": "432", "shell": "/bin/nologin" },
   "iplog": [
-    {  "ip": "192.168.59.3", "port": "12000", "pattern": [ "+*" ] },
-    {  "ip": "192.168.59.3", "port": "12001", "pattern": [ "-*", "+auth*" ] }
+    {  "ip": "192.168.59.3", "port": "12000", "pattern": [ "-*", "+user*", "+daemon*" ] },
+    {  "ip": "192.168.59.3", "port": "12001", "pattern": [ "-user*", "-daemon*" ] }
   ]
 }

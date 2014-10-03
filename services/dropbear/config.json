@@ -4,7 +4,7 @@
       "state": "down",
       "enable": "echo \"airstack\":\"airstack\" | chpasswd",
       "disable": "",
-      "run": "/usr/sbin/dropbear -F -E -R",
+      "run": "/usr/sbin/dropbear -F -w -E",
       "check": "",
       "finish": "",
       "log": "exec chpst -u log logger -t dropbear -p auth.notice",

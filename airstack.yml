@@ -38,3 +38,7 @@ build:
       cmd: core-watch /package/json/json-utils -c "core-test-runner -f /package/json/json-utils/test/*_spec.lua"
   mount:
     *dev_mounts
+
+
+:production:
+  # Build defaults

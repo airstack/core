@@ -1,0 +1,40 @@
+################################################################################
+# Defaults
+#
+# Best practice is to set defaults to production settings.
+
+name: airstack/core
+
+build:
+  output: .airstack/build
+  templates:
+    # Build template directory
+    dir: Dockerfiles
+    # Build templates, concatenated in listed order
+    files: Dockerfile.base Dockerfile.packages Dockerfile.services
+
+
+################################################################################
+# Environment specific sections
+#
+# Prefixed with a colon ':'
+# Missing keys in environment sections will be looked up the default section above.
+
+:development:
+  build:
+    templates:
+      <% dev_tpls = 'Dockerfile.base Dockerfile.packages Dockerfile.packages.development Dockerfile.services Dockerfile.services.development' %>
+      files: <%= dev_tpls %>
+  mount: &dev_mounts
+    - ./command:/package/json/json-utils/command
+    - ./test:/package/json/json-utils/test
+
+:test:
+  build:
+    templates:
+      files: <%= dev_tpls %> Dockerfile.services.test
+  commands:
+    start:
+      cmd: core-watch /package/json/json-utils -c "core-test-runner -f /package/json/json-utils/test/*_spec.lua"
+  mount:
+    *dev_mounts

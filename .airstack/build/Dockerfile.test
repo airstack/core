@@ -13,7 +13,9 @@
 #
 ################################################################################
 
-FROM debian:jessie
+FROM debian:wheezy
+RUN echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list
+
 USER root
 ENV HOME /root
 WORKDIR /root
@@ -49,7 +51,9 @@ RUN set -e; \
   ln -s /package/airstack/build/core-* /command/
 
 # Packages::Base
-RUN /command/core-package-install jq ca-certificates libssl1.0.0 openssl
+RUN set -e; \
+    /command/core-package-install wget ca-certificates libssl1.0.0 libpcre3 openssl; \
+    /command/core-slashpackage-install jq-1.4
 
 # Packages::runit
 RUN touch /etc/inittab && /command/core-package-install runit
@@ -74,14 +78,18 @@ RUN set -e; \
 
 RUN set -e; \
   /command/core-package-install \
-     ethtool net-tools \
-     procps psmisc bwm-ng \
-     sudo \
-     man-db info \
-     wget curl \
-     inotify-tools \
-     less vim-tiny; \
+    ethtool net-tools \
+    procps psmisc bwm-ng \
+    sudo \
+    man-db info \
+    wget curl \
+    inotify-tools \
+    less vim-tiny; \
   ln -s /usr/bin/vim.tiny /usr/bin/vim
+
+RUN set -e; \
+  /command/core-package-install \
+     make bzip2
 ################################################################################
 # SERVICES
 #

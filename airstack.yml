@@ -34,9 +34,7 @@ build:
   build:
     templates:
       files: <%= dev_tpls %> Dockerfile.services.test
-  commands:
-    start:
-      cmd: core-watch /package/json/json-utils -c "core-test-runner -f /package/json/json-utils/test/*_spec.lua"
+  cmd: core-watch /package/json/json-utils -c "core-test-runner -f /package/json/json-utils/test/*_spec.lua"
   mount:
     *dev_mounts
 

@@ -23,7 +23,3 @@ RUN set -e; \
   groupadd --system airstack --gid 432; \
   useradd --uid 431 --system --base-dir /home --create-home --gid airstack --shell /bin/nologin --comment "airstack user" airstack; \
   chown -R airstack:airstack /home/airstack
-
-<% # Example use of eco templating in a Dockerfile %>
-<% name = "RUN echo '#{@config.name}' > /home/airstack/name" %>
-<%- name %>

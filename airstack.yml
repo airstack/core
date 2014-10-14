@@ -36,7 +36,6 @@ cmd: "sh -c '{ /etc/runit/2 multi &}'"
   build:
     templates:
       files: <%= dev_tpls %> Dockerfile.services.test
-  # cmd: /command/core-watch /package/json/json-utils -c \"core-test-runner -f /package/json/json-utils/test/*_spec.lua\"
   cmd: /command/core-test-runner -f /package/airstack/test/\*_spec.lua
   mount:
     *dev_mounts

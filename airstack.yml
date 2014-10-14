@@ -6,6 +6,9 @@
 name: airstack/core
 
 build:
+  from:
+    image: debian
+    tag: wheezy
   dir: .airstack/build
   cache: .airstack/cache
   templates:

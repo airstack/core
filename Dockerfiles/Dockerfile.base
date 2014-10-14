@@ -13,7 +13,7 @@
 #
 ################################################################################
 
-FROM debian:wheezy
+FROM <%= @config.build.from.image %>:<%= @config.build.from.tag %>
 RUN echo "deb http://http.debian.net/debian wheezy-backports main" >> /etc/apt/sources.list
 
 USER root

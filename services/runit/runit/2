@@ -16,10 +16,12 @@ msg "Initializing Runit Level 2\n"
 TMP_RUNLEVEL=$1
 if test "$TMP_RUNLEVEL" = "single"; then
   runsvchdir $TMP_RUNLEVEL >/dev/null
-elif test "$TMP_RUNLEVEL" = "syslog"; then
-  runsvchdir multi >/dev/null
+elif test "$TMP_RUNLEVEL" = "multi"; then
+  runsvchdir $TMP_RUNLEVEL >/dev/null
 else
-  runsvchdir ${TMP_RUNLEVEL:='multi'} >/dev/null
+  #default
+  runsvchdir multi >/dev/null
+  TMP_RUNLEVEL="syslog"
 fi
 
 # run in bg

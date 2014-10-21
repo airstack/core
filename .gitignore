@@ -1,7 +1,7 @@
-**/input
-**/output
-**/_notes
-**/_wip
+input
+output
+_notes
+_wip
 .DS_Store
 
 # AIRSTACK

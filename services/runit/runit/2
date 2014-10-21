@@ -5,16 +5,22 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 # add airstack helpers if they exist:
 ERROR_MESSAGE_DEFAULT="[ERROR] runit runlevel 2 -"
-[ -f "/package/airstack/core/airstack-helpers" ] && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
+test -f "/package/airstack/core/airstack-helpers" && { . /package/airstack/core/airstack-helpers ;} || { printf "missing airstack-helpers. exiting.\n" && exit 113 ;}
 
 set -e
 msg "Initializing Runit Level 2\n"
 
-# defaults to 'multi', but can pass in different runlevel.
-# /etc/runit/2 single
+# defaults to 'multi' runlevel, but can pass in 'single' runlevel option for low-level debugging.
+# e.g. /etc/runit/2 single
 
 TMP_RUNLEVEL=$1
-runsvchdir ${TMP_RUNLEVEL:="multi"} >/dev/null
+if test "$TMP_RUNLEVEL" = "single"; then
+  runsvchdir $TMP_RUNLEVEL >/dev/null
+elif test "$TMP_RUNLEVEL" = "syslog"; then
+  runsvchdir multi >/dev/null
+else
+  runsvchdir ${TMP_RUNLEVEL:='multi'} >/dev/null
+fi
 
 # run in bg
 env - PATH=$PATH \
@@ -87,7 +93,7 @@ env - PATH=$PATH \
 # put AIRSTACK_RUNTIME_VARS in temp file with default {} if empty.
 
 merge_runtime_jsons() {
-  [ -d /env ] || mkdir -p /env
+  test -d /env || mkdir -p /env
   local json_new="/env/RUNTIME_NEW"
   echo ${AIRSTACK_RUNTIME_VARS:='{}'} | jq '' > $json_new
   # ensure config.json is first
@@ -108,21 +114,23 @@ error_check "merge failure. ohnoes."
 msg "Starting /dev/log service in $TMP_RUNLEVEL mode\n"
 /package/airstack/core/service-conf socklog-unix 2>&1
 # error_check "enabling socklog-unix "
-while [ ! -e /dev/log ]; do sleep 0.01; done;
+while test ! -e /dev/log; do sleep 0.01; done;
 
 AIRSTACK_SERVICES=$(cat /env/RUNTIME | jq -r '.services | keys[]' | awk '{ gsub(/socklog-unix/, ""); print $0}')
 
-if [ "$TMP_RUNLEVEL" != "single" ]; then
+if test "$TMP_RUNLEVEL" != "single"; then
 	echo $AIRSTACK_SERVICES | xargs -n1 -P0 sh /package/airstack/core/service-conf
 fi
 
 printf "%s\n" "services currently running:"
 update-service --list
 
+if test "$TMP_RUNLEVEL" = "syslog"; then
 # tail syslog in foreground if file larger than 0
-# while true; do
-# [ -s /var/log/syslog ] && break
-# sleep 0.01
-# done
-# printf "\n%s\n" "Showing log entries from: /var/log/syslog"
-# printf "\n" && tail -n10 -F /var/log/syslog
+  while true; do
+    test -s /var/log/syslog && break
+    sleep 0.01
+  done
+  printf "\n%s\n" "Showing log entries from: /var/log/syslog"
+  printf "\n" && tail -n10 -F /var/log/syslog
+fi
